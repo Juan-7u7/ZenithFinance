@@ -56,6 +56,36 @@
     font-weight: 600;
     color: var(--text-main);
   }
+
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      padding-right: 3rem;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xs);
+      border-radius: 50%;
+      transition: all 0.2s;
+
+      &:hover {
+        color: var(--primary);
+        background: var(--bg-card-hover);
+      }
+    }
+  }
 }
 
 .btn {

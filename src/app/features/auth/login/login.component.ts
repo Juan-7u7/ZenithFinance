@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -9,14 +10,16 @@ import { of } from 'rxjs';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   loginForm: FormGroup;
   isLoading = signal(false);
+  showPassword = signal(false);
   errorMessage = signal<string | null>(null);
+  readonly icons = { Eye, EyeOff };
 
   constructor(
     private fb: FormBuilder,
@@ -74,5 +77,9 @@ export class LoginComponent {
     if (control.hasError('minlength')) return 'Mínimo 6 caracteres';
 
     return '';
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
   }
 }
