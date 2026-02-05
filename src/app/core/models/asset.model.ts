@@ -27,7 +27,9 @@ export interface Transaction {
   id?: string;
   user_id: string;
   asset_id: string;
-  type: 'buy' | 'sell';
+  symbol?: string;     // For UI display
+  asset_name?: string; // For UI display
+  type: 'buy' | 'sell' | 'update' | 'delete';
   amount: number;
   price_per_unit: number;
   total: number;

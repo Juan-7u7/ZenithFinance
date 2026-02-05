@@ -1,0 +1,20 @@
+<div class="toast-container">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [ngClass]="toast.type" @toastAnimation>
+      <div class="icon">
+        @switch (toast.type) {
+          @case ('success') { <lucide-icon [img]="icons.CheckCircle" size="20"></lucide-icon> }
+          @case ('error') { <lucide-icon [img]="icons.AlertCircle" size="20"></lucide-icon> }
+          @case ('info') { <lucide-icon [img]="icons.Info" size="20"></lucide-icon> }
+          @default { <lucide-icon [img]="icons.Info" size="20"></lucide-icon> }
+        }
+      </div>
+      <div class="content">
+        <p>{{ toast.message }}</p>
+      </div>
+      <button class="close-btn" (click)="toastService.remove(toast.id)">
+        <lucide-icon [img]="icons.X" size="16"></lucide-icon>
+      </button>
+    </div>
+  }
+</div>

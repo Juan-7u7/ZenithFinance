@@ -39,7 +39,7 @@ export class Supabase {
       // Intentar leer de una tabla (ajusta el nombre de la tabla según tu esquema)
       // Si no tienes tablas aún, esto fallará pero confirmará la conexión
       const { data, error } = await this.supabase
-        .from('users') // Cambia 'users' por el nombre de una tabla real en tu DB
+        .from('user_assets') // Changed from 'users' to a real table
         .select('*')
         .limit(1);
 
@@ -48,10 +48,10 @@ export class Supabase {
         // 42P01 = PostgreSQL table does not exist
         // PGRST205 = PostgREST table not found in schema cache
         if (error.code === '42P01' || error.code === 'PGRST205') {
-          console.warn('Table does not exist, but connection is working');
+          console.warn('Table user_assets does not exist, check your SQL setup');
           return {
             success: true,
-            message: 'Connection successful! (Table "users" not found - create your schema)',
+            message: 'Connection successful but table user_assets missing',
             error: error,
           };
         }

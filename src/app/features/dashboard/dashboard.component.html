@@ -58,71 +58,79 @@
       </section>
 
       <!-- Assets Grid -->
-      <section class="assets-section">
-        <div class="section-header">
-          <h2>Mis Activos</h2>
-          <button class="btn btn-sm btn-outline" (click)="openAddModal()">
-            <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> Agregar Activo
-          </button>
-        </div>
-
-        @if (isAddModalOpen()) {
-          <app-add-asset-modal
-            (close)="closeAddModal()"
-            (assetAdded)="onAssetAdded($event)"
-          ></app-add-asset-modal>
-        }
-
-        @if (dashboard().assets.length === 0) {
-          <div class="empty-state glass-card">
-            <p>No tienes activos en tu portafolio aún.</p>
-            <button class="btn btn-primary">Comenzar a invertir</button>
+      <div class="main-grid">
+        <!-- Assets Grid -->
+        <section class="assets-section">
+          <div class="section-header">
+            <h2>Mis Activos</h2>
+            <button class="btn btn-sm btn-outline" (click)="openAddModal()">
+              <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> Agregar Activo
+            </button>
           </div>
-        } @else {
-          <div class="assets-grid">
-            @for (asset of dashboard().assets; track asset.assetId) {
-              <div class="asset-card glass-card slide-up">
-                <div class="asset-header">
-                  <div class="asset-icon">
-                    <img [src]="asset.image" [alt]="asset.name" onerror="this.src='assets/placeholder.png'">
+
+          @if (isAddModalOpen()) {
+            <app-add-asset-modal
+              (close)="closeAddModal()"
+              (assetAdded)="onAssetAdded($event)"
+            ></app-add-asset-modal>
+          }
+
+          @if (dashboard().assets.length === 0) {
+            <div class="empty-state glass-card">
+              <p>No tienes activos en tu portafolio aún.</p>
+              <button class="btn btn-primary" (click)="openAddModal()">Comenzar a invertir</button>
+            </div>
+          } @else {
+            <div class="assets-grid">
+              @for (asset of dashboard().assets; track asset.assetId) {
+                <div class="asset-card glass-card slide-up">
+                  <div class="asset-header">
+                    <div class="asset-icon">
+                      <img [src]="asset.image" [alt]="asset.name" onerror="this.src='assets/placeholder.png'">
+                    </div>
+                    <div class="asset-name">
+                      <h4>{{ asset.name }}</h4>
+                      <span class="symbol">{{ asset.symbol | uppercase }}</span>
+                    </div>
+                    <div class="asset-price">
+                      {{ formatCurrency(asset.currentPrice) }}
+                    </div>
                   </div>
-                  <div class="asset-name">
-                    <h4>{{ asset.name }}</h4>
-                    <span class="symbol">{{ asset.symbol | uppercase }}</span>
+                  
+                  <div class="asset-body">
+                    <div class="asset-metric">
+                      <span>Cantidad</span>
+                      <span>{{ asset.quantity }}</span>
+                    </div>
+                    <div class="asset-metric">
+                      <span>Valor</span>
+                      <span>{{ formatCurrency(asset.totalValue) }}</span>
+                    </div>
+                    <div class="asset-metric highlight" [class.positive]="asset.profitLoss >= 0" [class.negative]="asset.profitLoss < 0">
+                      <span>P/L</span>
+                      <span>{{ formatPercentage(asset.profitLossPercentage) }}</span>
+                    </div>
                   </div>
-                  <div class="asset-price">
-                    {{ formatCurrency(asset.currentPrice) }}
+                  
+                  <div class="asset-actions">
+                    <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" title="Editar">
+                      <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
+                    </button>
+                    <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" title="Eliminar">
+                      <lucide-icon [img]="icons.Trash2" size="16"></lucide-icon>
+                    </button>
                   </div>
                 </div>
-                
-                <div class="asset-body">
-                  <div class="asset-metric">
-                    <span>Cantidad</span>
-                    <span>{{ asset.quantity }}</span>
-                  </div>
-                  <div class="asset-metric">
-                    <span>Valor</span>
-                    <span>{{ formatCurrency(asset.totalValue) }}</span>
-                  </div>
-                  <div class="asset-metric highlight" [class.positive]="asset.profitLoss >= 0" [class.negative]="asset.profitLoss < 0">
-                    <span>P/L</span>
-                    <span>{{ formatPercentage(asset.profitLossPercentage) }}</span>
-                  </div>
-                </div>
-                
-                <div class="asset-actions">
-                  <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" title="Editar">
-                    <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
-                  </button>
-                  <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" title="Eliminar">
-                    <lucide-icon [img]="icons.Trash2" size="16"></lucide-icon>
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        }
-      </section>
+              }
+            </div>
+          }
+        </section>
+
+        <!-- History Section -->
+        <section class="history-section">
+          <app-transaction-history></app-transaction-history>
+        </section>
+      </div>
 
       <!-- Edit Modal -->
       @if (editingAsset(); as asset) {

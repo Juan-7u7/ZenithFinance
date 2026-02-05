@@ -3,7 +3,6 @@
   max-width: 1400px;
   margin: 0 auto;
   min-height: 100vh;
-  // Background handled by global body styles
 }
 
 /* Header */
@@ -108,7 +107,7 @@
   
   &.primary-gradient {
     background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
-    color: white; // Override text color for contrast on gradient
+    color: white; 
     border: none;
     
     h3 {
@@ -169,6 +168,18 @@
   }
 }
 
+/* Main Grid Layout */
+.main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: var(--spacing-lg);
+  align-items: start;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Assets Grid */
 .assets-section {
   .section-header {
@@ -196,9 +207,15 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   cursor: pointer;
+  position: relative;
   
   &:hover {
     border-color: var(--primary-400);
+    
+    .asset-actions {
+      opacity: 1;
+      pointer-events: all;
+    }
   }
   
   .asset-header {
@@ -241,24 +258,26 @@
       span:first-child { color: var(--text-tertiary); margin-bottom: 2px; }
       span:last-child { color: var(--text-secondary); font-weight: 500; }
       
+      &.highlight {
+        &.positive span:last-child { color: var(--success); }
+        &.negative span:last-child { color: var(--error); }
+      }
+    }
   }
 
   .asset-actions {
     position: absolute;
-    top: var(--spacing-md);
-    right: var(--spacing-md);
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
     display: flex;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-xs);
     opacity: 0;
+    pointer-events: none;
     transition: opacity var(--transition-base);
     background: var(--surface-card);
     padding: 4px;
     border-radius: 8px;
     box-shadow: var(--elevation-2);
-  }
-
-  &:hover .asset-actions {
-    opacity: 1;
   }
 }
 

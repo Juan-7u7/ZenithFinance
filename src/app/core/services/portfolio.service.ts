@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, from, throwError } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, from, throwError, of } from 'rxjs';
+import { map, tap, catchError, switchMap } from 'rxjs/operators';
 import { Supabase } from './supabase';
 import { AuthService } from './auth.service';
-import { DatabaseAsset } from '../models/asset.model';
+import { DatabaseAsset, Transaction } from '../models/asset.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,9 @@ import { DatabaseAsset } from '../models/asset.model';
 export class PortfolioService {
   private _assets = new BehaviorSubject<DatabaseAsset[]>([]);
   public assets$ = this._assets.asObservable();
+
+  private _transactions = new BehaviorSubject<Transaction[]>([]);
+  public transactions$ = this._transactions.asObservable();
 
   private _loading = new BehaviorSubject<boolean>(false);
   public loading$ = this._loading.asObservable();
@@ -20,6 +23,7 @@ export class PortfolioService {
     private authService: AuthService
   ) {
     this.loadPortfolio();
+    this.loadTransactions();
   }
 
   loadPortfolio(): void {
@@ -50,6 +54,55 @@ export class PortfolioService {
     ).subscribe();
   }
 
+  loadTransactions(): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    // Use 'user_transactions' table
+    from(
+      this.supabase.getClient()
+        .from('user_transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(50) // Load last 50 transactions
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          // If table doesn't exist, we just return empty array silently (graceful degradation)
+          if (error.code === '42P01') return []; 
+          throw error;
+        }
+        return data as Transaction[];
+      }),
+      tap(data => this._transactions.next(data || [])),
+      catchError(err => {
+        console.warn('Could not load transactions', err);
+        return of([]);
+      })
+    ).subscribe();
+  }
+
+  private saveTransaction(tx: Partial<Transaction>): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    const transaction: Transaction = {
+      ...tx,
+      user_id: user.id,
+      date: new Date(),
+      total: (tx.amount || 0) * (tx.price_per_unit || 0)
+    } as Transaction;
+
+    this.supabase.getClient()
+      .from('user_transactions')
+      .insert(transaction)
+      .then(({ error }) => {
+        if (!error) this.loadTransactions();
+        else console.warn('Failed to log transaction', error);
+      });
+  }
+
   addAsset(asset: DatabaseAsset): Observable<any> {
     const user = this.authService.getCurrentUser();
     if (!user) return throwError(() => new Error('User not authenticated'));
@@ -69,6 +122,16 @@ export class PortfolioService {
       tap(({ data, error }) => {
         if (error) throw error;
         this.loadPortfolio(); 
+        
+        // Log Transaction
+        this.saveTransaction({
+          asset_id: asset.asset_id,
+          symbol: asset.symbol,
+          asset_name: asset.asset_name,
+          type: 'buy',
+          amount: asset.amount,
+          price_per_unit: asset.purchase_price
+        });
       })
     );
   }
@@ -77,7 +140,6 @@ export class PortfolioService {
     const user = this.authService.getCurrentUser();
     if (!user) return throwError(() => new Error('User not authenticated'));
 
-    // We rely on asset.id being present for update
     if (!asset.id) return throwError(() => new Error('Asset ID required for update'));
 
     const updates = {
@@ -90,16 +152,26 @@ export class PortfolioService {
         .from('user_assets')
         .update(updates)
         .eq('id', asset.id)
-        .eq('user_id', user.id) // Security check RLS
+        .eq('user_id', user.id)
     ).pipe(
       tap(({ error }) => {
         if (error) throw error;
         this.loadPortfolio();
+
+        // Log Update
+        this.saveTransaction({
+          asset_id: asset.asset_id || 'unknown', // Might be missing if partial update? No, we pass full object from modal
+          symbol: asset.symbol,
+          asset_name: asset.asset_name,
+          type: 'update',
+          amount: asset.amount,
+          price_per_unit: asset.purchase_price
+        });
       })
     );
   }
 
-  removeAsset(id: string): Observable<any> {
+  removeAsset(id: string, assetDetails?: Partial<DatabaseAsset>): Observable<any> {
     return from(
       this.supabase.getClient()
         .from('user_assets')
@@ -109,6 +181,17 @@ export class PortfolioService {
       tap(({ error }) => {
         if (error) throw error;
         this.loadPortfolio();
+
+        if (assetDetails) {
+          this.saveTransaction({
+            asset_id: assetDetails.asset_id,
+            symbol: assetDetails.symbol,
+            asset_name: assetDetails.asset_name,
+            type: 'sell', // Or 'delete', but 'sell' implies closing position
+            amount: assetDetails.amount,
+            price_per_unit: assetDetails.purchase_price
+          });
+        }
       })
     );
   }

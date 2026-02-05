@@ -1,0 +1,38 @@
+<div class="history-card glass-card">
+  <h3>Historial de Movimientos</h3>
+  
+  <div class="history-list custom-scrollbar">
+    @if (transactions().length === 0) {
+      <div class="empty-history">
+        <p>No hay movimientos recientes.</p>
+      </div>
+    } @else {
+      @for (tx of transactions(); track tx.id || $index) {
+        <div class="history-item">
+          <div class="icon-wrapper" [ngClass]="tx.type">
+            @switch (tx.type) {
+              @case ('buy') { <lucide-icon [img]="icons.ArrowDownLeft" size="18"></lucide-icon> }
+              @case ('sell') { <lucide-icon [img]="icons.ArrowUpRight" size="18"></lucide-icon> }
+              @case ('update') { <lucide-icon [img]="icons.RefreshCw" size="18"></lucide-icon> }
+              @case ('delete') { <lucide-icon [img]="icons.Trash2" size="18"></lucide-icon> }
+            }
+          </div>
+          
+          <div class="tx-details">
+            <div class="tx-header">
+              <span class="asset-name">{{ tx.asset_name || tx.symbol || 'Activo' }}</span>
+              <span class="tx-amount" [class.negative]="tx.type === 'sell' || tx.type === 'delete'">
+                {{ tx.type === 'sell' || tx.type === 'delete' ? '-' : '+' }}{{ tx.amount }} {{ tx.symbol | uppercase }}
+              </span>
+            </div>
+            <div class="tx-meta">
+              <span class="tx-type">{{ getTypeLabel(tx.type) }}</span>
+              <span class="dot">•</span>
+              <span class="tx-date">{{ tx.date | date:'mediumDate' }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
