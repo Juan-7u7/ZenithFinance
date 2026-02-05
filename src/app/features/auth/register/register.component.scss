@@ -130,6 +130,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-md);
+
+  @media (max-width: 400px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .btn-outline {
@@ -146,6 +150,6 @@
 
 @media (max-width: 480px) {
   .register-card {
-    padding: var(--space-lg);
+    padding: var(--space-xl) var(--space-lg);
   }
 }

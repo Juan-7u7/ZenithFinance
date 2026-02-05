@@ -58,6 +58,16 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* Mobile Overrides */
+@media (max-width: 640px) {
+  :root {
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+    --radius-lg: 16px;
+  }
+}
+
 /* Dark Theme */
 :root[data-theme='dark'] {
   --bg-page: #020617;        /* Slate 950 */

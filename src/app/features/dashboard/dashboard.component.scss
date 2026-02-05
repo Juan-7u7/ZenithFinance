@@ -44,6 +44,17 @@
     display: flex;
     gap: var(--space-md);
   }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    
+    .actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 }
 
 .btn-icon {
@@ -106,6 +117,10 @@
     grid-template-columns: 1fr;
     .stats-card { grid-column: span 1; }
   }
+
+  @media (max-width: 480px) {
+    gap: var(--space-md);
+  }
 }
 
 .chart-card {
@@ -142,6 +157,10 @@
       margin-bottom: var(--space-md);
       color: white;
       letter-spacing: -0.05em;
+
+      @media (max-width: 640px) {
+        font-size: 2.25rem;
+      }
     }
   }
 }
@@ -188,6 +207,10 @@
       font-weight: 600;
       color: var(--text-main);
       letter-spacing: -0.02em;
+
+      @media (max-width: 640px) {
+        font-size: 1.25rem;
+      }
     }
   }
 }
