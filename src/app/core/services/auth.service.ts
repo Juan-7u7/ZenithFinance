@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Supabase } from './supabase';
@@ -13,6 +13,8 @@ export class AuthService {
 
   private tokenSubject = new BehaviorSubject<string | null>(null);
   public token$ = this.tokenSubject.asObservable();
+
+  public isInitialized = signal(false);
 
   constructor(private supabase: Supabase) {
     this.recoverSession();
@@ -34,6 +36,8 @@ export class AuthService {
       }
     } catch (e) {
       console.error('Session recovery failed:', e);
+    } finally {
+      this.isInitialized.set(true);
     }
   }
 
