@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
+import { LucideAngularModule, Eye, EyeOff, Mail } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -19,7 +19,7 @@ export class LoginComponent {
   isLoading = signal(false);
   showPassword = signal(false);
   errorMessage = signal<string | null>(null);
-  readonly icons = { Eye, EyeOff };
+  readonly icons = { Eye, EyeOff, Mail };
 
   constructor(
     private fb: FormBuilder,
