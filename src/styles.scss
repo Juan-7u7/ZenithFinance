@@ -104,6 +104,11 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden; // Safety for mobile
+}
+
+html {
+  overflow-x: hidden;
 }
 
 /* ============================================

@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
   
   h3 {
     margin: 0 0 var(--space-md) 0;
