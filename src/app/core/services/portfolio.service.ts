@@ -24,6 +24,26 @@ export class PortfolioService {
   ) {
     this.loadPortfolio();
     this.loadTransactions();
+    this.subscribeToRealtimeUpdates();
+  }
+
+  private subscribeToRealtimeUpdates() {
+    const client = this.supabase.getClient();
+    const user = this.authService.getCurrentUser();
+    
+    if (!user) return;
+
+    client.channel('portfolio_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'user_assets', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          console.log('Realtime update received:', payload);
+          // Reload data to ensure consistency (simpler than merging delta manually)
+          this.loadPortfolio();
+        }
+      )
+      .subscribe();
   }
 
   loadPortfolio(): void {

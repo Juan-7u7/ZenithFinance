@@ -35,7 +35,11 @@
           <ul class="search-results custom-scrollbar">
             @for (result of searchResults(); track result.id) {
               <li (click)="selectAsset(result)">
-                <img [src]="result.image" [alt]="result.name" onerror="this.src='assets/placeholder.png'">
+                @if (result.image) {
+                  <img [src]="result.image" [alt]="result.name" (error)="result.image = ''">
+                } @else {
+                  <lucide-icon [img]="icons.CircleDollarSign" size="24" style="margin-right: 12px; color: var(--text-muted)"></lucide-icon>
+                }
                 <div class="coin-info">
                   <span class="coin-name">{{ result.name }}</span>
                   <span class="coin-symbol">{{ result.symbol | uppercase }}</span>

@@ -45,6 +45,10 @@
           </div>
         </div>
 
+        <div class="card chart-card glass-card">
+          <app-portfolio-distribution [assets]="dashboard().assets"></app-portfolio-distribution>
+        </div>
+
         <div class="card stats-card glass-card">
           <div class="stat-item">
             <span class="label">Inversión Total</span>
@@ -86,7 +90,11 @@
                 <div class="asset-card glass-card slide-up">
                   <div class="asset-header">
                     <div class="asset-icon">
-                      <img [src]="asset.image" [alt]="asset.name" onerror="this.src='assets/placeholder.png'">
+                      @if (asset.image) {
+                        <img [src]="asset.image" [alt]="asset.name" (error)="asset.image = ''">
+                      } @else {
+                        <lucide-icon [img]="icons.CircleDollarSign" size="24"></lucide-icon>
+                      }
                     </div>
                     <div class="asset-name">
                       <h4>{{ asset.name }}</h4>

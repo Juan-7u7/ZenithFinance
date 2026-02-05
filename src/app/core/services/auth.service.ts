@@ -16,7 +16,15 @@ export class AuthService {
 
   constructor(private supabase: Supabase) {
     this.loadStoredAuth();
+    this.recoverSession();
     this.initAuthListener();
+  }
+
+  private async recoverSession() {
+    const { data } = await this.supabase.getClient().auth.getSession();
+    if (data.session) {
+      this.updateSession(data.session);
+    }
   }
 
   private initAuthListener(): void {

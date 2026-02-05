@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LucideAngularModule, X, Search, Save } from 'lucide-angular';
+import { LucideAngularModule, X, Search, Save, CircleDollarSign } from 'lucide-angular';
 import { debounceTime, distinctUntilChanged, switchMap, filter, tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MarketService } from '../../../../core/services/market.service';
@@ -23,7 +23,7 @@ export class AddAssetModalComponent {
   private marketService = inject(MarketService);
   private portfolioService = inject(PortfolioService);
 
-  readonly icons = { X, Search, Save };
+  readonly icons = { X, Search, Save, CircleDollarSign };
   
   assetForm: FormGroup;
   searchResults = signal<Partial<Asset>[]>([]);

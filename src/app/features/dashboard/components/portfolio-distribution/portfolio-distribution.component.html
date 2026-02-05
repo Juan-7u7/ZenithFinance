@@ -1,0 +1,16 @@
+<div class="chart-wrapper">
+  <h3>Distribución</h3>
+  <div class="chart-container">
+    @if (assets.length > 0) {
+      <canvas baseChart
+        [data]="doughnutChartData"
+        [type]="doughnutChartType"
+        [options]="doughnutChartOptions">
+      </canvas>
+    } @else {
+      <div class="empty-chart">
+        <p>Añade activos para ver tu distribución</p>
+      </div>
+    }
+  </div>
+</div>

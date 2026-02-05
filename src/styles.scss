@@ -1,355 +1,207 @@
-/* You can add global styles to this file, and also import other style files */
-
 /* ============================================
-   FLUENT UI INSPIRED THEME VARIABLES
+   MINIMALIST PREMIUM THEME
    ============================================ */
+
+/* Import Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Primary Colors */
-  --primary-50:  #eaf8fc;
-  --primary-100: #d0eff9;
-  --primary-200: #BDE8F5;
-  --primary-300: #83b8dd;
-  --primary-400: #4988C4;
-  --primary-500: #1C4D8D;
-  --primary-600: #16407a;
-  --primary-700: #0F2854;
-  --primary-800: #0a1c3d;
-  --primary-900: #051026;
+  /* Modern Palette (Slate & Indigo) */
+  --primary: #6366f1; /* Indigo 500 */
+  --primary-hover: #4f46e5;
+  --primary-light: #e0e7ff;
+  
+  /* Status Colors (Pastel/Vibrant) */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
 
-  /* Surface Colors - Light Theme */
-  --surface-background: #f8fdff;
-  --surface-card: #ffffff;
-  --surface-hover: #eaf8fc;
-  --surface-border: #4988C4;
+  /* Neutrals - Light Theme */
+  --bg-page: #f8fafc;        /* Slate 50 */
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;  /* Slate 100 */
+  
+  --text-main: #0f172a;      /* Slate 900 */
+  --text-muted: #64748b;     /* Slate 500 */
+  --text-light: #94a3b8;     /* Slate 400 */
+  
+  --border-color: #e2e8f0;   /* Slate 200 */
+  --border-hover: #cbd5e1;   /* Slate 300 */
 
-  /* Text Colors - Light Theme */
-  --text-primary: #0F2854;
-  --text-secondary: #1C4D8D;
-  --text-tertiary: #4988C4;
-  --text-on-primary: #ffffff;
+  /* Shadows (Soft & Diffused) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px -5px rgba(99, 102, 241, 0.4);
 
-  /* Status Colors */
-  --success: #4caf50;
-  --warning: #ff9800;
-  --error: #f44336;
-  --info: #2196f3;
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: 16px;
 
-  /* Elevations & Glassmorphism */
-  --elevation-1: 0 1px 3px rgba(15, 40, 84, 0.08);
-  --elevation-2: 0 3px 6px rgba(15, 40, 84, 0.12);
-  --elevation-3: 0 8px 16px rgba(15, 40, 84, 0.12);
-  --elevation-4: 0 16px 32px rgba(15, 40, 84, 0.16);
-
-  --glass-background: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.18);
-
-  /* Borders */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 16px;
+  /* Layout */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
 
   /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
 
   /* Typography */
-  --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 2rem;
-
-  /* Transitions */
-  --transition-fast: 150ms ease-in-out;
-  --transition-base: 250ms ease-in-out;
-  --transition-slow: 350ms ease-in-out;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Dark Theme Variables */
-:root[data-theme='dark'],
-.dark-theme {
-  --surface-background: #061E29;
-  --surface-card: #1D546D;
-  --surface-hover: #266b8a;
-  --surface-border: #5F9598;
+/* Dark Theme */
+:root[data-theme='dark'] {
+  --bg-page: #020617;        /* Slate 950 */
+  --bg-card: #0f172a;        /* Slate 900 */
+  --bg-card-hover: #1e293b;  /* Slate 800 */
+  
+  --text-main: #f8fafc;      /* Slate 50 */
+  --text-muted: #94a3b8;     /* Slate 400 */
+  --text-light: #64748b;     /* Slate 500 */
+  
+  --border-color: #1e293b;   /* Slate 800 */
+  --border-hover: #334155;   /* Slate 700 */
 
-  --text-primary: #F3F4F4;
-  --text-secondary: #b0d0d4;
-  --text-tertiary: #5F9598;
-  --text-on-primary: #061E29;
-
-  --glass-background: rgba(29, 84, 109, 0.6);
-  --glass-border: rgba(95, 149, 152, 0.3);
-
-  --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --elevation-2: 0 3px 6px rgba(0, 0, 0, 0.4);
-  --elevation-3: 0 8px 16px rgba(0, 0, 0, 0.5);
-  --elevation-4: 0 16px 32px rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5);
 }
 
 /* ============================================
-   RESET & BASE STYLES
+   BASE RESETS
    ============================================ */
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html,
 body {
-  height: 100%;
-  width: 100%;
-  font-family: var(--font-family);
-  font-size: var(--font-size-md);
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  background-color: var(--surface-background);
-  color: var(--text-primary);
-  transition:
-    background-color var(--transition-base),
-    color var(--transition-base);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ============================================
-   UTILITY CLASSES
+   COMPONENT CLASSES
    ============================================ */
 
-/* Glassmorphism Card */
+/* Glass Card - The core of the design */
 .glass-card {
-  background: var(--glass-background);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--elevation-2);
-  transition: all var(--transition-base);
+  background: var(--bg-card); /* Fallback */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-card:hover {
-  box-shadow: var(--elevation-3);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
 }
 
-/* Card */
-.card {
-  background-color: var(--surface-card);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
-  box-shadow: var(--elevation-1);
-  transition: all var(--transition-base);
-}
-
-.card:hover {
-  box-shadow: var(--elevation-2);
-}
-
-/* Flexbox Utilities */
-.flex {
-  display: flex;
-}
-
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.flex-gap-sm {
-  gap: var(--spacing-sm);
-}
-
-.flex-gap-md {
-  gap: var(--spacing-md);
-}
-
-.flex-gap-lg {
-  gap: var(--spacing-lg);
-}
-
-/* Grid */
-.grid {
-  display: grid;
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.grid-cols-4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-@media (max-width: 768px) {
-  .grid-cols-2,
-  .grid-cols-3,
-  .grid-cols-4 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Text Utilities */
-.text-primary {
-  color: var(--text-primary);
-}
-
-.text-secondary {
-  color: var(--text-secondary);
-}
-
-.text-tertiary {
-  color: var(--text-tertiary);
-}
-
-.text-success {
-  color: var(--success);
-}
-
-.text-error {
-  color: var(--error);
-}
-
-.text-warning {
-  color: var(--warning);
-}
-
-/* Spacing Utilities */
-.p-sm {
-  padding: var(--spacing-sm);
-}
-
-.p-md {
-  padding: var(--spacing-md);
-}
-
-.p-lg {
-  padding: var(--spacing-lg);
-}
-
-.m-sm {
-  margin: var(--spacing-sm);
-}
-
-.m-md {
-  margin: var(--spacing-md);
-}
-
-.m-lg {
-  margin: var(--spacing-lg);
-}
-
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-
+/* Container */
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--space-lg);
 }
 
-@media (min-width: 768px) {
-  .container {
-    padding: 0 var(--spacing-lg);
-  }
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
 }
 
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 var(--spacing-xl);
-  }
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
 }
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+  transform: translateY(-1px);
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.btn-icon:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-main);
 }
 
-.fade-in {
-  animation: fadeIn var(--transition-base);
+/* Form Elements */
+input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  outline: none;
 }
 
-.slide-up {
-  animation: slideUp var(--transition-base);
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
-/* ============================================
-   SCROLLBAR STYLING
-   ============================================ */
-
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--surface-background);
+  background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-border);
-  border-radius: 4px;
+  background: var(--border-color);
+  border-radius: 10px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: var(--text-muted);
 }

@@ -36,20 +36,24 @@ import { LucideAngularModule, AlertTriangle, Trash2 } from 'lucide-angular';
     .delete-content {
       text-align: center;
       align-items: center;
-      padding: 2rem;
+      padding: var(--space-2xl);
     }
     .warning-icon {
       color: var(--error);
-      background: rgba(244, 67, 54, 0.1);
-      padding: 1rem;
+      background: #fef2f2;
+      padding: 1.25rem;
       border-radius: 50%;
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-lg);
+      display: inline-flex;
     }
     .btn-danger {
       background-color: var(--error);
       color: white;
       border: none;
-      &:hover { background-color: #d32f2f; }
+      &:hover { 
+        background-color: #dc2626; 
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+      }
     }
   `]
 })

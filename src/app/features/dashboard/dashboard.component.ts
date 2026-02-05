@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2 } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardStateService } from './dashboard-state.service';
@@ -11,6 +11,7 @@ import { AddAssetModalComponent } from './components/add-asset-modal/add-asset-m
 import { EditAssetModalComponent } from './components/edit-asset-modal/edit-asset-modal.component';
 import { ConfirmDeleteModalComponent } from './components/confirm-delete-modal/confirm-delete-modal.component';
 import { TransactionHistoryComponent } from './components/transaction-history/transaction-history.component';
+import { PortfolioDistributionComponent } from './components/portfolio-distribution/portfolio-distribution.component';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { ToastService } from '../../core/services/toast.service';
 import { PortfolioAsset } from '../../core/models/asset.model';
@@ -18,13 +19,13 @@ import { PortfolioAsset } from '../../core/models/asset.model';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent],
+  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2 };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign };
   
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
