@@ -55,6 +55,16 @@ export class LoginComponent {
       .subscribe();
   }
 
+  async loginWithProvider(provider: 'google' | 'github') {
+    this.isLoading.set(true);
+    try {
+      await this.authService.loginWithProvider(provider);
+    } catch (error: any) {
+      this.isLoading.set(false);
+      this.errorMessage.set(error.message);
+    }
+  }
+
   getErrorMessage(field: string): string {
     const control = this.loginForm.get(field);
     if (!control || !control.touched) return '';

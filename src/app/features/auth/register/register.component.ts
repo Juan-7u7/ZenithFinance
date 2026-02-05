@@ -26,7 +26,11 @@ export class RegisterComponent {
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+      ]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
@@ -57,11 +61,23 @@ export class RegisterComponent {
         }),
         catchError(error => {
           this.isLoading.set(false);
+          // Handle 'user_already_exists' or other specific errors efficiently
           this.errorMessage.set(error.message || 'Error al registrar usuario');
           return of(null);
         })
       )
       .subscribe();
+  }
+
+  async loginWithProvider(provider: 'google' | 'github') {
+    this.isLoading.set(true);
+    try {
+      await this.authService.loginWithProvider(provider);
+      // Redirect happens automatically by Supabase/Browser
+    } catch (error: any) {
+      this.isLoading.set(false);
+      this.errorMessage.set(error.message);
+    }
   }
 
   getErrorMessage(field: string): string {
@@ -73,6 +89,9 @@ export class RegisterComponent {
     if (control.hasError('minlength')) {
       const minLength = control.errors?.['minlength'].requiredLength;
       return `Mínimo ${minLength} caracteres`;
+    }
+    if (control.hasError('pattern') && field === 'password') {
+      return 'Debe tener mayús., minús., número y símbolo (@$!%*?&)';
     }
 
     if (field === 'confirmPassword' && this.registerForm.hasError('passwordMismatch')) {

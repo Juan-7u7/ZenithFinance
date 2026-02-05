@@ -44,7 +44,7 @@
           id="password"
           type="password"
           formControlName="password"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="8+ car, mayús, minús, núm, símb"
           [class.error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
         />
         @if (getErrorMessage('password')) {
@@ -69,7 +69,7 @@
       <button
         type="submit"
         class="btn btn-primary"
-        [disabled]="isLoading()"
+        [disabled]="registerForm.invalid || isLoading()"
       >
         @if (isLoading()) {
           <span class="loading">Creando cuenta...</span>
@@ -77,6 +77,19 @@
           <span>Crear Cuenta</span>
         }
       </button>
+
+      <div class="divider">
+        <span>O continúa con</span>
+      </div>
+
+      <div class="social-login">
+        <button type="button" class="btn btn-outline" (click)="loginWithProvider('google')" [disabled]="isLoading()">
+          Google
+        </button>
+        <button type="button" class="btn btn-outline" (click)="loginWithProvider('github')" [disabled]="isLoading()">
+          GitHub
+        </button>
+      </div>
     </form>
 
     <div class="footer">

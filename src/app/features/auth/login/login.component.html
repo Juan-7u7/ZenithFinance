@@ -41,7 +41,7 @@
       <button
         type="submit"
         class="btn btn-primary"
-        [disabled]="isLoading()"
+        [disabled]="loginForm.invalid || isLoading()"
       >
         @if (isLoading()) {
           <span class="loading">Iniciando sesión...</span>
@@ -49,6 +49,19 @@
           <span>Iniciar Sesión</span>
         }
       </button>
+
+      <div class="divider">
+        <span>O continúa con</span>
+      </div>
+
+      <div class="social-login">
+        <button type="button" class="btn btn-outline" (click)="loginWithProvider('google')" [disabled]="isLoading()">
+          Google
+        </button>
+        <button type="button" class="btn btn-outline" (click)="loginWithProvider('github')" [disabled]="isLoading()">
+          GitHub
+        </button>
+      </div>
     </form>
 
     <div class="footer">

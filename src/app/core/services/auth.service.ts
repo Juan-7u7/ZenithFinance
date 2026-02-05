@@ -16,6 +16,40 @@ export class AuthService {
 
   constructor(private supabase: Supabase) {
     this.loadStoredAuth();
+    this.initAuthListener();
+  }
+
+  private initAuthListener(): void {
+    this.supabase.getClient().auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event);
+      if (event === 'SIGNED_IN' && session) {
+        this.updateSession(session);
+      } else if (event === 'SIGNED_OUT') {
+        this.clearAuth();
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        this.updateSession(session);
+      }
+    });
+  }
+
+  private updateSession(session: any): void {
+    if (!session?.user) return;
+    
+    const user: User = {
+      id: session.user.id,
+      email: session.user.email!,
+      name: session.user.user_metadata?.['name'] || session.user.email!.split('@')[0],
+      avatar: session.user.user_metadata?.['avatar_url'],
+      createdAt: new Date(session.user.created_at)
+    };
+    
+    const authResponse: AuthResponse = {
+      user,
+      token: session.access_token,
+      refreshToken: session.refresh_token
+    };
+
+    this.setAuth(authResponse);
   }
 
   private loadStoredAuth(): void {
@@ -48,28 +82,29 @@ export class AuthService {
           }
 
           if (data.session && data.user) {
-            const user: User = {
-              id: data.user.id,
-              email: data.user.email!,
-              name: data.user.user_metadata?.['name'] || data.user.email!.split('@')[0],
-              avatar: data.user.user_metadata?.['avatar_url'],
-              createdAt: new Date(data.user.created_at)
-            };
-
-            const authResponse: AuthResponse = {
-              user,
+            this.updateSession(data.session);
+            observer.next({
+              user: this.getCurrentUser()!,
               token: data.session.access_token,
               refreshToken: data.session.refresh_token
-            };
-
-            this.setAuth(authResponse);
-            observer.next(authResponse);
+            });
             observer.complete();
           } else {
             observer.error(new Error('No session data received'));
           }
         })
         .catch(error => observer.error(error));
+    });
+  }
+
+  loginWithProvider(provider: 'google' | 'github'): Promise<void> {
+    return this.supabase.getClient().auth.signInWithOAuth({
+      provider: provider,
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
+    }).then(({ error }) => {
+      if (error) throw error;
     });
   }
 
@@ -92,22 +127,16 @@ export class AuthService {
           }
 
           if (data.session && data.user) {
-            const user: User = {
-              id: data.user.id,
-              email: data.user.email!,
-              name: credentials.name,
-              createdAt: new Date(data.user.created_at)
-            };
-
-            const authResponse: AuthResponse = {
-              user,
+            this.updateSession(data.session);
+            observer.next({
+              user: this.getCurrentUser()!,
               token: data.session.access_token,
               refreshToken: data.session.refresh_token
-            };
-
-            this.setAuth(authResponse);
-            observer.next(authResponse);
+            });
             observer.complete();
+          } else if (data.user && !data.session) {
+             // Case: Email confirmation required
+             observer.error(new Error('Please confirm your email address to continue.'));
           } else {
             observer.error(new Error('Registration successful but no session created'));
           }
@@ -142,10 +171,8 @@ export class AuthService {
             return;
           }
 
-          const newToken = data.session.access_token;
-          this.tokenSubject.next(newToken);
-          localStorage.setItem('auth_token', newToken);
-          observer.next(newToken);
+          this.updateSession(data.session);
+          observer.next(data.session.access_token);
           observer.complete();
         })
         .catch(error => observer.error(error));

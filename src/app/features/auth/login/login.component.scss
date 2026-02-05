@@ -136,6 +136,43 @@
   }
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--surface-border);
+  }
+
+  span {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+.social-login {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--surface-border);
+  color: var(--text-primary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--surface-hover);
+    border-color: var(--text-secondary);
+  }
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: var(--spacing-lg);
