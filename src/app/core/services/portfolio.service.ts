@@ -3,22 +3,13 @@ import { BehaviorSubject, Observable, from, throwError } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { Supabase } from './supabase';
 import { AuthService } from './auth.service';
-
-export interface UserAsset {
-  id?: string;
-  user_id?: string;
-  asset_id: string; // e.g., 'bitcoin'
-  symbol: string;
-  quantity: number;
-  avg_buy_price: number;
-  created_at?: Date;
-}
+import { DatabaseAsset } from '../models/asset.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PortfolioService {
-  private _assets = new BehaviorSubject<UserAsset[]>([]);
+  private _assets = new BehaviorSubject<DatabaseAsset[]>([]);
   public assets$ = this._assets.asObservable();
 
   private _loading = new BehaviorSubject<boolean>(false);
@@ -45,7 +36,7 @@ export class PortfolioService {
     ).pipe(
       map(({ data, error }) => {
         if (error) throw error;
-        return data as UserAsset[];
+        return data as DatabaseAsset[];
       }),
       tap(data => {
         this._assets.next(data || []);
@@ -54,17 +45,20 @@ export class PortfolioService {
       catchError(error => {
         console.error('Error loading portfolio:', error);
         this._loading.next(false);
-        // If table doesn't exist yet, we might want to handle it gracefully or init empty
         return throwError(() => error);
       })
     ).subscribe();
   }
 
-  addAsset(asset: UserAsset): Observable<any> {
+  addAsset(asset: DatabaseAsset): Observable<any> {
     const user = this.authService.getCurrentUser();
     if (!user) return throwError(() => new Error('User not authenticated'));
 
-    const newAsset = { ...asset, user_id: user.id };
+    // Ensure we send snake_case to Supabase as per interface
+    const newAsset = { 
+      ...asset, 
+      user_id: user.id 
+    };
 
     return from(
       this.supabase.getClient()
@@ -74,7 +68,6 @@ export class PortfolioService {
     ).pipe(
       tap(({ data, error }) => {
         if (error) throw error;
-        // Refresh local stateoptimistically or fetch again
         this.loadPortfolio(); 
       })
     );
@@ -92,13 +85,5 @@ export class PortfolioService {
         this.loadPortfolio();
       })
     );
-  }
-  
-  getPortfolioValue(marketPrices: any): number {
-    const assets = this._assets.value;
-    return assets.reduce((total, asset) => {
-      const price = marketPrices[asset.asset_id]?.current_price || 0;
-      return total + (asset.quantity * price);
-    }, 0);
   }
 }

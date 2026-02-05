@@ -11,9 +11,27 @@ export interface Asset {
   lastUpdate: Date;
 }
 
-export interface PriceHistory {
-  timestamp: Date;
-  price: number;
+// Strict Database Model
+export interface DatabaseAsset {
+  id?: string;
+  user_id: string;
+  symbol: string;
+  asset_name: string;
+  amount: number;
+  purchase_price: number;
+  created_at?: Date;
+  asset_id: string; // CoinGecko ID for mapping
+}
+
+export interface Transaction {
+  id?: string;
+  user_id: string;
+  asset_id: string;
+  type: 'buy' | 'sell';
+  amount: number;
+  price_per_unit: number;
+  total: number;
+  date: Date;
 }
 
 export interface PortfolioAsset {

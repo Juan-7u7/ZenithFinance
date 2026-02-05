@@ -1,0 +1,87 @@
+<div class="modal-overlay fade-in" (click)="onCancel()">
+  <div class="modal-container glass-card slide-up" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Agregar Activo</h2>
+      <button class="btn-icon" (click)="onCancel()">
+        <lucide-icon [img]="icons.X"></lucide-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="assetForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <!-- Alerts -->
+      @if (errorMessage()) {
+        <div class="error-alert">{{ errorMessage() }}</div>
+      }
+
+      <!-- Search Field -->
+      <div class="form-group search-group">
+        <label>Buscar Criptomoneda</label>
+        <div class="input-wrapper">
+          <lucide-icon [img]="icons.Search" class="input-icon" size="18"></lucide-icon>
+          <input 
+            type="text" 
+            formControlName="searchQuery" 
+            placeholder="Ej. Bitcoin, Ethereum..." 
+            autocomplete="off"
+            [class.filled]="selectedAsset()"
+          >
+          @if (isSearching()) {
+            <div class="spinner-sm"></div>
+          }
+        </div>
+        
+        <!-- Search Results Dropdown -->
+        @if (searchResults().length > 0 && !selectedAsset()) {
+          <ul class="search-results custom-scrollbar">
+            @for (result of searchResults(); track result.id) {
+              <li (click)="selectAsset(result)">
+                <img [src]="result.image" [alt]="result.name" onerror="this.src='assets/placeholder.png'">
+                <div class="coin-info">
+                  <span class="coin-name">{{ result.name }}</span>
+                  <span class="coin-symbol">{{ result.symbol | uppercase }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Transaction Details -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cantidad</label>
+          <input type="number" formControlName="amount" placeholder="0.00">
+        </div>
+
+        <div class="form-group">
+          <label>Precio de Compra (USD)</label>
+          <input type="number" formControlName="purchasePrice" placeholder="0.00">
+        </div>
+      </div>
+
+      <!-- Dynamic Total Preview -->
+      @if (assetForm.get('amount')?.value && assetForm.get('purchasePrice')?.value) {
+        <div class="total-preview">
+          <span>Inversión Total:</span>
+          <strong>{{ (assetForm.get('amount')?.value * assetForm.get('purchasePrice')?.value) | currency:'USD' }}</strong>
+        </div>
+      }
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="onCancel()">Cancelar</button>
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="assetForm.invalid || isLoading() || !selectedAsset()"
+        >
+          @if (isLoading()) {
+            <span class="loading-dots">Guardando...</span>
+          } @else {
+            <lucide-icon [img]="icons.Save" size="18"></lucide-icon>
+            Guardar Activo
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

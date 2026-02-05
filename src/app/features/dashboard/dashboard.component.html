@@ -61,10 +61,17 @@
       <section class="assets-section">
         <div class="section-header">
           <h2>Mis Activos</h2>
-          <button class="btn btn-sm btn-outline">
+          <button class="btn btn-sm btn-outline" (click)="openAddModal()">
             <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> Agregar Activo
           </button>
         </div>
+
+        @if (isAddModalOpen()) {
+          <app-add-asset-modal
+            (close)="closeAddModal()"
+            (assetAdded)="onAssetAdded($event)"
+          ></app-add-asset-modal>
+        }
 
         @if (dashboard().assets.length === 0) {
           <div class="empty-state glass-card">

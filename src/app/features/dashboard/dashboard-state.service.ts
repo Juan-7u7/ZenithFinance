@@ -41,10 +41,10 @@ export class DashboardStateService {
       const enrichedAssets: PortfolioAsset[] = userAssets.map(ua => {
         const marketData = marketPrices.find(m => m.id === ua.asset_id);
         const currentPrice = marketData?.currentPrice || 0;
-        const totalValue = ua.quantity * currentPrice;
+        const totalValue = ua.amount * currentPrice;
         
         // Calculate Profit/Loss
-        const initialInvestment = ua.quantity * ua.avg_buy_price;
+        const initialInvestment = ua.amount * ua.purchase_price;
         const profitLoss = totalValue - initialInvestment;
         const profitLossPercentage = initialInvestment > 0 
           ? (profitLoss / initialInvestment) * 100 
@@ -53,21 +53,21 @@ export class DashboardStateService {
         return {
           assetId: ua.asset_id,
           symbol: ua.symbol,
-          name: marketData?.name || ua.asset_id,
-          quantity: ua.quantity,
-          averageBuyPrice: ua.avg_buy_price,
+          name: marketData?.name || ua.asset_name || ua.asset_id,
+          quantity: ua.amount,
+          averageBuyPrice: ua.purchase_price,
           currentPrice: currentPrice,
           totalValue: totalValue,
           profitLoss: profitLoss,
           profitLossPercentage: profitLossPercentage,
-          image: marketData?.image,  // Extra property useful for UI
-          change24h: marketData?.priceChangePercentage24h // Extra property
-        } as any; // Cast to any to include extra UI props not in strict interface if needed
+          image: marketData?.image,
+          change24h: marketData?.priceChangePercentage24h
+        };
       });
 
       // Calculate Totals
       const totalValue = enrichedAssets.reduce((acc, curr) => acc + curr.totalValue, 0);
-      const totalInvestment = userAssets.reduce((acc, curr) => acc + (curr.quantity * curr.avg_buy_price), 0);
+      const totalInvestment = userAssets.reduce((acc, curr) => acc + (curr.amount * curr.purchase_price), 0);
       const totalProfitLoss = totalValue - totalInvestment;
       const totalProfitLossPercentage = totalInvestment > 0 
         ? (totalProfitLoss / totalInvestment) * 100 
