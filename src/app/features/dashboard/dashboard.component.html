@@ -3,10 +3,16 @@
   <header class="dashboard-header glass-card">
     <div class="user-welcome">
       @if (currentUser(); as user) {
-        <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar" class="avatar">
+        <div class="avatar-wrapper">
+          <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar" class="avatar">
+          <span class="status-indicator"></span>
+        </div>
         <div class="user-info">
           <h1>Hola, {{ user.name }}</h1>
-          <p>Bienvenido de nuevo</p>
+          <div class="date-header">
+            <span class="day-tag">{{ currentDate | date:'EEEE' }}</span>
+            <span class="date">{{ currentDate | date:'mediumDate' }}</span>
+          </div>
         </div>
       }
     </div>
@@ -36,8 +42,11 @@
       
       <!-- Financial Summary -->
       <section class="summary-section">
-        <div class="card summary-card glass-card primary-gradient">
-          <h3>Balance Total</h3>
+        <div class="card summary-card glass-card primary-gradient shadow-2xl">
+          <div class="card-header">
+            <h3>Balance Total</h3>
+            <lucide-icon [img]="icons.Wallet" size="20" class="card-icon"></lucide-icon>
+          </div>
           <div class="balance-value">{{ formatCurrency(dashboard().totalValue) }}</div>
           <div class="pnl-chip" [class.positive]="dashboard().totalProfitLoss >= 0" [class.negative]="dashboard().totalProfitLoss < 0">
             {{ formatPercentage(dashboard().totalProfitLossPercentage) }}
@@ -49,14 +58,25 @@
           <app-portfolio-distribution [assets]="dashboard().assets"></app-portfolio-distribution>
         </div>
 
-        <div class="card stats-card glass-card">
-          <div class="stat-item">
-            <span class="label">Inversión Total</span>
-            <span class="value">{{ formatCurrency(dashboard().totalInvestment) }}</span>
+        <div class="card stats-card-v2 glass-card">
+          <div class="stat-group">
+            <div class="stat-badge investment">
+              <lucide-icon [img]="icons.TrendingUp" size="24"></lucide-icon>
+            </div>
+            <div class="stat-info">
+              <span class="label">Inversión Total</span>
+              <span class="value">{{ formatCurrency(dashboard().totalInvestment) }}</span>
+              <p class="sub-label">Basado en {{ dashboard().assets.length }} activos</p>
+            </div>
           </div>
-          <div class="stat-item">
-            <span class="label">Activos</span>
-            <span class="value">{{ dashboard().assets.length }}</span>
+          <div class="stat-group alternate">
+             <div class="stat-badge count">
+               <lucide-icon [img]="icons.Briefcase" size="24"></lucide-icon>
+             </div>
+             <div class="stat-info">
+               <span class="label">Diversificación</span>
+               <span class="value">{{ dashboard().assets.length }} Activos</span>
+             </div>
           </div>
         </div>
       </section>
