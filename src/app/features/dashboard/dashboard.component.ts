@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardStateService } from './dashboard-state.service';
@@ -18,7 +19,7 @@ export class DashboardComponent implements OnInit {
   private dashboardState = inject(DashboardStateService);
   private router = inject(Router);
 
-  currentUser = this.authService.currentUser$;
+  currentUser = toSignal(this.authService.currentUser$);
   currentTheme = this.themeService.theme;
   
   // Dashboard State Signal with loaded portfolio data + market prices

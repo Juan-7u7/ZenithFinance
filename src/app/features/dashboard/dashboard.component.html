@@ -2,7 +2,7 @@
   <!-- Header -->
   <header class="dashboard-header glass-card">
     <div class="user-welcome">
-      @if (currentUser() | async; as user) {
+      @if (currentUser(); as user) {
         <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar" class="avatar">
         <div class="user-info">
           <h1>Hola, {{ user.name }}</h1>

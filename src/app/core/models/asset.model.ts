@@ -26,6 +26,8 @@ export interface PortfolioAsset {
   totalValue: number;
   profitLoss: number;
   profitLossPercentage: number;
+  image?: string;
+  change24h?: number;
 }
 
 export interface PriceAlert {
