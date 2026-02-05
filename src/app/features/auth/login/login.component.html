@@ -1,0 +1,58 @@
+<div class="login-container">
+  <div class="login-card glass-card">
+    <h1>Bienvenido a Zenith Finance</h1>
+    <p class="subtitle">Inicia sesión para continuar</p>
+
+    @if (errorMessage()) {
+      <div class="error-alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="tu@email.com"
+          [class.error]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        />
+        @if (getErrorMessage('email')) {
+          <span class="error-message">{{ getErrorMessage('email') }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          [class.error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        />
+        @if (getErrorMessage('password')) {
+          <span class="error-message">{{ getErrorMessage('password') }}</span>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isLoading()"
+      >
+        @if (isLoading()) {
+          <span class="loading">Iniciando sesión...</span>
+        } @else {
+          <span>Iniciar Sesión</span>
+        }
+      </button>
+    </form>
+
+    <div class="footer">
+      <p>¿No tienes una cuenta? <a routerLink="/auth/register">Regístrate</a></p>
+    </div>
+  </div>
+</div>
