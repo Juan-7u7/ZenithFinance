@@ -73,6 +73,32 @@ export class PortfolioService {
     );
   }
 
+  updateAsset(asset: DatabaseAsset): Observable<any> {
+    const user = this.authService.getCurrentUser();
+    if (!user) return throwError(() => new Error('User not authenticated'));
+
+    // We rely on asset.id being present for update
+    if (!asset.id) return throwError(() => new Error('Asset ID required for update'));
+
+    const updates = {
+      amount: asset.amount,
+      purchase_price: asset.purchase_price
+    };
+
+    return from(
+      this.supabase.getClient()
+        .from('user_assets')
+        .update(updates)
+        .eq('id', asset.id)
+        .eq('user_id', user.id) // Security check RLS
+    ).pipe(
+      tap(({ error }) => {
+        if (error) throw error;
+        this.loadPortfolio();
+      })
+    );
+  }
+
   removeAsset(id: string): Observable<any> {
     return from(
       this.supabase.getClient()

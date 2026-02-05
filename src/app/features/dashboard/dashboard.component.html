@@ -109,11 +109,42 @@
                     <span>{{ formatPercentage(asset.profitLossPercentage) }}</span>
                   </div>
                 </div>
+                
+                <div class="asset-actions">
+                  <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" title="Editar">
+                    <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
+                  </button>
+                  <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" title="Eliminar">
+                    <lucide-icon [img]="icons.Trash2" size="16"></lucide-icon>
+                  </button>
+                </div>
               </div>
             }
           </div>
         }
       </section>
+
+      <!-- Edit Modal -->
+      @if (editingAsset(); as asset) {
+        @if (asset.id) {
+          <app-edit-asset-modal
+            [asset]="asset"
+            [databaseId]="asset.id"
+            (close)="closeEditModal()"
+            (assetUpdated)="onAssetUpdated()"
+          ></app-edit-asset-modal>
+        }
+      }
+
+      <!-- Delete Modal -->
+      @if (deletingAsset(); as asset) {
+        <app-confirm-delete-modal
+          [assetName]="asset.name"
+          [isLoading]="isDeleting()"
+          (cancel)="closeDeleteModal()"
+          (confirm)="confirmDelete()"
+        ></app-confirm-delete-modal>
+      }
     </div>
   }
 </div>

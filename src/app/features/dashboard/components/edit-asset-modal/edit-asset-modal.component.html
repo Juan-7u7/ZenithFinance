@@ -1,0 +1,57 @@
+<div class="modal-overlay fade-in" (click)="onCancel()">
+  <div class="modal-container glass-card slide-up" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-content">
+        <h2>Editar {{ asset.name }}</h2>
+        <span class="symbol-badge">{{ asset.symbol | uppercase }}</span>
+      </div>
+      <button class="btn-icon" (click)="onCancel()">
+        <lucide-icon [img]="icons.X"></lucide-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="modal-body">
+      @if (errorMessage()) {
+        <div class="error-alert">{{ errorMessage() }}</div>
+      }
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cantidad</label>
+          <input type="number" formControlName="amount" placeholder="0.00">
+        </div>
+
+        <div class="form-group">
+          <label>Precio Promedio de Compra (USD)</label>
+          <input type="number" formControlName="purchasePrice" placeholder="0.00">
+        </div>
+      </div>
+
+      <!-- Live Preview of Total Value -->
+      @if (editForm.get('amount')?.value) {
+        <div class="total-preview">
+          <div class="preview-item">
+            <span>Valor Actual:</span>
+            <strong>{{ (editForm.get('amount')?.value * asset.currentPrice) | currency:'USD' }}</strong>
+          </div>
+        </div>
+      }
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="onCancel()">Cancelar</button>
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="editForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="loading-dots">Guardando...</span>
+          } @else {
+            <lucide-icon [img]="icons.Save" size="18"></lucide-icon>
+            Guardar Cambios
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

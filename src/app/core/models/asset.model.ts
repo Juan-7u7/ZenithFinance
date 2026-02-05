@@ -35,6 +35,7 @@ export interface Transaction {
 }
 
 export interface PortfolioAsset {
+  id?: string; // Database ID
   assetId: string;
   symbol: string;
   name: string;

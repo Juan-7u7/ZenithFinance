@@ -241,11 +241,49 @@
       span:first-child { color: var(--text-tertiary); margin-bottom: 2px; }
       span:last-child { color: var(--text-secondary); font-weight: 500; }
       
-      &.highlight {
-        &.positive span:last-child { color: var(--success); }
-        &.negative span:last-child { color: var(--error); }
-      }
-    }
+  }
+
+  .asset-actions {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    display: flex;
+    gap: var(--spacing-sm);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    background: var(--surface-card);
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: var(--elevation-2);
+  }
+
+  &:hover .asset-actions {
+    opacity: 1;
+  }
+}
+
+.btn-icon-sm {
+  background: var(--surface-hover);
+  border: 1px solid var(--surface-border);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--primary-500);
+    border-color: var(--primary-500);
+    background: var(--surface-card);
+  }
+
+  &.delete:hover {
+    color: var(--error);
+    border-color: var(--error);
   }
 }
 

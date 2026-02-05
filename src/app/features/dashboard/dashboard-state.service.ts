@@ -51,6 +51,7 @@ export class DashboardStateService {
           : 0;
 
         return {
+          id: ua.id, // Map Database ID
           assetId: ua.asset_id,
           symbol: ua.symbol,
           name: marketData?.name || ua.asset_name || ua.asset_id,
