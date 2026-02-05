@@ -15,15 +15,25 @@ export class AuthService {
   public token$ = this.tokenSubject.asObservable();
 
   constructor(private supabase: Supabase) {
-    this.loadStoredAuth();
     this.recoverSession();
     this.initAuthListener();
   }
 
   private async recoverSession() {
-    const { data } = await this.supabase.getClient().auth.getSession();
-    if (data.session) {
-      this.updateSession(data.session);
+    try {
+      const { data, error } = await this.supabase.getClient().auth.getSession();
+      if (error) {
+        // If there's an error with the session (like invalid refresh token), logout clean
+        if (error.message.includes('refresh_token')) {
+          await this.logout().toPromise();
+        }
+        return;
+      }
+      if (data.session) {
+        this.updateSession(data.session);
+      }
+    } catch (e) {
+      console.error('Session recovery failed:', e);
     }
   }
 
@@ -41,7 +51,10 @@ export class AuthService {
   }
 
   private updateSession(session: any): void {
-    if (!session?.user) return;
+    if (!session?.user) {
+      this.clearAuth();
+      return;
+    }
     
     const user: User = {
       id: session.user.id,
@@ -51,30 +64,11 @@ export class AuthService {
       createdAt: new Date(session.user.created_at)
     };
     
-    const authResponse: AuthResponse = {
-      user,
-      token: session.access_token,
-      refreshToken: session.refresh_token
-    };
-
-    this.setAuth(authResponse);
+    this.currentUserSubject.next(user);
+    this.tokenSubject.next(session.access_token);
   }
 
-  private loadStoredAuth(): void {
-    const token = localStorage.getItem('auth_token');
-    const userStr = localStorage.getItem('current_user');
-
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        this.tokenSubject.next(token);
-        this.currentUserSubject.next(user);
-      } catch (error) {
-        console.error('Error loading stored auth:', error);
-        this.clearAuth();
-      }
-    }
-  }
+  // loadStoredAuth removed as it caused conflicts with Supabase's internal persistence.
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     return new Observable<AuthResponse>(observer => {
@@ -199,21 +193,10 @@ export class AuthService {
     return !!this.tokenSubject.value && !!this.currentUserSubject.value;
   }
 
-  private setAuth(authResponse: AuthResponse): void {
-    this.currentUserSubject.next(authResponse.user);
-    this.tokenSubject.next(authResponse.token);
-
-    localStorage.setItem('auth_token', authResponse.token);
-    localStorage.setItem('refresh_token', authResponse.refreshToken);
-    localStorage.setItem('current_user', JSON.stringify(authResponse.user));
-  }
-
   private clearAuth(): void {
     this.currentUserSubject.next(null);
     this.tokenSubject.next(null);
-
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('current_user');
   }
+
+  // Explicit setAuth removed to favor Supabase's automatic session persistence.
 }

@@ -11,7 +11,15 @@ export class Supabase {
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
-      environment.supabaseKey
+      environment.supabaseKey,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce'
+        }
+      }
     );
     console.log('Supabase client initialized');
   }
