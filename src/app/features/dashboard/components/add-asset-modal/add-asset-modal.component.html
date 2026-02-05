@@ -7,69 +7,128 @@
       </button>
     </div>
 
-    <form [formGroup]="assetForm" (ngSubmit)="onSubmit()" class="modal-body">
-      <!-- Alerts -->
+    <form [formGroup]="assetForm" (ngSubmit)="onSubmit()" class="modal-body custom-scrollbar">
       @if (errorMessage()) {
         <div class="error-alert">{{ errorMessage() }}</div>
       }
 
-      <!-- Search Field -->
-      <div class="form-group search-group">
-        <label>Buscar Criptomoneda</label>
-        <div class="input-wrapper">
-          <lucide-icon [img]="icons.Search" class="input-icon" size="18"></lucide-icon>
-          <input 
-            type="text" 
-            formControlName="searchQuery" 
-            placeholder="Ej. Bitcoin, Ethereum..." 
-            autocomplete="off"
-            [class.filled]="selectedAsset()"
-          >
-          @if (isSearching()) {
-            <div class="spinner-sm"></div>
+      <div class="search-section">
+        <!-- Search Field -->
+        <div class="form-group search-group">
+          <label>Buscar Criptomoneda</label>
+          <div class="input-wrapper">
+            <lucide-icon [img]="icons.Search" class="input-icon" size="18"></lucide-icon>
+            <input 
+              type="text" 
+              formControlName="searchQuery" 
+              placeholder="Ej. BTC, Ethereum, Solana..." 
+              autocomplete="off"
+            >
+            @if (isSearching()) {
+              <div class="spinner-sm"></div>
+            }
+          </div>
+          
+          <!-- Search Results Dropdown -->
+          @if (searchResults().length > 0) {
+            <ul class="search-results custom-scrollbar shadow-lg">
+              @for (result of searchResults(); track result.id) {
+                <li (click)="selectAsset(result)">
+                  <div class="result-item">
+                    @if (result.image) {
+                      <img [src]="result.image" [alt]="result.name" (error)="result.image = ''">
+                    } @else {
+                      <lucide-icon [img]="icons.CircleDollarSign" size="20"></lucide-icon>
+                    }
+                    <div class="coin-info">
+                      <span class="coin-name">{{ result.name }}</span>
+                      <span class="coin-symbol">{{ result.symbol | uppercase }}</span>
+                    </div>
+                  </div>
+                  <lucide-icon [img]="icons.Plus" size="14" class="add-indicator"></lucide-icon>
+                </li>
+              }
+            </ul>
           }
         </div>
-        
-        <!-- Search Results Dropdown -->
-        @if (searchResults().length > 0 && !selectedAsset()) {
-          <ul class="search-results custom-scrollbar">
-            @for (result of searchResults(); track result.id) {
-              <li (click)="selectAsset(result)">
-                @if (result.image) {
-                  <img [src]="result.image" [alt]="result.name" (error)="result.image = ''">
-                } @else {
-                  <lucide-icon [img]="icons.CircleDollarSign" size="24" style="margin-right: 12px; color: var(--text-muted)"></lucide-icon>
-                }
-                <div class="coin-info">
-                  <span class="coin-name">{{ result.name }}</span>
-                  <span class="coin-symbol">{{ result.symbol | uppercase }}</span>
-                </div>
-              </li>
-            }
-          </ul>
+
+        <!-- Popular Suggestions -->
+        @if (!selectedAsset() && searchResults().length === 0) {
+          <div class="trending-section fade-in">
+            <p class="section-label">Sugerencias populares:</p>
+            <div class="popular-grid">
+              @for (item of popularAssets(); track item.id) {
+                <button type="button" class="popular-btn" (click)="selectAsset(item)">
+                  <img [src]="item.image" [alt]="item.name">
+                  <span>{{ item.symbol | uppercase }}</span>
+                </button>
+              }
+            </div>
+          </div>
         }
       </div>
 
-      <!-- Transaction Details -->
-      <div class="form-row">
-        <div class="form-group">
-          <label>Cantidad</label>
-          <input type="number" formControlName="amount" placeholder="0.00">
-        </div>
-
-        <div class="form-group">
-          <label>Precio de Compra (USD)</label>
-          <input type="number" formControlName="purchasePrice" placeholder="0.00">
-        </div>
-      </div>
-
-      <!-- Dynamic Total Preview -->
-      @if (assetForm.get('amount')?.value && assetForm.get('purchasePrice')?.value) {
-        <div class="total-preview">
-          <span>Inversión Total:</span>
-          <strong>{{ (assetForm.get('amount')?.value * assetForm.get('purchasePrice')?.value) | currency:'USD' }}</strong>
+      <!-- Selected Asset Preview -->
+      @if (selectedAsset(); as selected) {
+        <div class="selected-asset-card fade-in">
+          <div class="asset-preview-header">
+            <div class="coin-main">
+              @if (selected.image) {
+                <img [src]="selected.image" [alt]="selected.name" (error)="selected.image = ''">
+              } @else {
+                <lucide-icon [img]="icons.CircleDollarSign" size="32"></lucide-icon>
+              }
+              <div class="name-box">
+                <span class="name">{{ selected.name }}</span>
+                <span class="symbol">{{ selected.symbol | uppercase }}</span>
+              </div>
+            </div>
+            <button type="button" class="clear-selection" (click)="clearSelection()" title="Quitar">
+               <lucide-icon [img]="icons.X" size="16"></lucide-icon>
+            </button>
+          </div>
+          <div class="asset-preview-stats">
+            <div class="stat">
+              <span class="label">Precio Actual</span>
+              <span class="value">{{ (selected.currentPrice || 0) | currency:'USD' }}</span>
+            </div>
+            @if (selected.priceChangePercentage24h !== undefined) {
+              <div class="stat">
+                <span class="label">Cambio 24h</span>
+                <span class="value" [class.positive]="selected.priceChangePercentage24h >= 0" [class.negative]="selected.priceChangePercentage24h < 0">
+                  {{ selected.priceChangePercentage24h >= 0 ? '↑' : '↓' }} {{ (selected.priceChangePercentage24h || 0).toFixed(2) }}%
+                </span>
+              </div>
+            }
+          </div>
         </div>
       }
+
+      <!-- Form Inputs -->
+      <div class="form-inputs" [class.disabled]="!selectedAsset()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input type="number" formControlName="amount" placeholder="0.00" step="any">
+          </div>
+
+          <div class="form-group">
+            <label>Precio de Compra (USD)</label>
+            <input type="number" formControlName="purchasePrice" placeholder="0.00" step="any">
+            <small class="helper-text">Precio unitario al momento de la compra</small>
+          </div>
+        </div>
+
+        <!-- Dynamic Total Preview -->
+        @if (selectedAsset() && assetForm.get('amount')?.value && assetForm.get('purchasePrice')?.value) {
+          <div class="total-preview-box fade-in">
+             <div class="preview-row">
+               <span>Inversión Estimada:</span>
+               <strong>{{ (assetForm.get('amount')?.value * assetForm.get('purchasePrice')?.value) | currency:'USD' }}</strong>
+             </div>
+          </div>
+        }
+      </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" (click)="onCancel()">Cancelar</button>
@@ -79,10 +138,10 @@
           [disabled]="assetForm.invalid || isLoading() || !selectedAsset()"
         >
           @if (isLoading()) {
-            <span class="loading-dots">Guardando...</span>
+            <span class="loading-dots">Iniciando...</span>
           } @else {
             <lucide-icon [img]="icons.Save" size="18"></lucide-icon>
-            Guardar Activo
+            <span>Confirmar Inversión</span>
           }
         </button>
       </div>

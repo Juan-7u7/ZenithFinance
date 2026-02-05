@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LucideAngularModule, X, Search, Save, CircleDollarSign } from 'lucide-angular';
+import { LucideAngularModule, X, Search, Save, CircleDollarSign, Plus } from 'lucide-angular';
 import { debounceTime, distinctUntilChanged, switchMap, filter, tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MarketService } from '../../../../core/services/market.service';
@@ -23,7 +23,15 @@ export class AddAssetModalComponent {
   private marketService = inject(MarketService);
   private portfolioService = inject(PortfolioService);
 
-  readonly icons = { X, Search, Save, CircleDollarSign };
+  readonly icons = { X, Search, Save, CircleDollarSign, Plus };
+  
+  popularAssets = signal<any[]>([
+    { id: 'bitcoin', name: 'Bitcoin', symbol: 'btc', image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png' },
+    { id: 'ethereum', name: 'Ethereum', symbol: 'eth', image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png' },
+    { id: 'binancecoin', name: 'BNB', symbol: 'bnb', image: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png' },
+    { id: 'solana', name: 'Solana', symbol: 'sol', image: 'https://assets.coingecko.com/coins/images/4128/large/solana.png' },
+    { id: 'cardano', name: 'Cardano', symbol: 'ada', image: 'https://assets.coingecko.com/coins/images/975/large/cardano.png' }
+  ]);
   
   assetForm: FormGroup;
   searchResults = signal<Partial<Asset>[]>([]);
@@ -67,7 +75,7 @@ export class AddAssetModalComponent {
   selectAsset(asset: Partial<Asset>): void {
     this.selectedAsset.set(asset);
     this.searchResults.set([]); // Clear results
-    this.assetForm.get('searchQuery')?.setValue(asset.name + ' (' + asset.symbol?.toUpperCase() + ')', { emitEvent: false });
+    this.assetForm.get('searchQuery')?.setValue('', { emitEvent: false }); // Clear input on selection
     
     // Fetch current price to populate purchase price
     if (asset.id) {
@@ -76,6 +84,14 @@ export class AddAssetModalComponent {
         next: (details) => {
           this.assetForm.get('purchasePrice')?.enable();
           this.assetForm.get('purchasePrice')?.setValue(details.market_data.current_price.usd);
+          
+          // Enrich selected asset with more data for preview
+          this.selectedAsset.set({
+            ...asset,
+            currentPrice: details.market_data.current_price.usd,
+            priceChangePercentage24h: details.market_data.price_change_percentage_24h
+          });
+          
           this.isSearching.set(false);
         },
         error: () => {
@@ -84,6 +100,12 @@ export class AddAssetModalComponent {
         }
       });
     }
+  }
+
+  clearSelection(): void {
+    this.selectedAsset.set(null);
+    this.assetForm.get('purchasePrice')?.setValue(0);
+    this.assetForm.get('purchasePrice')?.disable();
   }
 
   onSubmit(): void {
