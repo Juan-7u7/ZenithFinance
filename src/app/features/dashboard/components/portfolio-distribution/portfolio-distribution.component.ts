@@ -26,18 +26,26 @@ export class PortfolioDistributionComponent implements OnChanges {
       { 
         data: [],
         backgroundColor: [
-          '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#ef4444', 
-          '#f59e0b', '#10b981', '#3b82f6', '#06b6d4', '#84cc16'
+          '#6366f1', // Indigo
+          '#8b5cf6', // Violet
+          '#06b6d4', // Cyan
+          '#f43f5e', // Rose
+          '#10b981', // Emerald
+          '#f59e0b'  // Amber
         ],
         hoverBackgroundColor: [
-          '#4f46e5', '#7c3aed', '#db2777', '#e11d48', '#dc2626', 
-          '#d97706', '#059669', '#2563eb', '#0891b2', '#65a30d'
+          '#4f46e5', '#7c3aed', '#0891b2', '#e11d48', '#059669', '#d97706'
         ],
         borderWidth: 0,
-        hoverOffset: 4
+        hoverOffset: 12,
+        borderRadius: 8,
+        spacing: 4
       }
     ]
   };
+
+  public customLegend: { label: string; value: number; percentage: string; color: string }[] = [];
+  public totalValueVisible = 0;
   
   public doughnutChartType: 'doughnut' = 'doughnut';
   public doughnutChartOptions: ChartOptions<'doughnut'> = {
@@ -45,14 +53,7 @@ export class PortfolioDistributionComponent implements OnChanges {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right',
-        labels: {
-          color: '#94a3b8',
-          font: { family: 'Inter, sans-serif', size: 12 },
-          usePointStyle: true,
-          pointStyle: 'circle',
-          padding: 20
-        }
+        display: false // We'll use a custom legend
       },
       tooltip: {
         backgroundColor: 'rgba(15, 23, 42, 0.9)',
@@ -61,7 +62,8 @@ export class PortfolioDistributionComponent implements OnChanges {
         bodyColor: '#e2e8f0',
         borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
-        cornerRadius: 8,
+        cornerRadius: 12,
+        boxPadding: 6,
         callbacks: {
           label: (context) => {
             const value = context.raw as number;
@@ -72,9 +74,9 @@ export class PortfolioDistributionComponent implements OnChanges {
         }
       }
     },
-    cutout: '70%', 
+    cutout: '82%', 
     layout: {
-      padding: 10
+      padding: 15
     }
   };
 
@@ -85,7 +87,14 @@ export class PortfolioDistributionComponent implements OnChanges {
   }
 
   private updateChartData(): void {
-    if (!this.assets.length) return;
+    if (!this.assets.length) {
+      this.totalValueVisible = 0;
+      this.customLegend = [];
+      return;
+    }
+
+    const totalValue = this.assets.reduce((sum, a) => sum + a.totalValue, 0);
+    this.totalValueVisible = totalValue;
 
     // Sort by value (desc)
     const sortedAssets = [...this.assets].sort((a, b) => b.totalValue - a.totalValue);
@@ -110,5 +119,14 @@ export class PortfolioDistributionComponent implements OnChanges {
         data: data
       }]
     };
+
+    // Update Custom Legend
+    const colors = this.doughnutChartData.datasets[0].backgroundColor as string[];
+    this.customLegend = labels.map((label, index) => ({
+      label,
+      value: data[index],
+      percentage: ((data[index] / totalValue) * 100).toFixed(1) + '%',
+      color: colors[index % colors.length]
+    }));
   }
 }
