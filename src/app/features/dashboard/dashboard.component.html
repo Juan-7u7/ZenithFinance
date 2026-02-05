@@ -13,11 +13,10 @@
     
     <div class="actions">
       <button class="btn-icon" (click)="toggleTheme()" [attr.aria-label]="'Cambiar tema'">
-        <i class="icon-theme" [class.dark]="currentTheme() === 'dark'"></i>
-        {{ currentTheme() === 'light' ? '🌙' : '☀️' }}
+        <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" class="icon-theme"></lucide-icon>
       </button>
       <button class="btn-icon" (click)="logout()" title="Cerrar sesión">
-        🚪
+        <lucide-icon [img]="icons.LogOut"></lucide-icon>
       </button>
     </div>
   </header>
@@ -62,7 +61,9 @@
       <section class="assets-section">
         <div class="section-header">
           <h2>Mis Activos</h2>
-          <button class="btn btn-sm btn-outline">+ Agregar Activo</button>
+          <button class="btn btn-sm btn-outline">
+            <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> Agregar Activo
+          </button>
         </div>
 
         @if (dashboard().assets.length === 0) {

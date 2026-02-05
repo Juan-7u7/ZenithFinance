@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardStateService } from './dashboard-state.service';
@@ -9,11 +10,14 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
+  // Icons
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet };
+  
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private dashboardState = inject(DashboardStateService);
