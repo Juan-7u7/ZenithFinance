@@ -20,6 +20,7 @@
   /* Neutrals - Light Theme */
   --bg-page: #f8fafc;        /* Slate 50 */
   --bg-card: #ffffff;
+  --bg-card-rgb: 255, 255, 255;
   --bg-card-hover: #f1f5f9;  /* Slate 100 */
   
   --text-main: #0f172a;      /* Slate 900 */
@@ -44,6 +45,7 @@
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
+  --radius-xl: 32px;
   --radius-full: 9999px;
 
   /* Spacing */
@@ -72,6 +74,7 @@
 :root[data-theme='dark'] {
   --bg-page: #020617;        /* Slate 950 */
   --bg-card: #0f172a;        /* Slate 900 */
+  --bg-card-rgb: 15, 23, 42;
   --bg-card-hover: #1e293b;  /* Slate 800 */
   
   --text-main: #f8fafc;      /* Slate 50 */

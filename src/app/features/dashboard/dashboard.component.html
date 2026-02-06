@@ -4,7 +4,13 @@
     <div class="user-welcome">
       @if (currentUser(); as user) {
         <div class="avatar-wrapper clickable" (click)="goToProfile()">
-          <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar" class="avatar">
+          @if (user.avatar) {
+            <img [src]="user.avatar" alt="Avatar" class="avatar">
+          } @else {
+            <div class="avatar placeholder-avatar">
+              {{ user.name.charAt(0).toUpperCase() }}
+            </div>
+          }
           <span class="status-indicator"></span>
         </div>
         <div class="user-info">
@@ -18,17 +24,17 @@
     </div>
     
     <div class="actions">
-      <button class="btn-icon" (click)="goToProfile()" [title]="'profile.title' | translate">
+      <button class="btn-icon-v2" (click)="goToProfile()" [title]="'profile.title' | translate">
         <lucide-icon [img]="icons.Settings" class="icon-settings"></lucide-icon>
       </button>
-      <button class="btn-icon" (click)="toggleLanguage()" [title]="'common.language' | translate">
+      <button class="btn-icon-v2 lang-btn" (click)="toggleLanguage()" [title]="'common.language' | translate">
         <lucide-icon [img]="icons.Languages" class="icon-lang"></lucide-icon>
         <span class="lang-code">{{ currentLang() | uppercase }}</span>
       </button>
-      <button class="btn-icon" (click)="toggleTheme()" [title]="'common.theme' | translate">
+      <button class="btn-icon-v2" (click)="toggleTheme()" [title]="'common.theme' | translate">
         <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" class="icon-theme"></lucide-icon>
       </button>
-      <button class="btn-icon" (click)="logout()" [title]="'dashboard.logout' | translate">
+      <button class="btn-icon-v2" (click)="logout()" [title]="'dashboard.logout' | translate">
         <lucide-icon [img]="icons.LogOut"></lucide-icon>
       </button>
     </div>
