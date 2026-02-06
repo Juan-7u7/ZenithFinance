@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, NgZone } from '@angular/core';
 import { Supabase } from './supabase';
 import { AuthService } from './auth.service';
 import { from, Observable } from 'rxjs';
@@ -21,6 +21,7 @@ export interface AppNotification {
 export class NotificationService {
   private supabase = inject(Supabase);
   private authService = inject(AuthService);
+  private ngZone = inject(NgZone);
 
   // State
   unreadCount = signal(0);
@@ -30,18 +31,22 @@ export class NotificationService {
 
   constructor() {
      // Listen to auth state changes to setup/teardown subscription
-     this.authService.authState$.subscribe(user => {
+     this.authService.authState$.subscribe((user: any) => {
          if (user) {
              this.loadNotifications();
              this.setupRealtimeSubscription();
          } else {
              // Cleanup on logout if necessary
              if (this.realtimeChannel) {
-                 this.supabase.getClient().removeChannel(this.realtimeChannel);
-                 this.realtimeChannel = null;
+                 this.ngZone.run(() => {
+                    this.supabase.getClient().removeChannel(this.realtimeChannel);
+                    this.realtimeChannel = null;
+                 });
              }
-             this.notifications.set([]);
-             this.unreadCount.set(0);
+             this.ngZone.run(() => {
+                this.notifications.set([]);
+                this.unreadCount.set(0);
+             });
          }
      });
   }
@@ -60,8 +65,10 @@ export class NotificationService {
       ).subscribe(({ data, error }) => {
           if (!error && data) {
               const notifs = data as any[]; // Type cast for join result
-              this.notifications.set(notifs);
-              this.unreadCount.set(notifs.filter(n => !n.is_read).length);
+              this.ngZone.run(() => {
+                this.notifications.set(notifs);
+                this.unreadCount.set(notifs.filter(n => !n.is_read).length);
+              });
           }
       });
   }
@@ -81,7 +88,9 @@ export class NotificationService {
         { event: 'INSERT', schema: 'public', table: 'notifications', filter: `recipient_id=eq.${myId}` }, 
         (payload) => {
           console.log('New notification received:', payload);
-          this.handleNewNotification(payload.new);
+          this.ngZone.run(() => {
+            this.handleNewNotification(payload.new);
+          });
         }
       )
       .subscribe();
@@ -98,8 +107,12 @@ export class NotificationService {
           .single()
           .then(({ data, error }) => {
               if (data && !error) {
-                  this.notifications.update(curr => [data, ...curr]);
-                  this.unreadCount.update(c => c + 1);
+                  this.ngZone.run(() => {
+                      this.notifications.update(curr => [data, ...curr]);
+                      this.unreadCount.update(c => c + 1);
+                  });
+              } else {
+                  console.error('Error fetching new notification details:', error);
               }
           });
   }
