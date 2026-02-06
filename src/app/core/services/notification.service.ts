@@ -29,11 +29,21 @@ export class NotificationService {
   private realtimeChannel: any;
 
   constructor() {
-     // Initial load if user exists
-     if (this.authService.getCurrentUser()) {
-         this.loadNotifications();
-         this.setupRealtimeSubscription();
-     }
+     // Listen to auth state changes to setup/teardown subscription
+     this.authService.authState$.subscribe(user => {
+         if (user) {
+             this.loadNotifications();
+             this.setupRealtimeSubscription();
+         } else {
+             // Cleanup on logout if necessary
+             if (this.realtimeChannel) {
+                 this.supabase.getClient().removeChannel(this.realtimeChannel);
+                 this.realtimeChannel = null;
+             }
+             this.notifications.set([]);
+             this.unreadCount.set(0);
+         }
+     });
   }
 
   loadNotifications() {

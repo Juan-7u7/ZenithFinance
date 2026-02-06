@@ -10,6 +10,7 @@ import { AuthResponse, LoginCredentials, User } from '../models/auth.model';
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  public authState$ = this.currentUser$; // Alias for compatibility
 
   private tokenSubject = new BehaviorSubject<string | null>(null);
   public token$ = this.tokenSubject.asObservable();
