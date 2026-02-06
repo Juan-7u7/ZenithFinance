@@ -26,10 +26,13 @@ export class NotificationService {
   unreadCount = signal(0);
   notifications = signal<AppNotification[]>([]);
 
+  private realtimeChannel: any;
+
   constructor() {
      // Initial load if user exists
      if (this.authService.getCurrentUser()) {
          this.loadNotifications();
+         this.setupRealtimeSubscription();
      }
   }
 
@@ -51,6 +54,44 @@ export class NotificationService {
               this.unreadCount.set(notifs.filter(n => !n.is_read).length);
           }
       });
+  }
+
+  private setupRealtimeSubscription() {
+    const myId = this.authService.getCurrentUser()?.id;
+    if (!myId) return;
+
+    if (this.realtimeChannel) {
+        this.supabase.getClient().removeChannel(this.realtimeChannel);
+    }
+
+    this.realtimeChannel = this.supabase.getClient()
+      .channel('public:notifications')
+      .on(
+        'postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `recipient_id=eq.${myId}` }, 
+        (payload) => {
+          console.log('New notification received:', payload);
+          this.handleNewNotification(payload.new);
+        }
+      )
+      .subscribe();
+      
+    console.log('Realtime notifications subscribed for user:', myId);
+  }
+
+  private handleNewNotification(record: any) {
+      // Fetch full details to get sender info (JOIN)
+      this.supabase.getClient()
+          .from('notifications')
+          .select('*, sender:sender_id(name, avatar_url)')
+          .eq('id', record.id)
+          .single()
+          .then(({ data, error }) => {
+              if (data && !error) {
+                  this.notifications.update(curr => [data, ...curr]);
+                  this.unreadCount.update(c => c + 1);
+              }
+          });
   }
 
   markAsRead(id: string) {
