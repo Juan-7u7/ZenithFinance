@@ -32,24 +32,8 @@ export class CommunityService {
         .from('follows')
         .insert({ follower_id: myId, following_id: targetId })
     ).pipe(
-      // After successfully following, insert the notification manually
-      switchMap(({ error }) => {
-        if (error) throw error;
-        
-        return from(
-            this.supabase.getClient()
-                .from('notifications')
-                .insert({
-                    recipient_id: targetId,
-                    sender_id: myId,
-                    type: 'NEW_FOLLOWER',
-                    is_read: false
-                })
-        );
-      }),
       map(({ error }) => {
-        if (error) console.error('Error creating notification:', error);
-        // We don't throw blocking error for notification failure, follow is done
+        if (error) throw error;
       }),
       catchError(err => {
         console.error('Follow error', err);

@@ -134,7 +134,37 @@ export class NotificationService {
       });
   }
 
+  deleteNotification(id: string) {
+      // Optimistic update
+      const prevList = this.notifications();
+      const wasUnread = prevList.find(n => n.id === id)?.is_read === false;
+      
+      this.ngZone.run(() => {
+          this.notifications.update(list => list.filter(n => n.id !== id));
+          if (wasUnread) {
+              this.unreadCount.update(c => Math.max(0, c - 1));
+          }
+      });
+
+      this.supabase.getClient()
+        .from('notifications')
+        .delete()
+        .eq('id', id)
+        .then(({ error }) => {
+            if (error) {
+                console.error('Error deleting notification:', error);
+                // Optional: rollback on error if needed
+            }
+        });
+  }
+
   private handleNewNotification(record: any) {
+      // DE-DUPLICATION CHECK: Prevent same ID from being added twice
+      if (this.notifications().some(n => n.id === record.id)) {
+          console.log('Skipping duplicate notification:', record.id);
+          return;
+      }
+
       this.supabase.getClient()
           .from('notifications')
           .select('*, sender:sender_id(name, avatar_url)')
@@ -143,14 +173,19 @@ export class NotificationService {
           .then(({ data, error }) => {
               if (data) {
                   this.ngZone.run(() => {
-                      this.notifications.update(curr => [data, ...curr]);
-                      this.unreadCount.update(c => c + 1);
+                      // Final check before adding
+                      if (!this.notifications().some(n => n.id === data.id)) {
+                        this.notifications.update(curr => [data, ...curr]);
+                        this.unreadCount.update(c => c + 1);
+                      }
                   });
               } else {
                   // If join fails, just add the raw record
                   this.ngZone.run(() => {
-                    this.notifications.update(curr => [record, ...curr]);
-                    this.unreadCount.update(c => c + 1);
+                    if (!this.notifications().some(n => n.id === record.id)) {
+                        this.notifications.update(curr => [record, ...curr]);
+                        this.unreadCount.update(c => c + 1);
+                    }
                   });
               }
           });

@@ -51,6 +51,10 @@
             @if (!notif.is_read) {
               <div class="unread-dot"></div>
             }
+
+            <button class="btn-delete" (click)="deleteNotification(notif.id, $event)" title="Eliminar">
+               <lucide-icon [img]="icons.Trash2" size="14"></lucide-icon>
+            </button>
           </div>
         }
       </div>

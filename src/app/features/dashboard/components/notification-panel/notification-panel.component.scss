@@ -225,8 +225,34 @@
       border-radius: 50%;
       background: var(--primary);
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 16px;
+      right: 12px;
+    }
+
+    .btn-delete {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      opacity: 0;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+    }
+
+    &:hover .btn-delete {
+      opacity: 1;
     }
   }
 }

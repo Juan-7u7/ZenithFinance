@@ -1,13 +1,12 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, X, UserPlus, Bell, Check } from 'lucide-angular';
+import { LucideAngularModule, X, UserPlus, Bell, Check, Trash2 } from 'lucide-angular';
 import { NotificationService, AppNotification } from '../../../../core/services/notification.service';
-import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-notification-panel',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './notification-panel.component.html',
   styleUrls: ['./notification-panel.component.scss']
 })
@@ -17,7 +16,7 @@ export class NotificationPanelComponent {
   
   private notificationService = inject(NotificationService);
   
-  readonly icons = { X, UserPlus, Bell, Check };
+  readonly icons = { X, UserPlus, Bell, Check, Trash2 };
 
   markRead(id: string, event: Event): void {
     event.stopPropagation();
@@ -31,5 +30,10 @@ export class NotificationPanelComponent {
 
   onClose(): void {
     this.close.emit();
+  }
+
+  deleteNotification(id: string, event: Event): void {
+    event.stopPropagation();
+    this.notificationService.deleteNotification(id);
   }
 }
