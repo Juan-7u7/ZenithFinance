@@ -158,6 +158,28 @@
         </form>
       </section>
 
+      <!-- Personalizar Banner -->
+      <section class="settings-section glass-card" *ngIf="fullProfile()">
+        <div class="section-header">
+          <lucide-icon [img]="icons.Palette" size="20" class="primary-icon"></lucide-icon>
+          <h3>Personalizar Banner</h3>
+        </div>
+
+        <div class="banner-preview-box" [style.background]="'linear-gradient(135deg, ' + bannerColors()[0] + ' 0%, ' + bannerColors()[1] + ' 50%, ' + bannerColors()[2] + ' 100%)'">
+           <div class="preview-text">Vista Previa</div>
+        </div>
+
+        <div class="color-pickers">
+           <div class="picker-item" *ngFor="let color of bannerColors(); let i = index">
+              <label>Color {{ i + 1 }}</label>
+              <div class="picker-input-wrapper">
+                 <input type="color" [value]="color" (change)="updateColor(i, $event)">
+                 <span class="color-value">{{ color }}</span>
+              </div>
+           </div>
+        </div>
+      </section>
+
       <!-- Preferences & Security -->
       <section class="settings-section glass-card">
         <div class="section-header">

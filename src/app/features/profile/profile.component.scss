@@ -644,6 +644,98 @@
   }
 }
 
+/* Banner Customization Styles */
+.banner-preview-box {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid var(--border-color);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at top right, rgba(255,255,255,0.1) 0%, transparent 70%);
+  }
+
+  .preview-text {
+    font-weight: 800;
+    color: white;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 1;
+  }
+}
+
+.color-pickers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .picker-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .picker-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: var(--primary);
+      }
+
+      input[type="color"] {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        background: none;
+
+        &::-webkit-color-swatch-wrapper { padding: 0; }
+        &::-webkit-color-swatch { border: none; border-radius: 6px; }
+      }
+
+      .color-value {
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
 .danger-content {
   p { color: var(--text-muted); margin-bottom: var(--space-lg); line-height: 1.5; }
 }

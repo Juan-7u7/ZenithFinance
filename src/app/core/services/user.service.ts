@@ -17,6 +17,7 @@ export interface UserProfile {
   avatar_url?: string;
   email?: string;
   privacy_settings?: PrivacySettings;
+  banner_colors?: string[];
 }
 
 export interface PublicAsset {
@@ -144,6 +145,23 @@ export class UserService {
              console.error('Error updating privacy:', err);
              return of(void 0);
          })
+    );
+  }
+
+  updateBannerColors(colors: string[]): Observable<void> {
+    return from(this.supabase.getClient().auth.getUser()).pipe(
+        map(res => res.data.user?.id),
+        switchMap(uid => {
+            if (!uid) return of(null);
+            return from(
+                this.supabase.getClient()
+                    .from('profiles')
+                    .update({ banner_colors: colors })
+                    .eq('id', uid)
+            );
+        }),
+        map(() => void 0),
+        catchError(() => of(void 0))
     );
   }
 }

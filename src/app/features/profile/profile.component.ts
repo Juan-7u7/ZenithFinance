@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { LucideAngularModule, User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check } from 'lucide-angular';
+import { LucideAngularModule, User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check, Palette } from 'lucide-angular';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService, UserProfile } from '../../core/services/user.service';
 import { LanguageService } from '../../core/services/language.service';
@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   
   // Icons
-  readonly icons = { User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check };
+  readonly icons = { User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check, Palette };
 
   // UI State
   isLoading = signal(false);
@@ -44,6 +44,7 @@ export class ProfileComponent implements OnInit {
   
   // Extended Profile Data
   fullProfile = signal<UserProfile | null>(null);
+  bannerColors = signal<string[]>(['#4f46e5', '#7c3aed', '#db2777']);
 
   profileForm!: FormGroup;
   privacyForm!: FormGroup;
@@ -78,9 +79,26 @@ export class ProfileComponent implements OnInit {
               if (myProfile.privacy_settings) {
                   this.privacyForm.patchValue(myProfile.privacy_settings);
               }
+              if (myProfile.banner_colors && myProfile.banner_colors.length === 3) {
+                  this.bannerColors.set(myProfile.banner_colors);
+              }
           }
        });
     }
+  }
+
+  updateColor(index: number, event: Event) {
+    const color = (event.target as HTMLInputElement).value;
+    const newColors = [...this.bannerColors()];
+    newColors[index] = color;
+    this.bannerColors.set(newColors);
+    this.saveBannerColors();
+  }
+
+  saveBannerColors() {
+    this.userService.updateBannerColors(this.bannerColors()).subscribe(() => {
+        this.toastService.success('Banner actualizado');
+    });
   }
 
   savePrivacy() {

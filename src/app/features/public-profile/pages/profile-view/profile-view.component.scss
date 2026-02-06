@@ -36,15 +36,16 @@
 
 /* New Header Design */
 .profile-page-header {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
   position: relative;
 
   .profile-banner {
-    height: 180px;
+    height: 240px; /* Increased for Desktop */
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
-    border-radius: 0 0 24px 24px;
+    border-radius: 0 0 32px 32px;
     position: relative;
     overflow: hidden;
+    transition: background 0.5s ease;
 
     &::after {
       content: '';
@@ -55,22 +56,23 @@
 
     @media (max-width: 640px) {
         height: 160px;
+        border-radius: 0 0 24px 24px;
     }
   }
 
   .profile-header-main {
-    padding: 0 32px;
-    margin-top: -60px;
+    padding: 0 40px;
+    margin-top: -80px; /* More pull-up for larger avatar */
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 
     @media (max-width: 640px) {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        margin-top: -50px;
+        margin-top: -60px;
         padding: 0 16px;
         gap: 20px;
     }
@@ -78,12 +80,12 @@
     .profile-identity-container {
       display: flex;
       align-items: flex-end;
-      gap: 24px;
+      gap: 32px;
 
       @media (max-width: 640px) {
           flex-direction: column;
           align-items: center;
-          gap: 12px;
+          gap: 16px;
       }
 
       .avatar-outer {
@@ -91,13 +93,18 @@
         z-index: 5;
         
         .avatar-wrapper {
-          width: 120px;
-          height: 120px;
+          width: 160px; /* Larger on Desktop */
+          height: 160px;
           border-radius: 50%;
-          border: 6px solid var(--bg-page);
+          border: 8px solid var(--bg-page);
           background: var(--bg-page);
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+          box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+
+          @media (max-width: 640px) {
+            width: 120px;
+            height: 120px;
+          }
 
           img, .placeholder {
             width: 100%;
@@ -111,36 +118,52 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: 800;
+            
+            @media (max-width: 640px) {
+              font-size: 3rem;
+            }
           }
         }
 
         .status-badge {
            position: absolute;
-           bottom: 8px;
-           right: 8px;
-           width: 24px;
-           height: 24px;
+           bottom: 12px;
+           right: 12px;
+           width: 32px;
+           height: 32px;
            background: var(--primary);
-           border: 3px solid var(--bg-page);
+           border: 4px solid var(--bg-page);
            border-radius: 50%;
            display: flex;
            align-items: center;
            justify-content: center;
            color: white;
            z-index: 6;
+
+           @media (max-width: 640px) {
+             width: 24px;
+             height: 24px;
+             bottom: 8px;
+             right: 8px;
+           }
         }
       }
 
       .info-content {
-        padding-bottom: 8px;
+        padding-bottom: 16px;
+
+        @media (max-width: 640px) {
+            padding-bottom: 0;
+        }
 
         .name-row {
           display: flex;
           align-items: center;
-          gap: 8px;
-          margin-bottom: 2px;
+          gap: 12px;
+          margin-bottom: 4px;
+          flex-wrap: nowrap; /* Prevent wrap on desktop */
 
           @media (max-width: 640px) {
               justify-content: center;
@@ -148,25 +171,30 @@
           }
 
           h1 {
-            font-size: 2.2rem;
+            font-size: 2.8rem; /* Even larger */
             font-weight: 800;
             margin: 0;
             color: var(--text-main);
-            letter-spacing: -0.5px;
-            line-height: 1.1;
+            letter-spacing: -1.5px;
+            line-height: 1;
+
+            @media (max-width: 640px) {
+              font-size: 2.22rem;
+            }
           }
 
           .verified-icon {
             background: var(--primary);
             color: white;
             border-radius: 50%;
-            padding: 3px;
+            padding: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+            width: 24px;
+            height: 24px;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+            margin-top: 4px;
           }
         }
 
