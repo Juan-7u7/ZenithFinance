@@ -81,6 +81,18 @@ export class CommunityService {
     );
   }
 
+  getFollowerCount(userId: string): Observable<number> {
+    return from(
+      this.supabase.getClient()
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('following_id', userId)
+    ).pipe(
+      map(({ count }) => count || 0),
+      catchError(() => of(0))
+    );
+  }
+
   // --- Leaderboard System ---
 
   getLeaderboard(timeframe: '24h' | 'total' = 'total'): Observable<LeaderboardUser[]> {

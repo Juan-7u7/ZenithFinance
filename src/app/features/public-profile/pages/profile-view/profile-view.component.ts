@@ -26,6 +26,7 @@ export class ProfileViewComponent implements OnInit {
 
   profile = signal<UserProfile | null>(null);
   assets = signal<PublicAsset[]>([]);
+  followerCount = signal(0);
   isGeneratingSnapshot = signal(false);
   isFollowing = signal(false);
   isProcessingFollow = signal(false);
@@ -50,11 +51,18 @@ export class ProfileViewComponent implements OnInit {
                this.profile.set(p);
                this.loadPublicPortfolio(p.username!);
                this.checkFollowingStatus(p.id);
+               this.loadFollowerCount(p.id);
              }
            })
         );
       })
     ).subscribe();
+  }
+
+  loadFollowerCount(userId: string) {
+    this.communityService.getFollowerCount(userId).subscribe(count => {
+      this.followerCount.set(count);
+    });
   }
 
   checkFollowingStatus(userId: string) {
@@ -69,15 +77,19 @@ export class ProfileViewComponent implements OnInit {
     if (!prof || this.isProcessingFollow()) return;
 
     this.isProcessingFollow.set(true);
-    if (this.isFollowing()) {
+    const wasFollowing = this.isFollowing();
+
+    if (wasFollowing) {
       this.communityService.unfollowUser(prof.id).subscribe(() => {
         this.isFollowing.set(false);
+        this.followerCount.update(c => Math.max(0, c - 1));
         this.isProcessingFollow.set(false);
         this.toastService.info(`Ya no sigues a ${prof.name}`);
       });
     } else {
       this.communityService.followUser(prof.id).subscribe(() => {
         this.isFollowing.set(true);
+        this.followerCount.update(c => c + 1);
         this.isProcessingFollow.set(false);
         this.toastService.success(`Ahora sigues a ${prof.name}`);
       });

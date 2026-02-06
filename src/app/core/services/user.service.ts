@@ -7,6 +7,7 @@ export interface PrivacySettings {
   show_balance: boolean;
   show_assets: boolean;
   show_analytics: boolean;
+  show_followers: boolean;
 }
 
 export interface UserProfile {

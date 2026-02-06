@@ -141,6 +141,20 @@
                  </span>
               </label>
            </div>
+
+           <div class="toggle-row">
+              <div class="toggle-info">
+                 <span class="label">Mostrar Seguidores</span>
+                 <span class="desc">Permite que otros vean cuántas personas te siguen</span>
+              </div>
+              <label class="switch">
+                 <input type="checkbox" formControlName="show_followers" (change)="savePrivacy()">
+                 <span class="slider round"></span>
+                 <span class="checkbox-ui">
+                   <lucide-icon [img]="icons.Check" size="16"></lucide-icon>
+                 </span>
+              </label>
+           </div>
         </form>
       </section>
 

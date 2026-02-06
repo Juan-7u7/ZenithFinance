@@ -59,7 +59,7 @@
         </div>
         <div class="stat-data">
           <span class="label">Seguidores</span>
-          <span class="value">--</span>
+          <span class="value">{{ (profile()?.privacy_settings?.show_followers || isOwnProfile()) ? followerCount() : '--' }}</span>
         </div>
       </div>
       <div class="stat-item">

@@ -58,7 +58,8 @@ export class ProfileComponent implements OnInit {
     this.privacyForm = this.fb.group({
         show_balance: [false],
         show_assets: [true],
-        show_analytics: [true]
+        show_analytics: [true],
+        show_followers: [false]
     });
 
     // Load full profile with username and settings
