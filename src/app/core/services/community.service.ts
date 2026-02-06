@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Supabase } from './supabase';
 import { Observable, from, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 export interface LeaderboardUser {
@@ -32,8 +32,24 @@ export class CommunityService {
         .from('follows')
         .insert({ follower_id: myId, following_id: targetId })
     ).pipe(
-      map(({ error }) => {
+      // After successfully following, insert the notification manually
+      switchMap(({ error }) => {
         if (error) throw error;
+        
+        return from(
+            this.supabase.getClient()
+                .from('notifications')
+                .insert({
+                    recipient_id: targetId,
+                    sender_id: myId,
+                    type: 'NEW_FOLLOWER',
+                    is_read: false
+                })
+        );
+      }),
+      map(({ error }) => {
+        if (error) console.error('Error creating notification:', error);
+        // We don't throw blocking error for notification failure, follow is done
       }),
       catchError(err => {
         console.error('Follow error', err);
