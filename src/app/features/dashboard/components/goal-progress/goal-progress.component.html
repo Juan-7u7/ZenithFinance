@@ -26,6 +26,28 @@
         <span class="target">{{ activeGoal.target_amount | currency:'USD':'symbol':'1.0-0' }}</span>
       </div>
     </div>
+
+    <!-- Prediction Card -->
+    @if (estimatedTimeToGoal && remainingAmount > 0) {
+      <div class="prediction-card" [class]="growthTrend">
+        <div class="prediction-header">
+          <lucide-icon [img]="icons.TrendingUp" size="18"></lucide-icon>
+          <span>Predicción de Crecimiento</span>
+        </div>
+        <div class="prediction-body">
+          <div class="time-estimate">
+            <lucide-icon [img]="icons.Calendar" size="20"></lucide-icon>
+            <div class="text">
+              <span class="label">Tiempo estimado</span>
+              <span class="value">{{ estimatedTimeToGoal.text }}</span>
+            </div>
+          </div>
+          <p class="prediction-note">
+            Basado en un crecimiento del <strong>{{ profitLossPercentage() | number:'1.1-1' }}%</strong> actual
+          </p>
+        </div>
+      </div>
+    }
     
     <div class="goal-footer" *ngIf="remainingAmount > 0">
       <p>Faltan <strong>{{ remainingAmount | currency:'USD':'symbol':'1.2-2' }}</strong> para alcanzar tu objetivo.</p>

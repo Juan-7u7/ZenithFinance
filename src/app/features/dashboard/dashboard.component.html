@@ -78,7 +78,10 @@
         </div>
         
         <div class="card goal-card">
-           <app-goal-progress [currentBalance]="dashboard().totalValue"></app-goal-progress>
+           <app-goal-progress 
+             [currentBalance]="dashboard().totalValue"
+             [profitLossPercentage]="dashboard().totalProfitLossPercentage">
+           </app-goal-progress>
         </div>
 
         <div class="card chart-card glass-card">
