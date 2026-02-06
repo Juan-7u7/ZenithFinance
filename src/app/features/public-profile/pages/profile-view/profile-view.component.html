@@ -5,56 +5,109 @@
     Regresar
   </button>
 
-  <!-- Header / Social Card Preview -->
-  <header class="profile-header glass-card">
-    <div class="profile-identity">
-      <div class="avatar-wrapper">
-         <img [src]="profile()?.avatar_url || ''" (error)="$event.target['src']=''" alt="Avatar" *ngIf="profile()?.avatar_url; else placeholder">
-         <ng-template #placeholder>
-           <div class="avatar placeholder">
-             {{ profile()?.name?.charAt(0)?.toUpperCase() || 'U' }}
-           </div>
-         </ng-template>
+  <header class="profile-page-header">
+    <div class="profile-banner"></div>
+    
+    <div class="profile-header-main">
+      <div class="profile-identity-container">
+        <div class="avatar-outer">
+          <div class="avatar-wrapper">
+             <img [src]="profile()?.avatar_url || ''" (error)="$event.target['src']=''" alt="Avatar" *ngIf="profile()?.avatar_url; else placeholder">
+             <ng-template #placeholder>
+               <div class="avatar placeholder">
+                 {{ profile()?.name?.charAt(0)?.toUpperCase() || 'U' }}
+               </div>
+             </ng-template>
+          </div>
+          <div class="status-badge" *ngIf="isOwnProfile()">
+             <lucide-icon [img]="icons.Shield" size="12"></lucide-icon>
+          </div>
+        </div>
+
+        <div class="info-content">
+          <div class="name-row">
+            <h1>{{ profile()?.name }}</h1>
+            <lucide-icon [img]="icons.Check" size="18" class="verified-icon" *ngIf="profile()?.privacy_settings?.show_assets"></lucide-icon>
+          </div>
+          <span class="username">@{{ profile()?.username }}</span>
+        </div>
       </div>
-      <div class="info">
-        <h1>{{ profile()?.name }}</h1>
-        <span class="username">@{{ profile()?.username }}</span>
+
+      <div class="header-actions">
+        <button class="btn-share-alt" (click)="generateSnapshot()" title="Compartir Perfil">
+           <lucide-icon [img]="icons.Share2" size="20"></lucide-icon>
+        </button>
+
+        <ng-container *ngIf="!isOwnProfile()">
+          <button 
+            [class]="isFollowing() ? 'btn btn-following' : 'btn btn-follow'"
+            (click)="toggleFollow()"
+            [disabled]="isProcessingFollow()"
+          >
+            <lucide-icon [img]="isFollowing() ? icons.Check : icons.Plus" size="18"></lucide-icon>
+            {{ isFollowing() ? 'Siguiendo' : 'Seguir' }}
+          </button>
+        </ng-container>
       </div>
     </div>
-    
-    <div class="actions">
-       <!-- Share Button triggers Generate Snapshot logic -->
-       <button class="btn btn-primary" (click)="generateSnapshot()">
-          <lucide-icon [img]="icons.Share2" size="18"></lucide-icon>
-          Compartir
-       </button>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar glass-card">
+      <div class="stat-item">
+        <div class="stat-icon followers">
+          <lucide-icon [img]="icons.Users" size="18"></lucide-icon>
+        </div>
+        <div class="stat-data">
+          <span class="label">Seguidores</span>
+          <span class="value">--</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon assets">
+          <lucide-icon [img]="icons.Briefcase" size="18"></lucide-icon>
+        </div>
+        <div class="stat-data">
+          <span class="label">Activos</span>
+          <span class="value">{{ assets().length }}</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon performance">
+          <lucide-icon [img]="icons.TrendingUp" size="18"></lucide-icon>
+        </div>
+        <div class="stat-data">
+          <span class="label">Zenith Score</span>
+          <span class="value">Excellence</span>
+        </div>
+      </div>
     </div>
   </header>
 
   <!-- Content Grid -->
-  <div class="content-grid">
+  <main class="profile-content">
     
-    <!-- Left: Stats or Empty if private -->
-    <section class="portfolio-section glass-card">
+    <section class="section-card portfolio-highlights glass-card">
       <div class="section-header">
-        <h2>Portafolio Público</h2>
-        <span class="privacy-badge" *ngIf="!profile()?.privacy_settings?.show_assets">
-           <lucide-icon [img]="icons.Lock" size="14"></lucide-icon> Privado
+        <div class="title-with-icon">
+          <lucide-icon [img]="icons.Briefcase" size="20"></lucide-icon>
+          <h2>Portafolio Público</h2>
+        </div>
+        <span class="privacy-badge" [class.locked]="!profile()?.privacy_settings?.show_assets">
+           <lucide-icon [img]="profile()?.privacy_settings?.show_assets ? icons.Shield : icons.Lock" size="14"></lucide-icon> 
+           {{ profile()?.privacy_settings?.show_assets ? 'Verificado' : 'Privado' }}
         </span>
       </div>
 
-      <div class="assets-list" *ngIf="assets().length > 0; else emptyOrPrivate">
-        <div class="asset-row" *ngFor="let asset of assets()">
-           <div class="asset-info">
-             <span class="symbol">{{ asset.symbol }}</span>
-             <span class="name">{{ asset.name }}</span>
-           </div>
-           
-           <div class="asset-value">
-             <span class="amount">{{ asset.quantity }} {{ asset.symbol }}</span>
-             <!-- Only show value/price if enabled? For now show current value -->
-             <span class="fiat-value">{{ formatCurrency(asset.value) }}</span>
-           </div>
+      <div class="assets-modern-grid" *ngIf="assets().length > 0; else emptyOrPrivate">
+        <div class="asset-pill" *ngFor="let asset of assets()">
+          <div class="pill-info">
+            <span class="symbol">{{ asset.symbol }}</span>
+            <span class="name">{{ asset.name }}</span>
+          </div>
+          <div class="pill-value">
+            <span class="total">{{ formatCurrency(asset.value) }}</span>
+            <span class="qty">{{ asset.quantity }} units</span>
+          </div>
         </div>
       </div>
 
@@ -66,7 +119,7 @@
       </ng-template>
     </section>
 
-    <!-- Right: Snapshot Preview Area (Hidden by default, used for generation) -->
+    <!-- Right: Snapshot Preview Area -->
     <div id="snapshot-area" class="snapshot-card glass-card" *ngIf="isGeneratingSnapshot()">
        <div class="snapshot-header">
           <div class="user-row">
@@ -79,7 +132,6 @@
             </div>
           </div>
           <div class="qr-placeholder">
-             <!-- QR Code Component Here -->
             <div class="qr-box">QR</div>
           </div>
        </div>
@@ -99,8 +151,7 @@
           zenith.finance/u/{{ profile()?.username }}
        </div>
     </div>
-
-  </div>
+  </main>
 </div>
 
 <ng-template #loadingTpl>

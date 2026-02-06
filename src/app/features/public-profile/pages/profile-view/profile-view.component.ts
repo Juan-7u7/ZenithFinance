@@ -1,8 +1,11 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { UserService, UserProfile, PublicAsset } from '../../../../core/services/user.service';
-import { LucideAngularModule, Share2, Lock, Shield, ArrowLeft } from 'lucide-angular';
+import { AuthService } from '../../../../core/services/auth.service';
+import { CommunityService } from '../../../../core/services/community.service';
+import { ToastService } from '../../../../core/services/toast.service';
+import { LucideAngularModule, Share2, Lock, Shield, ArrowLeft, Users, TrendingUp, Briefcase, Plus, Check } from 'lucide-angular';
 import { switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -16,13 +19,25 @@ import { of } from 'rxjs';
 export class ProfileViewComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private communityService = inject(CommunityService);
+  private toastService = inject(ToastService);
   private location = inject(Location);
 
   profile = signal<UserProfile | null>(null);
   assets = signal<PublicAsset[]>([]);
   isGeneratingSnapshot = signal(false);
+  isFollowing = signal(false);
+  isProcessingFollow = signal(false);
 
-  readonly icons = { Share2, Lock, Shield, ArrowLeft };
+  currentUser = signal(this.authService.getCurrentUser());
+  isOwnProfile = computed(() => {
+    const prof = this.profile();
+    const me = this.currentUser();
+    return prof && me && prof.id === me.id;
+  });
+
+  readonly icons = { Share2, Lock, Shield, ArrowLeft, Users, TrendingUp, Briefcase, Plus, Check };
 
   ngOnInit() {
     this.route.paramMap.pipe(
@@ -34,11 +49,39 @@ export class ProfileViewComponent implements OnInit {
              if (p) {
                this.profile.set(p);
                this.loadPublicPortfolio(p.username!);
+               this.checkFollowingStatus(p.id);
              }
            })
         );
       })
     ).subscribe();
+  }
+
+  checkFollowingStatus(userId: string) {
+    if (this.isOwnProfile()) return;
+    this.communityService.checkIsFollowing(userId).subscribe(isFollowing => {
+      this.isFollowing.set(isFollowing);
+    });
+  }
+
+  toggleFollow() {
+    const prof = this.profile();
+    if (!prof || this.isProcessingFollow()) return;
+
+    this.isProcessingFollow.set(true);
+    if (this.isFollowing()) {
+      this.communityService.unfollowUser(prof.id).subscribe(() => {
+        this.isFollowing.set(false);
+        this.isProcessingFollow.set(false);
+        this.toastService.info(`Ya no sigues a ${prof.name}`);
+      });
+    } else {
+      this.communityService.followUser(prof.id).subscribe(() => {
+        this.isFollowing.set(true);
+        this.isProcessingFollow.set(false);
+        this.toastService.success(`Ahora sigues a ${prof.name}`);
+      });
+    }
   }
 
   loadPublicPortfolio(username: string) {
