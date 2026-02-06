@@ -80,6 +80,10 @@
     .icon { color: var(--error); }
   }
 
+  &.warning {
+    .icon { color: #f59e0b; }
+  }
+
   &.info {
     .icon { color: var(--primary); }
   }

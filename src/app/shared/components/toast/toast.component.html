@@ -5,6 +5,7 @@
         @switch (toast.type) {
           @case ('success') { <lucide-icon [img]="icons.CheckCircle" size="20"></lucide-icon> }
           @case ('error') { <lucide-icon [img]="icons.AlertCircle" size="20"></lucide-icon> }
+          @case ('warning') { <lucide-icon [img]="icons.AlertCircle" size="20"></lucide-icon> }
           @case ('info') { <lucide-icon [img]="icons.Info" size="20"></lucide-icon> }
           @default { <lucide-icon [img]="icons.Info" size="20"></lucide-icon> }
         }

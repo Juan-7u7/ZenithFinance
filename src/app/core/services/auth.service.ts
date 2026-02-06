@@ -233,27 +233,45 @@ export class AuthService {
   }
 
   updateProfile(updates: { name: string }): Observable<void> {
+    const user = this.getCurrentUser();
+    if (!user) {
+      return throwError(() => new Error('No user logged in'));
+    }
+
     return new Observable<void>(observer => {
-      this.supabase.getClient()
-        .auth.updateUser({
-          data: { name: updates.name }
-        })
-        .then(({ data, error }) => {
-          if (error) {
-            observer.error(error);
-          } else {
-            if (data.user) {
-              // Wait for auth listener to naturally update or force it:
-              this.currentUserSubject.next({
-                ...this.getCurrentUser()!,
-                name: updates.name
-              });
-            }
-            observer.next();
-            observer.complete();
-          }
-        })
-        .catch(error => observer.error(error));
+      // Update both auth metadata AND users table
+      Promise.all([
+        // 1. Update auth.users metadata
+        this.supabase.getClient()
+          .auth.updateUser({
+            data: { name: updates.name }
+          }),
+        // 2. Update users table (visible to other users)
+        this.supabase.getClient()
+          .from('users')
+          .update({ name: updates.name })
+          .eq('id', user.id)
+      ])
+      .then(([authResult, dbResult]) => {
+        if (authResult.error) {
+          observer.error(authResult.error);
+          return;
+        }
+        if (dbResult.error) {
+          observer.error(dbResult.error);
+          return;
+        }
+        
+        // Update local state
+        this.currentUserSubject.next({
+          ...user,
+          name: updates.name
+        });
+        
+        observer.next();
+        observer.complete();
+      })
+      .catch(error => observer.error(error));
     });
   }
 
