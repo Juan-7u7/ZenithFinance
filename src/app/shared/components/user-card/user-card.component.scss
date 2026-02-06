@@ -122,62 +122,81 @@
 
   .actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
       margin-top: auto;
       z-index: 1;
       
     .btn-connect {
         flex: 1;
-        padding: 10px;
-        border-radius: var(--radius-lg);
+        height: 46px;
+        padding: 0 16px;
+        border-radius: 12px;
         border: 1px solid var(--border-color);
-        background: rgba(255,255,255,0.03);
+        background: rgba(255, 255, 255, 0.05);
         color: var(--text-main);
-        font-weight: 600;
-        font-size: 0.9rem;
+        font-weight: 700;
+        font-size: 0.85rem;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
+        white-space: nowrap;
 
-        &:hover {
+        &:hover:not(:disabled) {
             border-color: var(--primary);
             background: rgba(99, 102, 241, 0.1);
             color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
         }
         
         &.following {
-             background: transparent;
-             border-color: var(--success);
+             background: rgba(16, 185, 129, 0.08);
+             border-color: rgba(16, 185, 129, 0.3);
              color: var(--success);
-             opacity: 0.8;
              
              &:hover {
-                 background: rgba(16, 185, 129, 0.1);
-                 opacity: 1;
+                 background: rgba(16, 185, 129, 0.15);
+                 border-color: var(--success);
+                 color: var(--success);
              }
         }
+
+        &:active { transform: scale(0.96); }
     }
     
     .btn-icon-v2 {
-        width: 42px;
-        height: 42px;
+        width: 46px; 
+        height: 46px; 
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: var(--radius-lg);
+        border-radius: 12px;
         border: 1px solid var(--border-color);
         color: var(--text-muted);
-        background: transparent;
-        transition: all 0.2s;
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(8px);
         
         &:hover {
-            background: var(--bg-card-hover);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-main);
-            border-color: var(--text-muted);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        &:active { transform: scale(0.9); }
+
+        lucide-icon {
+            transition: transform 0.2s ease;
+        }
+
+        &:hover lucide-icon {
+            transform: scale(1.1);
         }
     }
   }
