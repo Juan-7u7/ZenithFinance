@@ -32,6 +32,10 @@ export const routes: Routes = [
     loadChildren: () => import('./features/community/community.routes').then(m => m.COMMUNITY_ROUTES)
   },
   {
+    path: 'u/:username',
+    loadChildren: () => import('./features/public-profile/public-profile.routes').then(m => m.PUBLIC_PROFILE_ROUTES)
+  },
+  {
     path: '**',
     redirectTo: 'dashboard'
   }

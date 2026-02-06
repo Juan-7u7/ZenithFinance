@@ -54,27 +54,7 @@
         </div>
       } @else {
         @for (user of users(); track user.id) {
-          <div class="user-card glass-card slide-up">
-            <div class="user-avatar-wrapper">
-              @if (user.avatar_url) {
-                <img [src]="user.avatar_url" [alt]="user.name" class="user-avatar">
-              } @else {
-                <div class="user-avatar placeholder">
-                  {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
-                </div>
-              }
-            </div>
-            
-            <div class="user-info">
-              <h3>{{ user.name || 'User' }}</h3>
-              <!-- <span class="user-handle">@{{ user.email?.split('@')?.[0] }}</span> -->
-            </div>
-
-            <button class="btn-connect">
-              <lucide-icon [img]="icons.UserPlus" size="16"></lucide-icon>
-              <span>{{ 'community.connect' | translate }}</span>
-            </button>
-          </div>
+          <app-user-card [userData]="user" class="slide-up"></app-user-card>
         }
       }
     }

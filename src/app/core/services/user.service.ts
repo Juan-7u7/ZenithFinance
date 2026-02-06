@@ -1,13 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { Supabase } from './supabase';
+
+export interface PrivacySettings {
+  show_balance: boolean;
+  show_assets: boolean;
+  show_analytics: boolean;
+}
 
 export interface UserProfile {
   id: string;
   name?: string;
+  username?: string;
   avatar_url?: string;
-  email?: string; // Optional depending on privacy
+  email?: string;
+  privacy_settings?: PrivacySettings;
+}
+
+export interface PublicAsset {
+  asset_id: string;
+  symbol: string;
+  name: string;
+  quantity: number;
+  current_price: number;
+  value: number;
+  allocation_percentage: number;
 }
 
 @Injectable({
@@ -64,6 +82,67 @@ export class UserService {
         console.error('Error searching users:', err);
         return of([]);
       })
+    );
+  }
+
+  // Get Public Profile by Username
+  getProfileByUsername(username: string): Observable<UserProfile | null> {
+    return from(
+      this.supabase.getClient()
+        .from('profiles')
+        .select('*')
+        .eq('username', username)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) return null;
+        return data as UserProfile;
+      }),
+      catchError(() => of(null))
+    );
+  }
+
+  // Get Public Portfolio via RPC
+  getPublicPortfolio(username: string): Observable<PublicAsset[]> {
+    return from(
+      this.supabase.getClient()
+        .rpc('get_public_portfolio', { target_username: username })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+           console.error('Error fetching public portfolio:', error);
+           return [];
+        }
+        return (data || []) as PublicAsset[];
+      }),
+      catchError(err => {
+        console.error('Error in public portfolio RPC:', err);
+        return of([]);
+      })
+    );
+  }
+
+  // Update Privacy Settings
+  updatePrivacySettings(settings: PrivacySettings): Observable<void> {
+    return from(this.supabase.getClient().auth.getUser()).pipe(
+         map(res => {
+             const uid = res.data.user?.id;
+             if (!uid) throw new Error('No user');
+             return uid;
+         }),
+         switchMap(uid => {
+             return from(
+                 this.supabase.getClient()
+                    .from('profiles')
+                    .update({ privacy_settings: settings })
+                    .eq('id', uid)
+             );
+         }),
+         map(() => void 0),
+         catchError(err => {
+             console.error('Error updating privacy:', err);
+             return of(void 0);
+         })
     );
   }
 }

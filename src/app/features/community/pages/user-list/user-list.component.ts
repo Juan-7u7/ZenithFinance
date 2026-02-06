@@ -10,10 +10,12 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { Settings, LogOut, Moon, Sun, Languages, ArrowLeft } from 'lucide-angular';
 import { AuthService } from '../../../../core/services/auth.service';
 
+import { UserCardComponent } from '../../../../shared/components/user-card/user-card.component';
+
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe, UserCardComponent],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
 })

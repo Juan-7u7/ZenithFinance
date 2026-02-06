@@ -5,5 +5,9 @@ export const COMMUNITY_ROUTES: Routes = [
   {
     path: '',
     component: UserListComponent
+  },
+  {
+    path: 'leaderboard',
+    loadComponent: () => import('./pages/leaderboard/leaderboard.component').then(m => m.LeaderboardComponent)
   }
 ];

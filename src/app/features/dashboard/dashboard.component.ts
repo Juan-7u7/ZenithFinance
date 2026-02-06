@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
@@ -18,6 +18,8 @@ import { PortfolioService } from '../../core/services/portfolio.service';
 import { ToastService } from '../../core/services/toast.service';
 import { PortfolioAsset } from '../../core/models/asset.model';
 
+import { NotificationService } from '../../core/services/notification.service';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -27,7 +29,7 @@ import { PortfolioAsset } from '../../core/models/asset.model';
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus };
   currentDate = new Date();
   
   private authService = inject(AuthService);
@@ -37,6 +39,7 @@ export class DashboardComponent implements OnInit {
   private portfolioService = inject(PortfolioService);
   private toastService = inject(ToastService);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
   currentUser = toSignal(this.authService.currentUser$);
   currentTheme = this.themeService.theme;
@@ -45,6 +48,11 @@ export class DashboardComponent implements OnInit {
   // Dashboard State Signal with loaded portfolio data + market prices
   dashboard = this.dashboardState.state;
   
+  // Notification Signals
+  unreadCount = this.notificationService.unreadCount;
+  notifications = this.notificationService.notifications;
+  isNotificationPanelOpen = signal(false);
+
   // UI State
   isAddModalOpen = signal(false);
   editingAsset = signal<PortfolioAsset | null>(null);
@@ -53,6 +61,27 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('Dashboard initialized with State Service');
+    this.notificationService.loadNotifications();
+  }
+
+  // --- Notification Logic ---
+  toggleNotifications(event: Event): void {
+      event.stopPropagation();
+      this.isNotificationPanelOpen.update(v => !v);
+  }
+
+  closeNotifications(): void {
+      this.isNotificationPanelOpen.set(false);
+  }
+
+  markRead(id: string, event: Event): void {
+      event.stopPropagation();
+      this.notificationService.markAsRead(id);
+  }
+
+  markAllRead(event: Event): void {
+      event.stopPropagation();
+      this.notificationService.markAllRead();
   }
 
   // Add Modal

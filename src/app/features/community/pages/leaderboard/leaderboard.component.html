@@ -1,0 +1,36 @@
+<div class="leaderboard-container fade-in">
+    <header class="page-header glass-card">
+        <div class="header-content">
+            <h1>Ranking de Rendimiento</h1>
+            <p>Los mejores inversores de la comunidad basados en ROI (Retorno de Inversión)</p>
+        </div>
+        
+        <div class="time-filters glass-card">
+            <button class="filter-btn" [class.active]="timeframe() === '24h'" (click)="setTimeframe('24h')">24 Horas</button>
+            <button class="filter-btn" [class.active]="timeframe() === 'total'" (click)="setTimeframe('total')">Histórico</button>
+        </div>
+    </header>
+
+    <div class="leaderboard-grid">
+        <!-- Top 3 Podium (Optional visual flourish could go here) -->
+        
+        <div class="users-list" *ngIf="!isLoading(); else loadingTpl">
+            <app-user-card 
+                *ngFor="let user of leaders()" 
+                [userData]="user"
+                class="leader-card-wrapper"
+            ></app-user-card>
+            
+            <div class="empty-state" *ngIf="leaders().length === 0">
+                <p>No hay datos de rendimiento disponibles aún.</p>
+            </div>
+        </div>
+
+        <ng-template #loadingTpl>
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Calculando posiciones...</p>
+            </div>
+        </ng-template>
+    </div>
+</div>

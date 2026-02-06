@@ -1,0 +1,111 @@
+<div class="public-profile-container fade-in" *ngIf="profile(); else loadingTpl">
+  
+  <button class="btn-back-floating" (click)="goBack()">
+    <lucide-icon [img]="icons.ArrowLeft" size="20"></lucide-icon>
+    Regresar
+  </button>
+
+  <!-- Header / Social Card Preview -->
+  <header class="profile-header glass-card">
+    <div class="profile-identity">
+      <div class="avatar-wrapper">
+         <img [src]="profile()?.avatar_url || ''" (error)="$event.target['src']=''" alt="Avatar" *ngIf="profile()?.avatar_url; else placeholder">
+         <ng-template #placeholder>
+           <div class="avatar placeholder">
+             {{ profile()?.name?.charAt(0)?.toUpperCase() || 'U' }}
+           </div>
+         </ng-template>
+      </div>
+      <div class="info">
+        <h1>{{ profile()?.name }}</h1>
+        <span class="username">@{{ profile()?.username }}</span>
+      </div>
+    </div>
+    
+    <div class="actions">
+       <!-- Share Button triggers Generate Snapshot logic -->
+       <button class="btn btn-primary" (click)="generateSnapshot()">
+          <lucide-icon [img]="icons.Share2" size="18"></lucide-icon>
+          Compartir
+       </button>
+    </div>
+  </header>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+    
+    <!-- Left: Stats or Empty if private -->
+    <section class="portfolio-section glass-card">
+      <div class="section-header">
+        <h2>Portafolio Público</h2>
+        <span class="privacy-badge" *ngIf="!profile()?.privacy_settings?.show_assets">
+           <lucide-icon [img]="icons.Lock" size="14"></lucide-icon> Privado
+        </span>
+      </div>
+
+      <div class="assets-list" *ngIf="assets().length > 0; else emptyOrPrivate">
+        <div class="asset-row" *ngFor="let asset of assets()">
+           <div class="asset-info">
+             <span class="symbol">{{ asset.symbol }}</span>
+             <span class="name">{{ asset.name }}</span>
+           </div>
+           
+           <div class="asset-value">
+             <span class="amount">{{ asset.quantity }} {{ asset.symbol }}</span>
+             <!-- Only show value/price if enabled? For now show current value -->
+             <span class="fiat-value">{{ formatCurrency(asset.value) }}</span>
+           </div>
+        </div>
+      </div>
+
+      <ng-template #emptyOrPrivate>
+        <div class="empty-state">
+           <lucide-icon [img]="icons.Shield" size="48" class="icon-muted"></lucide-icon>
+           <p>La información detallada de este portafolio es privada.</p>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Right: Snapshot Preview Area (Hidden by default, used for generation) -->
+    <div id="snapshot-area" class="snapshot-card glass-card" *ngIf="isGeneratingSnapshot()">
+       <div class="snapshot-header">
+          <div class="user-row">
+            <div class="mini-avatar">
+               {{ profile()?.name?.charAt(0) }}
+            </div>
+            <div>
+              <h3>{{ profile()?.name }}</h3>
+              <span>Zenith Finance</span>
+            </div>
+          </div>
+          <div class="qr-placeholder">
+             <!-- QR Code Component Here -->
+            <div class="qr-box">QR</div>
+          </div>
+       </div>
+       
+       <div class="snapshot-stats">
+          <div class="stat-item">
+             <span class="label">Activos</span>
+             <span class="val">{{ assets().length }}</span>
+          </div>
+          <div class="stat-item">
+             <span class="label">Top Activo</span>
+             <span class="val accent">{{ assets()[0]?.symbol || '-' }}</span>
+          </div>
+       </div>
+
+       <div class="snapshot-footer">
+          zenith.finance/u/{{ profile()?.username }}
+       </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando perfil...</p>
+  </div>
+</ng-template>

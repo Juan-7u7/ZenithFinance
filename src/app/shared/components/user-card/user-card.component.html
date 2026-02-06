@@ -1,0 +1,37 @@
+<div class="user-card glass-card">
+  <div class="user-avatar-wrapper">
+    <img [src]="user().avatar_url || ''" (error)="$event.target['src']=''" *ngIf="user().avatar_url; else placeholder">
+    <ng-template #placeholder>
+      <div class="placeholder">{{ user().name?.charAt(0) || 'U' }}</div>
+    </ng-template>
+    
+    <!-- Rank Badge if provided -->
+    <div class="rank-badge" *ngIf="rank" [class.gold]="rank === 1" [class.silver]="rank === 2" [class.bronze]="rank === 3">
+       #{{ rank }}
+    </div>
+  </div>
+
+  <div class="user-info">
+    <h3>{{ user().name }}</h3>
+    <span class="user-handle" *ngIf="user().username">@{{ user().username }}</span>
+    
+    <!-- ROI Display if available (Leaderboard mode) -->
+    <div class="roi-stat" *ngIf="roi !== undefined">
+        <span class="label">Rendimiento</span>
+        <span class="value" [class.positive]="roi >= 0" [class.negative]="roi < 0">
+            {{ roi > 0 ? '+' : ''}}{{ roi }}%
+        </span>
+    </div>
+  </div>
+
+  <div class="actions">
+      <button class="btn-connect" [class.following]="isFollowing()" (click)="toggleFollow()">
+        <lucide-icon [img]="isFollowing() ? icons.UserCheck : icons.UserPlus" size="16"></lucide-icon>
+        {{ isFollowing() ? 'Siguiendo' : 'Seguir' }}
+      </button>
+      
+      <a [routerLink]="['/u', user().username]" class="btn-icon-v2" title="Ver Perfil" *ngIf="user().username">
+         <lucide-icon [img]="icons.Eye" size="18"></lucide-icon>
+      </a>
+  </div>
+</div>

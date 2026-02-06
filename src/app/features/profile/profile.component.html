@@ -96,6 +96,48 @@
         </form>
       </section>
 
+      <!-- Public Profile Settings -->
+      <section class="settings-section glass-card" *ngIf="fullProfile()">
+        <div class="section-header">
+          <lucide-icon [img]="icons.Globe" size="20" class="primary-icon"></lucide-icon>
+          <h3>Perfil Público</h3>
+        </div>
+
+        <div class="public-link-box">
+           <label>Tu enlace público</label>
+           <div class="link-wrapper">
+              <input readonly [value]="'zenith.finance/u/' + fullProfile()?.username">
+              <a [routerLink]="['/u', fullProfile()?.username]" target="_blank" class="btn-icon">
+                 <lucide-icon [img]="icons.Share2" size="18"></lucide-icon>
+              </a>
+           </div>
+        </div>
+
+        <form [formGroup]="privacyForm" class="privacy-form">
+           <div class="toggle-row">
+              <div class="toggle-info">
+                 <span class="label">Mostrar Activos</span>
+                 <span class="desc">Permite ver qué monedas tienes (sin cantidades si lo deseas)</span>
+              </div>
+              <label class="switch">
+                 <input type="checkbox" formControlName="show_assets" (change)="savePrivacy()">
+                 <span class="slider round"></span>
+              </label>
+           </div>
+           
+           <div class="toggle-row">
+              <div class="toggle-info">
+                 <span class="label">Mostrar Balance Total</span>
+                 <span class="desc">Muestra el valor total en USD de tu portafolio</span>
+              </div>
+              <label class="switch">
+                 <input type="checkbox" formControlName="show_balance" (change)="savePrivacy()">
+                 <span class="slider round"></span>
+              </label>
+           </div>
+        </form>
+      </section>
+
       <!-- Preferences & Security -->
       <section class="settings-section glass-card">
         <div class="section-header">
