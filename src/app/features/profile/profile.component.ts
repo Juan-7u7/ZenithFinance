@@ -87,11 +87,25 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  bannerPalettes = [
+    { name: 'Zenith', colors: ['#4f46e5', '#7c3aed', '#db2777'] },
+    { name: 'Cyberpunk', colors: ['#f472b6', '#a855f7', '#6366f1'] },
+    { name: 'Ocean', colors: ['#06b6d4', '#3b82f6', '#1d4ed8'] },
+    { name: 'Fire', colors: ['#f97316', '#ef4444', '#991b1b'] },
+    { name: 'Forest', colors: ['#10b981', '#059669', '#064e3b'] },
+    { name: 'Slate', colors: ['#475569', '#1e293b', '#0f172a'] }
+  ];
+
   updateColor(index: number, event: Event) {
     const color = (event.target as HTMLInputElement).value;
     const newColors = [...this.bannerColors()];
     newColors[index] = color;
     this.bannerColors.set(newColors);
+    this.saveBannerColors();
+  }
+
+  applyPalette(colors: string[]) {
+    this.bannerColors.set([...colors]);
     this.saveBannerColors();
   }
 

@@ -668,36 +668,83 @@
   .preview-text {
     font-weight: 800;
     color: white;
-    font-size: 1.25rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 2px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     z-index: 1;
+    opacity: 0.8;
+  }
+}
+
+.presets-section {
+  margin-bottom: var(--space-xl);
+  
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .palettes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .palette-btn {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+      .palette-colors {
+        display: flex;
+        gap: 4px;
+        
+        span {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          display: block;
+        }
+      }
+
+      &:hover {
+        transform: translateY(-3px);
+        border-color: var(--primary);
+        background: var(--bg-card);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      &:active { transform: scale(0.95); }
+    }
+  }
+}
+
+.manual-customization {
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
   }
 }
 
 .color-pickers {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-lg);
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
 
   .picker-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+    flex: 1;
+    min-width: 140px;
 
     .picker-input-wrapper {
       display: flex;
@@ -714,21 +761,21 @@
       }
 
       input[type="color"] {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         padding: 0;
         border: none;
-        border-radius: 6px;
+        border-radius: 50%;
         cursor: pointer;
         background: none;
 
         &::-webkit-color-swatch-wrapper { padding: 0; }
-        &::-webkit-color-swatch { border: none; border-radius: 6px; }
+        &::-webkit-color-swatch { border: none; border-radius: 50%; }
       }
 
       .color-value {
         font-family: monospace;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: var(--text-main);
         font-weight: 600;
       }

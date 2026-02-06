@@ -169,12 +169,32 @@
            <div class="preview-text">Vista Previa</div>
         </div>
 
-        <div class="color-pickers">
-           <div class="picker-item" *ngFor="let color of bannerColors(); let i = index">
-              <label>Color {{ i + 1 }}</label>
-              <div class="picker-input-wrapper">
-                 <input type="color" [value]="color" (change)="updateColor(i, $event)">
-                 <span class="color-value">{{ color }}</span>
+        <div class="presets-section">
+           <label>Presets Premium</label>
+           <div class="palettes-grid">
+              <button 
+                *ngFor="let p of bannerPalettes" 
+                class="palette-btn" 
+                (click)="applyPalette(p.colors)"
+                [title]="p.name"
+              >
+                 <div class="palette-colors">
+                    <span [style.background]="p.colors[0]"></span>
+                    <span [style.background]="p.colors[1]"></span>
+                    <span [style.background]="p.colors[2]"></span>
+                 </div>
+              </button>
+           </div>
+        </div>
+
+        <div class="manual-customization">
+           <label>Ajuste Manual</label>
+           <div class="color-pickers">
+              <div class="picker-item" *ngFor="let color of bannerColors(); let i = index">
+                 <div class="picker-input-wrapper">
+                    <input type="color" [value]="color" (change)="updateColor(i, $event)">
+                    <span class="color-value">{{ color }}</span>
+                 </div>
               </div>
            </div>
         </div>

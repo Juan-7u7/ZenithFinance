@@ -61,13 +61,13 @@
   }
 
   .profile-header-main {
-    position: relative; /* Added for stacking */
-    z-index: 10;        /* Ensure it's above the banner */
-    padding: 0 40px;
-    margin-top: -80px; /* More pull-up for larger avatar */
+    position: relative;
+    z-index: 10;
+    padding: 0 48px;
+    margin-top: -60px; /* Reduced pull-up to let it breathe */
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start; /* Align to top of the content area */
     margin-bottom: 32px;
 
     @media (max-width: 640px) {
@@ -81,13 +81,15 @@
 
     .profile-identity-container {
       display: flex;
-      align-items: flex-end;
+      align-items: flex-start; /* Changed from end to start */
       gap: 32px;
+      margin-top: -40px; /* Pull just the identity up */
 
       @media (max-width: 640px) {
           flex-direction: column;
           align-items: center;
           gap: 16px;
+          margin-top: 0;
       }
 
       .avatar-outer {
@@ -95,7 +97,7 @@
         z-index: 5;
         
         .avatar-wrapper {
-          width: 160px; /* Larger on Desktop */
+          width: 160px;
           height: 160px;
           border-radius: 50%;
           border: 8px solid var(--bg-page);
@@ -122,10 +124,6 @@
             justify-content: center;
             font-size: 4rem;
             font-weight: 800;
-            
-            @media (max-width: 640px) {
-              font-size: 3rem;
-            }
           }
         }
 
@@ -143,21 +141,14 @@
            justify-content: center;
            color: white;
            z-index: 6;
-
-           @media (max-width: 640px) {
-             width: 24px;
-             height: 24px;
-             bottom: 8px;
-             right: 8px;
-           }
         }
       }
 
       .info-content {
-        padding-bottom: 16px;
+        padding-top: 50px; /* Push name down so it's fully below banner */
 
         @media (max-width: 640px) {
-            padding-bottom: 0;
+            padding-top: 0;
         }
 
         .name-row {
@@ -165,23 +156,23 @@
           align-items: center;
           gap: 12px;
           margin-bottom: 4px;
-          flex-wrap: nowrap; /* Prevent wrap on desktop */
+          flex-wrap: wrap; /* Allow wrap but controlled */
+          max-width: 600px;
 
           @media (max-width: 640px) {
               justify-content: center;
-              flex-wrap: wrap;
           }
 
           h1 {
-            font-size: 2.8rem; /* Even larger */
+            font-size: 2.5rem;
             font-weight: 800;
             margin: 0;
             color: var(--text-main);
-            letter-spacing: -1.5px;
-            line-height: 1;
+            letter-spacing: -1px;
+            line-height: 1.1;
 
             @media (max-width: 640px) {
-              font-size: 2.22rem;
+              font-size: 2.2rem;
             }
           }
 
@@ -193,10 +184,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-            margin-top: 4px;
+            width: 22px;
+            height: 22px;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            flex-shrink: 0;
           }
         }
 
