@@ -28,7 +28,7 @@
             <h1>{{ profile()?.name }}</h1>
             <lucide-icon [img]="icons.Check" size="18" class="verified-icon" *ngIf="profile()?.privacy_settings?.show_assets"></lucide-icon>
           </div>
-          <span class="username">@{{ profile()?.username }}</span>
+          <p class="username-text">@{{ profile()?.username }}</p>
         </div>
       </div>
 

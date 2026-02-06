@@ -64,10 +64,10 @@
     position: relative;
     z-index: 10;
     padding: 0 48px;
-    margin-top: -60px; /* Reduced pull-up to let it breathe */
+    margin-top: -40px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; /* Align to top of the content area */
+    align-items: flex-start;
     margin-bottom: 32px;
 
     @media (max-width: 640px) {
@@ -75,21 +75,19 @@
         align-items: center;
         text-align: center;
         margin-top: -60px;
-        padding: 0 16px;
-        gap: 20px;
+        padding: 0 24px;
+        gap: 24px;
     }
 
     .profile-identity-container {
       display: flex;
-      align-items: flex-start; /* Changed from end to start */
+      align-items: flex-start;
       gap: 32px;
-      margin-top: -40px; /* Pull just the identity up */
 
       @media (max-width: 640px) {
           flex-direction: column;
           align-items: center;
           gap: 16px;
-          margin-top: 0;
       }
 
       .avatar-outer {
@@ -103,11 +101,12 @@
           border: 8px solid var(--bg-page);
           background: var(--bg-page);
           overflow: hidden;
-          box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+          box-shadow: 0 15px 40px rgba(0,0,0,0.5);
 
           @media (max-width: 640px) {
             width: 120px;
             height: 120px;
+            border-width: 6px;
           }
 
           img, .placeholder {
@@ -145,7 +144,7 @@
       }
 
       .info-content {
-        padding-top: 50px; /* Push name down so it's fully below banner */
+        padding-top: 70px; /* Increased to fully clear the banner overlap on PC */
 
         @media (max-width: 640px) {
             padding-top: 0;
@@ -155,8 +154,8 @@
           display: flex;
           align-items: center;
           gap: 12px;
-          margin-bottom: 4px;
-          flex-wrap: wrap; /* Allow wrap but controlled */
+          margin-bottom: 6px;
+          flex-wrap: wrap;
           max-width: 600px;
 
           @media (max-width: 640px) {
@@ -164,15 +163,15 @@
           }
 
           h1 {
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             font-weight: 800;
             margin: 0;
             color: var(--text-main);
-            letter-spacing: -1px;
+            letter-spacing: -1.2px;
             line-height: 1.1;
 
             @media (max-width: 640px) {
-              font-size: 2.2rem;
+              font-size: 2rem;
             }
           }
 
@@ -191,73 +190,90 @@
           }
         }
 
-        .username {
+        .username-text {
           font-size: 1.1rem;
           color: var(--text-muted);
           font-weight: 500;
+          margin: 0;
         }
       }
     }
 
-    .header-actions {
+    .profile-actions {
       display: flex;
+      align-items: center;
       gap: 12px;
-      padding-bottom: 12px;
+      padding-top: 80px; /* Aligns with the name row area after push-down */
 
-      .btn-share-alt {
+      @media (max-width: 640px) {
+          padding-top: 0;
+      }
+
+      .btn-icon {
         width: 44px;
         height: 44px;
-        border-radius: 12px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--border-color);
-        color: var(--text-muted);
-        cursor: pointer;
+        border-radius: 50%; /* Circle share button */
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-main);
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(8px);
 
-        &:hover {
-          background: rgba(255,255,255,0.1);
-          color: var(--text-main);
+        &:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.1);
           border-color: var(--primary);
+          color: var(--primary);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
+
+        &:active { transform: scale(0.9); }
+        &:disabled { opacity: 0.5; cursor: not-allowed; }
       }
 
-      .btn {
+      .btn-follow {
         height: 44px;
-        padding: 0 24px;
-        border-radius: 12px;
-        font-weight: 600;
+        padding: 0 28px;
+        border-radius: 22px; /* Rounded pill style */
+        font-weight: 700;
+        font-size: 0.95rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         border: none;
+        
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
 
-        &.btn-follow {
-          background: var(--primary);
-          color: white;
-          box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-          
-          &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
-          }
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+          filter: brightness(1.1);
         }
 
-        &.btn-following {
-          background: rgba(255,255,255,0.05);
-          color: var(--text-main);
-          border: 1px solid var(--border-color);
+        &.following {
+          background: rgba(255, 255, 255, 0.08);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: none;
+          backdrop-filter: blur(10px);
 
-          &:hover {
-            background: rgba(10, 10, 10, 0.2);
+          &:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.15);
             border-color: #ef4444;
             color: #ef4444;
           }
         }
+
+        &:active { transform: scale(0.96); }
+        &:disabled { opacity: 0.6; cursor: not-allowed; }
       }
     }
   }
