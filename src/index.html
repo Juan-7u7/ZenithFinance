@@ -9,6 +9,16 @@
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#6366f1">
   <meta name="description" content="Zenith Finance - Tu gestor patrimonial inteligente">
+  <script>
+    (function() {
+      try {
+        const storedTheme = localStorage.getItem('app_theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>
