@@ -104,64 +104,57 @@ export class ProfileViewComponent implements OnInit {
 
   showShareOptions = signal(false);
 
-  toggleShareOptions() {
-    this.showShareOptions.update(v => !v);
-  }
-
-  async generateProfileCard() {
+  async shareProfile() {
     if (this.isGeneratingSnapshot()) return;
     
-    // Ensure we have the element
-    const element = document.getElementById('share-card-template');
-    if (!element) return;
-
     this.isGeneratingSnapshot.set(true);
-    
-    try {
-      const h2c = (await import('html2canvas')).default;
-      const canvas = await h2c(element, {
-        useCORS: true,
-        scale: 2,
-        backgroundColor: null,
-      });
+    const url = window.location.href;
+    const text = `¡Mira mi portafolio en Zenith Finance! 🚀 Sigue mi progreso aquí:`;
+    const title = `Zenith Finance - ${this.profile()?.name}`;
 
-      const url = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `ZenithProfile_${this.profile()?.username}.png`;
-      link.href = url;
-      link.click();
+    try {
+      // 1. Copy link to clipboard immediately (fallback/convenience)
+      await navigator.clipboard.writeText(`${text} ${url}`);
       
-      this.toastService.success('Imagen de perfil generada');
+      // 2. Try to generate the image card
+      const element = document.getElementById('share-card-template');
+      if (element && navigator.share) {
+        const h2c = (await import('html2canvas')).default;
+        const canvas = await h2c(element, { useCORS: true, scale: 2, backgroundColor: null });
+        
+        const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
+        if (blob) {
+          const file = new File([blob], 'ZenithProfile.png', { type: 'image/png' });
+          
+          // Check if file sharing is supported
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: title,
+              text: text,
+              url: url
+            });
+            this.toastService.success('¡Portafolio compartido!');
+            return;
+          }
+        }
+      }
+
+      // If we reach here, we shared via text or just copied the link
+      if (navigator.share) {
+        await navigator.share({ title, text, url });
+        this.toastService.success('¡Enlace compartido!');
+      } else {
+        this.toastService.success('¡Enlace de perfil copiado!');
+      }
+
     } catch (error) {
-      console.error('Error generating image:', error);
-      this.toastService.error('Error al generar la imagen');
+      console.warn('Share interaction failed:', error);
+      this.toastService.info('Enlace copiado al portapapeles');
     } finally {
       this.isGeneratingSnapshot.set(false);
       this.showShareOptions.set(false);
     }
-  }
-
-  async shareProfile() {
-    const url = window.location.href;
-    const text = `¡Mira mi portafolio de inversiones en Zenith Finance! 🚀 Sigue mi progreso aquí:`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Zenith Finance - ${this.profile()?.name}`,
-          text: text,
-          url: url
-        });
-        this.toastService.success('¡Enlace compartido!');
-      } catch (error) {
-        console.warn('Share cancelled or failed:', error);
-      }
-    } else {
-      // Fallback: Copy to clipboard
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      this.toastService.info('Enlace copiado al portapapeles');
-    }
-    this.showShareOptions.set(false);
   }
 
   formatCurrency(val: number): string {

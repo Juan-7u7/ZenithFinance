@@ -33,25 +33,14 @@
       </div>
 
       <div class="profile-actions">
-        <!-- Share Menu -->
-        <div class="share-actions-wrapper">
-          <button class="btn-icon" (click)="toggleShareOptions()" title="Compartir Perfil">
+        <!-- Smart Share Button -->
+        <button class="btn-icon" (click)="shareProfile()" [disabled]="isGeneratingSnapshot()" title="Compartir Perfil">
+          @if (isGeneratingSnapshot()) {
+            <span class="loading-spinner small"></span>
+          } @else {
             <lucide-icon [img]="icons.Share2" size="20"></lucide-icon>
-          </button>
-          
-          @if (showShareOptions()) {
-            <div class="share-dropdown glass-card">
-              <button class="share-opt" (click)="shareProfile()">
-                <lucide-icon [img]="icons.ExternalLink" size="16"></lucide-icon>
-                <span>Compartir Enlace</span>
-              </button>
-              <button class="share-opt" (click)="generateProfileCard()">
-                <lucide-icon [img]="icons.Download" size="16"></lucide-icon>
-                <span>Descargar Tarjeta</span>
-              </button>
-            </div>
           }
-        </div>
+        </button>
 
         <button 
           class="btn-follow" 
