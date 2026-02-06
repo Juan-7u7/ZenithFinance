@@ -1,16 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { LucideAngularModule, ArrowLeft, Mail, CheckCircle } from 'lucide-angular';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.scss'
 })
@@ -19,15 +20,27 @@ export class ForgotPasswordComponent {
   isLoading = signal(false);
   isSubmitted = signal(false);
   errorMessage = signal<string | null>(null);
+  isAuthenticated = signal(false);
   readonly icons = { ArrowLeft, Mail, CheckCircle };
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private location: Location
   ) {
+    this.isAuthenticated.set(this.authService.isAuthenticated());
     this.forgotForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: [this.authService.getCurrentUser()?.email || '', [Validators.required, Validators.email]]
     });
+  }
+
+  goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      // Fallback if no history
+      this.isAuthenticated() ? window.location.href = '/dashboard' : window.location.href = '/auth/login';
+    }
   }
 
   onSubmit(): void {

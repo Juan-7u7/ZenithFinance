@@ -27,7 +27,11 @@ export class LanguageService {
         confirm_password: 'Confirmar Contraseña',
         error_login: 'Error al iniciar sesión',
         error_register: 'Error al registrarse',
-        success_reset: 'Correo enviado con éxito'
+        success_reset: 'Correo enviado con éxito',
+        forgot_password_title: 'Recuperar Contraseña',
+        forgot_password_desc: 'Te enviaremos un enlace para reestablecer tu acceso',
+        forgot_password_success: '¡Correo Enviado!',
+        forgot_password_success_desc: 'Hemos enviado instrucciones a <strong>{email}</strong> para que puedas recuperar tu cuenta.'
       },
       dashboard: {
         welcome: 'Hola',
@@ -106,7 +110,11 @@ export class LanguageService {
         confirm_password: 'Confirm Password',
         error_login: 'Login error',
         error_register: 'Sign up error',
-        success_reset: 'Email sent'
+        success_reset: 'Email sent',
+        forgot_password_title: 'Recover Password',
+        forgot_password_desc: "We'll send you a link to reset your access",
+        forgot_password_success: 'Email Sent!',
+        forgot_password_success_desc: 'We have sent instructions to <strong>{email}</strong> so you can recover your account.'
       },
       dashboard: {
         welcome: 'Hello',
@@ -179,7 +187,7 @@ export class LanguageService {
     document.documentElement.lang = lang;
   }
 
-  public translate(key: string): string {
+  public translate(key: string, params?: Record<string, string>): string {
     const keys = key.split('.');
     let value = this.translations[this.currentLang()];
     
@@ -189,6 +197,12 @@ export class LanguageService {
       } else {
         return key;
       }
+    }
+
+    if (params) {
+      Object.keys(params).forEach(param => {
+        value = value.replace(new RegExp(`{${param}}`, 'g'), params[param]);
+      });
     }
     
     return value;
