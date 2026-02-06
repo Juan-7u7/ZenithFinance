@@ -1,7 +1,7 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
@@ -14,6 +14,7 @@ import { EditAssetModalComponent } from './components/edit-asset-modal/edit-asse
 import { ConfirmDeleteModalComponent } from './components/confirm-delete-modal/confirm-delete-modal.component';
 import { TransactionHistoryComponent } from './components/transaction-history/transaction-history.component';
 import { PortfolioDistributionComponent } from './components/portfolio-distribution/portfolio-distribution.component';
+import { NotificationPanelComponent } from './components/notification-panel/notification-panel.component';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { ToastService } from '../../core/services/toast.service';
 import { PortfolioAsset } from '../../core/models/asset.model';
@@ -23,13 +24,13 @@ import { NotificationService } from '../../core/services/notification.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, TranslatePipe],
+  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, NotificationPanelComponent, TranslatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X };
   currentDate = new Date();
   
   private authService = inject(AuthService);
@@ -40,6 +41,7 @@ export class DashboardComponent implements OnInit {
   private toastService = inject(ToastService);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
+  private cdr = inject(ChangeDetectorRef);
 
   currentUser = toSignal(this.authService.currentUser$);
   currentTheme = this.themeService.theme;
@@ -66,8 +68,11 @@ export class DashboardComponent implements OnInit {
 
   // --- Notification Logic ---
   toggleNotifications(event: Event): void {
+      console.log('Toggle notifications clicked', this.isNotificationPanelOpen());
       event.stopPropagation();
       this.isNotificationPanelOpen.update(v => !v);
+      this.cdr.detectChanges();
+      console.log('New state:', this.isNotificationPanelOpen());
   }
 
   closeNotifications(): void {

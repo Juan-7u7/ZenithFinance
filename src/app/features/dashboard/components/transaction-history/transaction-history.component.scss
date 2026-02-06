@@ -62,23 +62,45 @@
 .tx-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px; /* Prevent overlap */
   
   .asset-name {
     font-weight: 600;
     color: var(--text-main);
     font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 150px; /* Allow shrinking */
   }
   
   .tx-amount {
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--success);
+    white-space: nowrap;
+    flex-shrink: 0;
     
     &.negative {
       color: var(--text-main); 
     }
   }
 }
+
+/* Mobile Optimizations */
+@media (max-width: 480px) {
+    .history-card { padding: 16px; h3 { font-size: 1rem; } }
+    
+    .icon-wrapper { width: 32px; height: 32px; svg { width: 16px; height: 16px; } }
+    
+    .tx-header {
+        .asset-name { font-size: 0.85rem; max-width: 120px; }
+        .tx-amount { font-size: 0.85rem; }
+    }
+}
+
 
 .tx-meta {
   display: flex;

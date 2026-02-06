@@ -580,99 +580,134 @@
   min-height: 200px;
 }
 
-/* Notification Styles */
-.notification-wrapper {
-  position: relative;
-  
-  .notification-badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: var(--error);
-      color: white;
-      font-size: 0.7rem;
-      font-weight: bold;
-      min-width: 18px;
-      height: 18px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 4px;
-      border: 2px solid var(--bg-card);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+/* Notification Overlay System */
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center; /* Centered by default for mobile simplicity, or adjust */
+  pointer-events: none; /* Let clicks pass through empty spaces if needed, but backdrop handles it */
+
+  .backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent; /* Invisible backdrop to catch clicks */
+    pointer-events: auto;
+    cursor: default;
   }
-  
-  .notification-dropdown {
-      position: absolute;
-      top: 50px;
-      right: -10px;
-      width: 320px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-xl);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-      z-index: 10000;
-      overflow: hidden;
-      backdrop-filter: blur(20px);
-      
-      .dropdown-header {
-          padding: 16px;
-          border-bottom: 1px solid var(--border-color);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+
+  .panel-container {
+    position: absolute;
+    top: 90px; /* Match header height + spacing */
+    right: 40px; /* Align with dashboard padding */
+    pointer-events: auto;
+    z-index: 10000;
+  }
+
+  @media (max-width: 768px) {
+    .panel-container {
+      top: 50%;
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 360px;
+    }
+  }
+}
+
+/* Global Mobile Fixes for Dashboard */
+@media (max-width: 768px) {
+  .dashboard-container {
+      padding: var(--space-md);
+  }
+
+  .dashboard-header {
+      padding: 20px;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+
+      .user-welcome {
+          width: 100%;
+          justify-content: center;
+          text-align: center;
+          flex-direction: column;
+          gap: 12px;
           
-          h3 { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
-          .btn-link { font-size: 0.8rem; color: var(--primary); background: none; border: none; cursor: pointer; &:hover { text-decoration: underline; } }
-      }
-      
-      .notification-list {
-          max-height: 350px;
-          overflow-y: auto;
+          .avatar-wrapper {
+              margin: 0 auto;
+              .avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+              .status-indicator { width: 16px; height: 16px; border-width: 3px; }
+          }
           
-          .empty-notif { padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
-          
-          .notification-item {
-              display: flex;
-              gap: 12px;
-              padding: 16px;
-              border-bottom: 1px solid var(--border-color);
-              cursor: pointer;
-              transition: background 0.2s;
-              position: relative;
-              
-              &:hover { background: var(--bg-card-hover); }
-              &.unread { background: rgba(99, 102, 241, 0.05); }
-              
-              .notif-icon-wrapper {
-                  width: 36px;
-                  height: 36px;
-                  border-radius: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  flex-shrink: 0;
-                  
-                  &.NEW_FOLLOWER { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-                  &.SYSTEM { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
-              }
-              
-              .notif-content {
-                  flex: 1;
-                  .notif-text { font-size: 0.85rem; margin: 0 0 4px; line-height: 1.4; color: var(--text-main); }
-                  .highlight { font-weight: 700; color: var(--text-main); }
-                  .notif-time { font-size: 0.75rem; color: var(--text-muted); }
-              }
-              
-              .unread-dot {
-                  width: 8px;
-                  height: 8px;
-                  background: var(--primary);
-                  border-radius: 50%;
-                  align-self: center;
+          .user-info {
+              h1 { font-size: 1.3rem; margin-bottom: 4px; }
+              .date-header { 
+                  justify-content: center; 
+                  flex-wrap: wrap;
+                  gap: 8px;
               }
           }
       }
+
+      .actions {
+          width: 100%;
+          justify-content: flex-start; /* Start for scrolling */
+          gap: 12px;
+          overflow-x: auto; /* Allow scrolling */
+          padding: 4px 0 12px 0; /* Space for scrollbar/touch */
+          -webkit-overflow-scrolling: touch;
+          
+          /* Hide scrollbar but keep functionality */
+          &::-webkit-scrollbar { display: none; }
+          scrollbar-width: none;
+          
+          /* Center content if it fits, otherwise scroll */
+          @media (min-width: 380px) {
+             justify-content: center;
+          }
+
+          .btn-icon-v2 {
+              width: 48px; /* Larger touch targets */
+              height: 48px;
+              flex-shrink: 0; /* Prevent shrinking */
+              background: rgba(255,255,255,0.05); /* Subtle background */
+              border-color: rgba(255,255,255,0.05);
+              
+              &:active { transform: scale(0.95); }
+              
+              /* Hide specific icons on mobile */
+              &.desktop-only {
+                  display: none;
+              }
+          }
+          
+          .notification-wrapper {
+              flex-shrink: 0;
+          }
+      }
+  }
+
+  /* Assets Grid Responsive */
+  .assets-grid {
+      grid-template-columns: 1fr !important; /* Force single column */
+  }
+
+  /* Adjust section headers */
+  .section-header {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      
+      h2 { font-size: 1.25rem; }
+      .btn { padding: 8px 12px; font-size: 0.85rem; }
   }
 }

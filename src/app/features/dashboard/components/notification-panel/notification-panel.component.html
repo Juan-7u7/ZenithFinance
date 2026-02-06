@@ -1,0 +1,59 @@
+<div class="notification-panel glass-card slide-in-top">
+  <div class="panel-header">
+    <div class="header-title">
+      <h3>Notificaciones</h3>
+      <span class="badge" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-text" (click)="markAllRead($event)" *ngIf="notifications.length > 0">
+        Marcar todo leido
+      </button>
+      <button class="btn-icon-close" (click)="onClose()">
+        <lucide-icon [img]="icons.X" size="18"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-content">
+    @if (notifications.length === 0) {
+      <div class="empty-state">
+        <div class="icon-circle">
+          <lucide-icon [img]="icons.Bell" size="24"></lucide-icon>
+        </div>
+        <p>No tienes notificaciones nuevas</p>
+      </div>
+    } @else {
+      <div class="notification-list">
+        @for (notif of notifications; track notif.id) {
+          <div class="notification-item" [class.unread]="!notif.is_read" (click)="markRead(notif.id, $event)">
+            <div class="notif-avatar">
+              @if (notif.type === 'NEW_FOLLOWER') {
+                <div class="icon-badge follower">
+                  <lucide-icon [img]="icons.UserPlus" size="16"></lucide-icon>
+                </div>
+              } @else {
+                <div class="icon-badge system">
+                  <lucide-icon [img]="icons.Bell" size="16"></lucide-icon>
+                </div>
+              }
+            </div>
+            
+            <div class="notif-body">
+              <p class="message" *ngIf="notif.type === 'NEW_FOLLOWER'">
+                <span class="highlight">{{ notif.sender?.name || 'Usuario' }}</span> te ha comenzado a seguir.
+              </p>
+              <p class="message" *ngIf="notif.type !== 'NEW_FOLLOWER'">
+                Nueva notificación del sistema.
+              </p>
+              <span class="timestamp">{{ notif.created_at | date:'shortTime' }}</span>
+            </div>
+
+            @if (!notif.is_read) {
+              <div class="unread-dot"></div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

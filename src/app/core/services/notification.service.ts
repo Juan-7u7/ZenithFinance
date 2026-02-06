@@ -40,13 +40,7 @@ export class NotificationService {
       from(
           this.supabase.getClient()
             .from('notifications')
-            .select(`
-                *,
-                sender:sender_id (
-                    name,
-                    avatar_url
-                )
-            `)
+            .select('*, sender:sender_id(name, avatar_url)')
             .eq('recipient_id', myId)
             .order('created_at', { ascending: false })
             .limit(20)

@@ -32,46 +32,15 @@
           <lucide-icon [img]="icons.Bell" class="icon-bell"></lucide-icon>
           <span class="notification-badge" *ngIf="unreadCount() > 0">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
         </button>
-
-        <!-- Notification Dropdown -->
-        <div class="notification-dropdown glass-card fade-in" *ngIf="isNotificationPanelOpen()" (click)="$event.stopPropagation()">
-            <div class="dropdown-header">
-                <h3>Notificaciones</h3>
-                <button class="btn-link" (click)="markAllRead($event)" *ngIf="unreadCount() > 0">Marcar leídas</button>
-            </div>
-            
-            <div class="notification-list">
-                <div class="empty-notif" *ngIf="notifications().length === 0">
-                    <p>No tienes nuevas notificaciones</p>
-                </div>
-
-                <div class="notification-item" *ngFor="let notif of notifications()" [class.unread]="!notif.is_read" (click)="markRead(notif.id, $event)">
-                    <div class="notif-icon-wrapper" [ngClass]="notif.type">
-                        <lucide-icon [img]="icons.UserPlus" size="16" *ngIf="notif.type === 'NEW_FOLLOWER'"></lucide-icon>
-                        <lucide-icon [img]="icons.Bell" size="16" *ngIf="notif.type !== 'NEW_FOLLOWER'"></lucide-icon>
-                    </div>
-                    <div class="notif-content">
-                        <p class="notif-text" *ngIf="notif.type === 'NEW_FOLLOWER'">
-                            <span class="highlight">{{ notif.sender?.name || 'Alguien' }}</span> te ha comenzado a seguir.
-                        </p>
-                        <p class="notif-text" *ngIf="notif.type !== 'NEW_FOLLOWER'">
-                            Nueva alerta del sistema.
-                        </p>
-                        <span class="notif-time">{{ notif.created_at | date:'shortTime' }}</span>
-                    </div>
-                    <div class="unread-dot" *ngIf="!notif.is_read"></div>
-                </div>
-            </div>
-        </div>
       </div>
-      <button class="btn-icon-v2" (click)="goToProfile()" [title]="'profile.title' | translate">
+      <button class="btn-icon-v2 desktop-only" (click)="goToProfile()" [title]="'profile.title' | translate">
         <lucide-icon [img]="icons.Settings" class="icon-settings"></lucide-icon>
       </button>
-      <button class="btn-icon-v2 lang-btn" (click)="toggleLanguage()" [title]="'common.language' | translate">
+      <button class="btn-icon-v2 lang-btn desktop-only" (click)="toggleLanguage()" [title]="'common.language' | translate">
         <lucide-icon [img]="icons.Languages" class="icon-lang"></lucide-icon>
         <span class="lang-code">{{ currentLang() | uppercase }}</span>
       </button>
-      <button class="btn-icon-v2" (click)="toggleTheme()" [title]="'common.theme' | translate">
+      <button class="btn-icon-v2 desktop-only" (click)="toggleTheme()" [title]="'common.theme' | translate">
         <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" class="icon-theme"></lucide-icon>
       </button>
       <button class="btn-icon-v2" (click)="logout()" [title]="'dashboard.logout' | translate">
@@ -236,4 +205,15 @@
       }
     </div>
   }
+
+  <!-- Notification Panel -->
+  <div class="notification-overlay" *ngIf="isNotificationPanelOpen()">
+    <div class="backdrop" (click)="closeNotifications()"></div>
+    <div class="panel-container">
+      <app-notification-panel 
+        [notifications]="notifications()" 
+        (close)="closeNotifications()">
+      </app-notification-panel>
+    </div>
+  </div>
 </div>
