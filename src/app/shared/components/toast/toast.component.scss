@@ -5,37 +5,36 @@
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 10px;
   pointer-events: none;
 
   @media (max-width: 640px) {
     top: auto;
-    bottom: var(--space-lg);
-    left: var(--space-md);
-    right: var(--space-md);
+    bottom: var(--space-xl);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
     align-items: center;
   }
 }
 
 .toast {
   pointer-events: auto;
-  min-width: 300px;
+  min-width: 240px;
   max-width: 420px;
-
-  @media (max-width: 640px) {
-    width: 100%;
-    min-width: 0;
-  }
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  background: var(--bg-card);
+  padding: 10px 16px;
+  border-radius: 100px;
+  background: rgba(var(--bg-card-rgb), 0.9);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  gap: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: toastFadeIn 0.3s ease-out;
 
   .icon {
     display: flex;
@@ -84,4 +83,9 @@
   &.info {
     .icon { color: var(--primary); }
   }
+}
+
+@keyframes toastFadeIn {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }

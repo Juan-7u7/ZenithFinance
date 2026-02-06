@@ -28,29 +28,34 @@
 
 .time-filters {
     display: flex;
-    padding: 4px;
-    border-radius: var(--radius-full);
-    background: var(--bg-card-hover);
+    padding: 3px;
+    border-radius: 100px;
+    background: rgba(var(--bg-card-rgb), 0.5);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(8px);
     
     .filter-btn {
-        padding: 8px 16px;
-        border-radius: var(--radius-full);
+        padding: 6px 16px;
+        border-radius: 100px;
         border: none;
         background: transparent;
         color: var(--text-muted);
-        font-weight: 600;
-        font-size: 0.9rem;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         
         &.active {
-            background: var(--bg-card);
-            color: var(--primary);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
         }
         
         &:hover:not(.active) {
             color: var(--text-main);
+            background: rgba(255, 255, 255, 0.1);
         }
     }
 }

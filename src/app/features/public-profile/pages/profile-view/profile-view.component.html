@@ -34,7 +34,7 @@
 
       <div class="profile-actions">
         <!-- Smart Share Button -->
-        <button class="btn-icon" (click)="shareProfile()" [disabled]="isGeneratingSnapshot()" title="Compartir Perfil">
+        <button class="btn-icon" (click)="shareProfile()" [disabled]="isGeneratingSnapshot()" data-tooltip="Compartir Perfil">
           @if (isGeneratingSnapshot()) {
             <span class="loading-spinner small"></span>
           } @else {

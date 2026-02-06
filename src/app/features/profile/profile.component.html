@@ -180,7 +180,7 @@
                 *ngFor="let p of bannerPalettes" 
                 class="palette-btn" 
                 (click)="applyPalette(p.colors)"
-                [title]="p.name"
+                [attr.data-tooltip]="p.name"
               >
                  <div class="palette-colors">
                     <span [style.background]="p.colors[0]"></span>
@@ -194,7 +194,7 @@
         <div class="manual-customization">
            <label>Ajuste Manual</label>
            <div class="color-pickers">
-              <div class="picker-item" *ngFor="let color of bannerColors(); let i = index">
+              <div class="picker-item" *ngFor="let color of bannerColors(); let i = index" [attr.data-label]="'Color ' + (i + 1)">
                  <div class="picker-input-wrapper">
                     <input type="color" [value]="color" (change)="updateColor(i, $event)">
                     <span class="color-value">{{ color }}</span>
