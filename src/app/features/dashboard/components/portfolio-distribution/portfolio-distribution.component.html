@@ -1,6 +1,6 @@
 <div class="chart-wrapper">
   <div class="header-row">
-    <h3>Distribución</h3>
+    <h3>{{ 'dashboard.distribution' | translate }}</h3>
   </div>
   
   <div class="content-body">
@@ -17,7 +17,7 @@
         </canvas>
       } @else {
         <div class="empty-chart">
-          <p>Sin activos</p>
+          <p>{{ 'common.no_data' | translate }}</p>
         </div>
       }
     </div>

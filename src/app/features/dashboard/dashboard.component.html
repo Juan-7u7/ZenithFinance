@@ -8,7 +8,7 @@
           <span class="status-indicator"></span>
         </div>
         <div class="user-info">
-          <h1>Hola, {{ user.name }}</h1>
+          <h1>{{ 'dashboard.welcome' | translate }}, {{ user.name }}</h1>
           <div class="date-header">
             <span class="day-tag">{{ currentDate | date:'EEEE' }}</span>
             <span class="date">{{ currentDate | date:'mediumDate' }}</span>
@@ -18,10 +18,14 @@
     </div>
     
     <div class="actions">
-      <button class="btn-icon" (click)="toggleTheme()" [attr.aria-label]="'Cambiar tema'">
+      <button class="btn-icon" (click)="toggleLanguage()" [title]="'common.language' | translate">
+        <lucide-icon [img]="icons.Languages" class="icon-lang"></lucide-icon>
+        <span class="lang-code">{{ currentLang() | uppercase }}</span>
+      </button>
+      <button class="btn-icon" (click)="toggleTheme()" [title]="'common.theme' | translate">
         <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" class="icon-theme"></lucide-icon>
       </button>
-      <button class="btn-icon" (click)="logout()" title="Cerrar sesión">
+      <button class="btn-icon" (click)="logout()" [title]="'dashboard.logout' | translate">
         <lucide-icon [img]="icons.LogOut"></lucide-icon>
       </button>
     </div>
@@ -44,7 +48,7 @@
       <section class="summary-section">
         <div class="card summary-card glass-card primary-gradient shadow-2xl">
           <div class="card-header">
-            <h3>Balance Total</h3>
+            <h3>{{ 'dashboard.total_balance' | translate }}</h3>
             <lucide-icon [img]="icons.Wallet" size="20" class="card-icon"></lucide-icon>
           </div>
           <div class="balance-value">{{ formatCurrency(dashboard().totalValue) }}</div>
@@ -64,9 +68,9 @@
               <lucide-icon [img]="icons.TrendingUp" size="24"></lucide-icon>
             </div>
             <div class="stat-info">
-              <span class="label">Inversión Total</span>
+              <span class="label">{{ 'dashboard.total_investment' | translate }}</span>
               <span class="value">{{ formatCurrency(dashboard().totalInvestment) }}</span>
-              <p class="sub-label">Basado en {{ dashboard().assets.length }} activos</p>
+              <p class="sub-label">{{ 'dashboard.based_on' | translate }} {{ dashboard().assets.length }} {{ 'dashboard.assets' | translate }}</p>
             </div>
           </div>
           <div class="stat-group alternate">
@@ -74,8 +78,8 @@
                <lucide-icon [img]="icons.Briefcase" size="24"></lucide-icon>
              </div>
              <div class="stat-info">
-               <span class="label">Diversificación</span>
-               <span class="value">{{ dashboard().assets.length }} Activos</span>
+               <span class="label">{{ 'dashboard.diversification' | translate }}</span>
+               <span class="value">{{ dashboard().assets.length }} {{ 'dashboard.assets' | translate }}</span>
              </div>
           </div>
         </div>
@@ -86,9 +90,9 @@
         <!-- Assets Grid -->
         <section class="assets-section">
           <div class="section-header">
-            <h2>Mis Activos</h2>
+            <h2>{{ 'dashboard.my_assets' | translate }}</h2>
             <button class="btn btn-sm btn-outline" (click)="openAddModal()">
-              <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> Agregar Activo
+              <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> {{ 'dashboard.add_asset' | translate }}
             </button>
           </div>
 
@@ -101,8 +105,8 @@
 
           @if (dashboard().assets.length === 0) {
             <div class="empty-state glass-card">
-              <p>No tienes activos en tu portafolio aún.</p>
-              <button class="btn btn-primary" (click)="openAddModal()">Comenzar a invertir</button>
+              <p>{{ 'dashboard.empty_portfolio' | translate }}</p>
+              <button class="btn btn-primary" (click)="openAddModal()">{{ 'dashboard.start_investing' | translate }}</button>
             </div>
           } @else {
             <div class="assets-grid">
@@ -127,11 +131,11 @@
                   
                   <div class="asset-body">
                     <div class="asset-metric">
-                      <span>Cantidad</span>
+                      <span>{{ 'dashboard.quantity' | translate }}</span>
                       <span>{{ asset.quantity }}</span>
                     </div>
                     <div class="asset-metric">
-                      <span>Valor</span>
+                      <span>{{ 'dashboard.value' | translate }}</span>
                       <span>{{ formatCurrency(asset.totalValue) }}</span>
                     </div>
                     <div class="asset-metric highlight" [class.positive]="asset.profitLoss >= 0" [class.negative]="asset.profitLoss < 0">
@@ -141,10 +145,10 @@
                   </div>
                   
                   <div class="asset-actions">
-                    <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" title="Editar">
+                    <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" [title]="'common.edit' | translate">
                       <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
                     </button>
-                    <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" title="Eliminar">
+                    <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" [title]="'common.delete' | translate">
                       <lucide-icon [img]="icons.Trash2" size="16"></lucide-icon>
                     </button>
                   </div>

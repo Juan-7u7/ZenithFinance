@@ -6,11 +6,12 @@ import { LucideAngularModule, Eye, EyeOff, Mail } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule, TranslatePipe],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -72,9 +73,9 @@ export class LoginComponent {
     const control = this.loginForm.get(field);
     if (!control || !control.touched) return '';
 
-    if (control.hasError('required')) return 'Este campo es requerido';
-    if (control.hasError('email')) return 'Email inválido';
-    if (control.hasError('minlength')) return 'Mínimo 6 caracteres';
+    if (control.hasError('required')) return 'common.required';
+    if (control.hasError('email')) return 'common.invalid_email';
+    if (control.hasError('minlength')) return 'common.min_length';
 
     return '';
   }

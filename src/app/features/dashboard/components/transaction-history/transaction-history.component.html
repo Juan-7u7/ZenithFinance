@@ -1,10 +1,10 @@
 <div class="history-card glass-card">
-  <h3>Historial de Movimientos</h3>
+  <h3>{{ 'dashboard.history_title' | translate }}</h3>
   
   <div class="history-list custom-scrollbar">
     @if (transactions().length === 0) {
       <div class="empty-history">
-        <p>No hay movimientos recientes.</p>
+        <p>{{ 'dashboard.no_history' | translate }}</p>
       </div>
     } @else {
       @for (tx of transactions(); track tx.id || $index) {
@@ -20,13 +20,13 @@
           
           <div class="tx-details">
             <div class="tx-header">
-              <span class="asset-name">{{ tx.asset_name || tx.symbol || 'Activo' }}</span>
+              <span class="asset-name">{{ tx.asset_name || tx.symbol || ('dashboard.assets' | translate) }}</span>
               <span class="tx-amount" [class.negative]="tx.type === 'sell' || tx.type === 'delete'">
                 {{ tx.type === 'sell' || tx.type === 'delete' ? '-' : '+' }}{{ tx.amount }} {{ tx.symbol | uppercase }}
               </span>
             </div>
             <div class="tx-meta">
-              <span class="tx-type">{{ getTypeLabel(tx.type) }}</span>
+              <span class="tx-type">{{ getTypeLabel(tx.type) | translate }}</span>
               <span class="dot">•</span>
               <span class="tx-date">{{ tx.date | date:'mediumDate' }}</span>
             </div>

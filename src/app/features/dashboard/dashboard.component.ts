@@ -1,8 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
+import { LanguageService } from '../../core/services/language.service';
+import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardStateService } from './dashboard-state.service';
 import { Router } from '@angular/router';
@@ -19,17 +21,18 @@ import { PortfolioAsset } from '../../core/models/asset.model';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent],
+  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, TranslatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages };
   currentDate = new Date();
   
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
+  private languageService = inject(LanguageService);
   private dashboardState = inject(DashboardStateService);
   private portfolioService = inject(PortfolioService);
   private toastService = inject(ToastService);
@@ -37,6 +40,7 @@ export class DashboardComponent implements OnInit {
 
   currentUser = toSignal(this.authService.currentUser$);
   currentTheme = this.themeService.theme;
+  currentLang = this.languageService.currentLang;
   
   // Dashboard State Signal with loaded portfolio data + market prices
   dashboard = this.dashboardState.state;
@@ -55,7 +59,8 @@ export class DashboardComponent implements OnInit {
   openAddModal(): void { this.isAddModalOpen.set(true); }
   closeAddModal(): void { this.isAddModalOpen.set(false); }
   onAssetAdded(asset: any): void {
-    this.toastService.success(`Activo ${asset.symbol} añadido`);
+    const msg = this.languageService.translate('common.success') + ': ' + asset.symbol;
+    this.toastService.success(msg);
     this.closeAddModal();
   }
 
@@ -67,7 +72,7 @@ export class DashboardComponent implements OnInit {
   closeEditModal(): void { this.editingAsset.set(null); }
   
   onAssetUpdated(): void {
-    this.toastService.success('Activo actualizado correctamente');
+    this.toastService.success(this.languageService.translate('common.success'));
     this.closeEditModal();
   }
 
@@ -92,13 +97,13 @@ export class DashboardComponent implements OnInit {
 
     this.portfolioService.removeAsset(asset.id, assetDetails).subscribe({
       next: () => {
-        this.toastService.info(`Activo ${asset.symbol} eliminado`);
+        this.toastService.info(this.languageService.translate('common.success') + ': ' + asset.symbol);
         this.isDeleting.set(false);
         this.closeDeleteModal();
       },
       error: (err) => {
         console.error(err);
-        this.toastService.error('Error al eliminar');
+        this.toastService.error(this.languageService.translate('common.error'));
         this.isDeleting.set(false);
       }
     });
@@ -108,6 +113,11 @@ export class DashboardComponent implements OnInit {
     this.themeService.toggleTheme();
   }
 
+  toggleLanguage(): void {
+    const nextLang = this.currentLang() === 'es' ? 'en' : 'es';
+    this.languageService.setLanguage(nextLang);
+  }
+
   logout(): void {
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/auth/login']);
@@ -115,7 +125,8 @@ export class DashboardComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
-    return new Intl.NumberFormat('es-MX', {
+    const locale = this.currentLang() === 'es' ? 'es-MX' : 'en-US';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2

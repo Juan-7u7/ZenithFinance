@@ -6,11 +6,12 @@ import { LucideAngularModule, Eye, EyeOff, Mail } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { TranslatePipe } from '../../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LucideAngularModule, TranslatePipe],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
@@ -88,18 +89,16 @@ export class RegisterComponent {
     const control = this.registerForm.get(field);
     if (!control || !control.touched) return '';
 
-    if (control.hasError('required')) return 'Este campo es requerido';
-    if (control.hasError('email')) return 'Email inválido';
-    if (control.hasError('minlength')) {
-      const minLength = control.errors?.['minlength'].requiredLength;
-      return `Mínimo ${minLength} caracteres`;
-    }
+    if (control.hasError('required')) return 'common.required';
+    if (control.hasError('email')) return 'common.invalid_email';
+    if (control.hasError('minlength')) return 'common.min_length';
+    
     if (control.hasError('pattern') && field === 'password') {
-      return 'Debe tener mayús., minús., número y símbolo (@$!%*?&)';
+      return 'common.password_pattern';
     }
 
     if (field === 'confirmPassword' && this.registerForm.hasError('passwordMismatch')) {
-      return 'Las contraseñas no coinciden';
+      return 'common.password_mismatch';
     }
 
     return '';

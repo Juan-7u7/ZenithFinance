@@ -4,16 +4,20 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartType, ChartOptions } from 'chart.js';
 import { PortfolioAsset } from '../../../../core/models/asset.model';
 import { registerChartComponents } from '../../../../core/config/chart.config';
+import { LanguageService } from '../../../../core/services/language.service';
+import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-portfolio-distribution',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, TranslatePipe],
   templateUrl: './portfolio-distribution.component.html',
   styleUrl: './portfolio-distribution.component.scss'
 })
 export class PortfolioDistributionComponent implements OnChanges {
   @Input() assets: PortfolioAsset[] = [];
+  private languageService = inject(LanguageService);
 
   constructor() {
     registerChartComponents();
@@ -69,7 +73,8 @@ export class PortfolioDistributionComponent implements OnChanges {
             const value = context.raw as number;
             const total = (context.chart as any)._metasets[context.datasetIndex].total as number;
             const percentage = ((value / total) * 100).toFixed(1) + '%';
-            return ` ${context.label}: ${value.toLocaleString('en-US', {style: 'currency', currency: 'USD'})} (${percentage})`;
+            const locale = this.languageService.currentLang() === 'es' ? 'es-MX' : 'en-US';
+            return ` ${context.label}: ${value.toLocaleString(locale, {style: 'currency', currency: 'USD'})} (${percentage})`;
           }
         }
       }
@@ -108,7 +113,7 @@ export class PortfolioDistributionComponent implements OnChanges {
 
     if (otherAssets.length > 0) {
       const otherValue = otherAssets.reduce((sum, a) => sum + a.totalValue, 0);
-      labels.push('OTROS');
+      labels.push(this.languageService.translate('common.others'));
       data.push(otherValue);
     }
 
