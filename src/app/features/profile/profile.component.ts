@@ -2,9 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { LucideAngularModule, User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check, Palette } from 'lucide-angular';
+import { LucideAngularModule, User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check, Palette, ExternalLink, Download } from 'lucide-angular';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService, UserProfile } from '../../core/services/user.service';
+import { CommunityService } from '../../core/services/community.service';
 import { LanguageService } from '../../core/services/language.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
@@ -28,13 +29,16 @@ export class ProfileComponent implements OnInit {
   private toastService = inject(ToastService);
   private userService = inject(UserService);
   private router = inject(Router);
+  private communityService = inject(CommunityService);
   
   // Icons
-  readonly icons = { User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check, Palette };
+  readonly icons = { User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check, Palette, ExternalLink, Download };
 
   // UI State
   isLoading = signal(false);
   isSaving = signal(false);
+  isGeneratingSnapshot = signal(false);
+  followerCount = signal(0);
   
   // Data Signals
   currentUser = toSignal(this.authService.currentUser$);
@@ -82,6 +86,7 @@ export class ProfileComponent implements OnInit {
               if (myProfile.banner_colors && myProfile.banner_colors.length === 3) {
                   this.bannerColors.set(myProfile.banner_colors);
               }
+              this.communityService.getFollowerCount(userId).subscribe(c => this.followerCount.set(c));
           }
        });
     }
@@ -107,6 +112,63 @@ export class ProfileComponent implements OnInit {
   applyPalette(colors: string[]) {
     this.bannerColors.set([...colors]);
     this.saveBannerColors();
+  }
+
+  async shareProfile() {
+    if (this.isGeneratingSnapshot()) return;
+    
+    this.isGeneratingSnapshot.set(true);
+    const username = this.fullProfile()?.username;
+    if (!username) {
+        this.isGeneratingSnapshot.set(false);
+        return;
+    }
+
+    const shareUrl = `${window.location.origin}/u/${username}`;
+    const text = `¡Mira mi portafolio en Zenith Finance! 🚀 Sigue mi progreso aquí:`;
+    const title = `Zenith Finance - ${this.fullProfile()?.name || 'Inversor'}`;
+
+    try {
+      // 1. Copy link to clipboard immediately
+      await navigator.clipboard.writeText(`${text} ${shareUrl}`);
+      
+      // 2. Try to generate and share the image card
+      const element = document.getElementById('share-card-template');
+      if (element && navigator.share) {
+        const h2c = (await import('html2canvas')).default;
+        const canvas = await h2c(element, { useCORS: true, scale: 2, backgroundColor: null });
+        
+        const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
+        if (blob) {
+          const file = new File([blob], 'ZenithProfile.png', { type: 'image/png' });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: title,
+              text: text,
+              url: shareUrl
+            });
+            this.toastService.success('¡Portafolio compartido!');
+            return;
+          }
+        }
+      }
+
+      // Fallback: system share or just copy link
+      if (navigator.share) {
+        await navigator.share({ title, text, url: shareUrl });
+        this.toastService.success('¡Enlace compartido!');
+      } else {
+        this.toastService.success('¡Enlace de perfil copiado!');
+      }
+
+    } catch (error) {
+      console.warn('Share interaction failed:', error);
+      this.toastService.info('Enlace copiado al portapapeles');
+    } finally {
+      this.isGeneratingSnapshot.set(false);
+    }
   }
 
   saveBannerColors() {

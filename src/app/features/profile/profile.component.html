@@ -107,9 +107,13 @@
            <label>Tu enlace público</label>
            <div class="link-wrapper">
               <input readonly [value]="'zenith.finance/u/' + fullProfile()?.username">
-              <a [routerLink]="['/u', fullProfile()?.username]" target="_blank" class="btn-icon">
-                 <lucide-icon [img]="icons.Share2" size="18"></lucide-icon>
-              </a>
+              <button (click)="shareProfile()" [disabled]="isGeneratingSnapshot()" class="btn-icon share-trigger">
+                 @if (isGeneratingSnapshot()) {
+                    <span class="loading-spinner small"></span>
+                 } @else {
+                    <lucide-icon [img]="icons.Share2" size="18"></lucide-icon>
+                 }
+              </button>
            </div>
         </div>
 
@@ -255,5 +259,40 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Template for Downloadable Image (Hidden from view) -->
+  <div class="share-card-container">
+    <div id="share-card-template" class="share-card">
+       <div class="card-banner" [style.background]="'linear-gradient(135deg, ' + bannerColors()[0] + ' 0%, ' + bannerColors()[1] + ' 50%, ' + bannerColors()[2] + ' 100%)'">
+         <div class="card-logo">ZENITH FINANCE</div>
+       </div>
+       <div class="card-body">
+         <div class="card-avatar">
+            <img [src]="fullProfile()?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + fullProfile()?.name" alt="">
+         </div>
+         <div class="card-info">
+            <h2>{{ fullProfile()?.name }}</h2>
+            <p>@{{ fullProfile()?.username }}</p>
+         </div>
+         <div class="card-stats">
+            <div class="card-stat">
+               <span class="v">{{ followerCount() }}</span>
+               <span class="l">Seguidores</span>
+            </div>
+            <div class="card-stat">
+               <span class="v">{{ privacyForm.get('show_assets')?.value ? assets().length : '--' }}</span>
+               <span class="l">Activos</span>
+            </div>
+            <div class="card-stat">
+               <span class="v highlight">85%</span>
+               <span class="l">Score</span>
+            </div>
+         </div>
+         <div class="card-footer">
+            <span>zenith.finance/u/{{ fullProfile()?.username }}</span>
+         </div>
+       </div>
+    </div>
   </div>
 </div>
