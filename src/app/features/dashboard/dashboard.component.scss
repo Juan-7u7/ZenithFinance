@@ -113,40 +113,47 @@
     align-items: center;
 
     .btn-icon-v2 {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      border-radius: 12px;
       background: var(--bg-card-hover);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      line-height: 1;
 
       &:hover {
         background: var(--primary);
         color: white;
         border-color: var(--primary);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
       }
 
       lucide-icon {
-        width: 18px;
-        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
       }
 
       &.lang-btn {
         width: auto;
-        padding: 0 10px;
-        gap: 6px;
+        padding: 0 12px;
+        gap: 8px;
 
         .lang-code {
-          font-size: 0.7rem;
+          font-size: 0.75rem;
           font-weight: 800;
-          letter-spacing: 0.02em;
+          letter-spacing: 0.05em;
+          display: inline-block;
+          margin-top: 1px; // Tiny adjustment if font is slightly off-center
         }
       }
     }
