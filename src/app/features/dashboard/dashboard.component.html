@@ -3,7 +3,7 @@
   <header class="dashboard-header glass-card">
     <div class="user-welcome">
       @if (currentUser(); as user) {
-        <div class="avatar-wrapper">
+        <div class="avatar-wrapper clickable" (click)="goToProfile()">
           <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar" class="avatar">
           <span class="status-indicator"></span>
         </div>
@@ -18,6 +18,9 @@
     </div>
     
     <div class="actions">
+      <button class="btn-icon" (click)="goToProfile()" [title]="'profile.title' | translate">
+        <lucide-icon [img]="icons.Settings" class="icon-settings"></lucide-icon>
+      </button>
       <button class="btn-icon" (click)="toggleLanguage()" [title]="'common.language' | translate">
         <lucide-icon [img]="icons.Languages" class="icon-lang"></lucide-icon>
         <span class="lang-code">{{ currentLang() | uppercase }}</span>

@@ -22,6 +22,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/portfolio/portfolio.routes').then(m => m.PORTFOLIO_ROUTES)
   },
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
+  },
+  {
     path: '**',
     redirectTo: 'dashboard'
   }

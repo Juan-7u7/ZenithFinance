@@ -19,6 +19,12 @@
 
     .avatar-wrapper {
       position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: scale(1.05);
+      }
       
       .avatar {
         width: 52px;

@@ -55,6 +55,23 @@ export class LanguageService {
         update: 'Ajuste',
         delete: 'Eliminación'
       },
+      profile: {
+        title: 'Mi Perfil',
+        subtitle: 'Gestiona tu información personal y cuenta',
+        personal_info: 'Información Personal',
+        account_stats: 'Estadísticas de la Cuenta',
+        security: 'Seguridad y Preferencias',
+        update_success: 'Perfil actualizado con éxito',
+        joined: 'Miembro desde',
+        save_changes: 'Guardar Cambios',
+        change_password: 'Cambiar Contraseña',
+        language: 'Idioma de la App',
+        theme: 'Tema Visual',
+        danger_zone: 'Zona de Peligro',
+        delete_account: 'Eliminar Cuenta',
+        security_score: 'Nivel de Seguridad',
+        verified: 'Cuenta Verificada'
+      },
       common: {
         loading: 'Cargando...',
         save: 'Guardar',
@@ -116,6 +133,23 @@ export class LanguageService {
         sell: 'Sell',
         update: 'Update',
         delete: 'Delete'
+      },
+      profile: {
+        title: 'My Profile',
+        subtitle: 'Manage your personal information and account',
+        personal_info: 'Personal Information',
+        account_stats: 'Account Statistics',
+        security: 'Security & Preferences',
+        update_success: 'Profile updated successfully',
+        joined: 'Member since',
+        save_changes: 'Save Changes',
+        change_password: 'Change Password',
+        language: 'App Language',
+        theme: 'Visual Theme',
+        danger_zone: 'Danger Zone',
+        delete_account: 'Delete Account',
+        security_score: 'Security Level',
+        verified: 'Verified Account'
       },
       common: {
         loading: 'Loading...',

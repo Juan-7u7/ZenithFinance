@@ -1,0 +1,155 @@
+<div class="profile-container fade-in">
+  <header class="profile-header">
+    <button class="btn-back" (click)="goBack()">
+      <lucide-icon [img]="icons.ArrowLeft" size="20"></lucide-icon>
+    </button>
+    <div class="title-group">
+      <h1>{{ 'profile.title' | translate }}</h1>
+      <p>{{ 'profile.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+    <!-- Left Column: User Card -->
+    <aside class="profile-sidebar">
+      <div class="user-card glass-card shadow-xl">
+        <div class="avatar-section">
+          <div class="avatar-large">
+            @if (currentUser(); as user) {
+              <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar">
+            }
+            <div class="verification-badge" title="Verified">
+              <lucide-icon [img]="icons.CheckCircle" size="16"></lucide-icon>
+            </div>
+          </div>
+          <h2 class="user-name">{{ currentUser()?.name }}</h2>
+          <span class="user-email">{{ currentUser()?.email }}</span>
+          <div class="member-tag">
+            <lucide-icon [img]="icons.Calendar" size="14"></lucide-icon>
+            {{ 'profile.joined' | translate }} {{ getMemberSince() | date:'LLLL yyyy' }}
+          </div>
+        </div>
+
+        <div class="security-score">
+          <div class="score-header">
+            <span>{{ 'profile.security_score' | translate }}</span>
+            <span class="score-value">85%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 85%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-card glass-card">
+        <h3>{{ 'profile.account_stats' | translate }}</h3>
+        <div class="stat-items">
+          <div class="stat-item">
+            <span class="stat-label">{{ 'dashboard.assets' | translate }}</span>
+            <span class="stat-value">{{ getPortfolioStats().count }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">{{ 'dashboard.total_investment' | translate }}</span>
+            <span class="stat-value highlight">{{ getPortfolioStats().totalInvested | currency:'USD' }}</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Settings -->
+    <main class="settings-content">
+      <!-- Personal Information -->
+      <section class="settings-section glass-card">
+        <div class="section-header">
+          <lucide-icon [img]="icons.User" size="20" class="primary-icon"></lucide-icon>
+          <h3>{{ 'profile.personal_info' | translate }}</h3>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="settings-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">{{ 'auth.name' | translate }}</label>
+              <div class="input-wrapper">
+                <input id="name" type="text" formControlName="name" placeholder="Tu nombre">
+                <lucide-icon [img]="icons.User" size="18" class="input-icon"></lucide-icon>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">{{ 'auth.email' | translate }}</label>
+              <div class="input-wrapper disabled">
+                <input id="email" type="email" formControlName="email">
+                <lucide-icon [img]="icons.Mail" size="18" class="input-icon"></lucide-icon>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || isSaving()">
+              @if (isSaving()) {
+                <span class="loading-spinner"></span>
+              } @else {
+                <lucide-icon [img]="icons.Save" size="18"></lucide-icon>
+                {{ 'profile.save_changes' | translate }}
+              }
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Preferences & Security -->
+      <section class="settings-section glass-card">
+        <div class="section-header">
+          <lucide-icon [img]="icons.Shield" size="20" class="primary-icon"></lucide-icon>
+          <h3>{{ 'profile.security' | translate }}</h3>
+        </div>
+
+        <div class="preference-list">
+          <div class="preference-item">
+            <div class="item-info">
+              <span class="item-title">{{ 'profile.language' | translate }}</span>
+              <span class="item-desc">{{ currentLang() === 'es' ? 'Español' : 'English' }}</span>
+            </div>
+            <button class="btn-toggle" (click)="toggleLanguage()">
+              <lucide-icon [img]="icons.Languages" size="18"></lucide-icon>
+              {{ currentLang() | uppercase }}
+            </button>
+          </div>
+
+          <div class="preference-item">
+            <div class="item-info">
+              <span class="item-title">{{ 'profile.theme' | translate }}</span>
+              <span class="item-desc">{{ currentTheme() === 'dark' ? 'Dark Mode' : 'Light Mode' }}</span>
+            </div>
+            <button class="btn-toggle theme" (click)="toggleTheme()">
+              <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" size="18"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="preference-item">
+            <div class="item-info">
+              <span class="item-title">{{ 'profile.change_password' | translate }}</span>
+              <span class="item-desc">Actualiza tus credenciales periódicamente</span>
+            </div>
+            <a routerLink="/auth/forgot-password" class="btn-link">
+              <lucide-icon [img]="icons.Shield" size="18"></lucide-icon>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Danger Zone -->
+      <section class="settings-section danger glass-card">
+        <div class="section-header">
+          <lucide-icon [img]="icons.Trash2" size="20" class="danger-icon"></lucide-icon>
+          <h3>{{ 'profile.danger_zone' | translate }}</h3>
+        </div>
+        <div class="danger-content">
+          <p>Una vez eliminada la cuenta, no hay vuelta atrás. Tus datos se borrarán permanentemente.</p>
+          <button class="btn btn-danger-outline">
+            {{ 'profile.delete_account' | translate }}
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

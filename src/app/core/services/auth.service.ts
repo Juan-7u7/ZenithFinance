@@ -231,6 +231,31 @@ export class AuthService {
     });
   }
 
+  updateProfile(updates: { name: string }): Observable<void> {
+    return new Observable<void>(observer => {
+      this.supabase.getClient()
+        .auth.updateUser({
+          data: { name: updates.name }
+        })
+        .then(({ data, error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            if (data.user) {
+              // Wait for auth listener to naturally update or force it:
+              this.currentUserSubject.next({
+                ...this.getCurrentUser()!,
+                name: updates.name
+              });
+            }
+            observer.next();
+            observer.complete();
+          }
+        })
+        .catch(error => observer.error(error));
+    });
+  }
+
   private clearAuth(): void {
     this.currentUserSubject.next(null);
     this.tokenSubject.next(null);
