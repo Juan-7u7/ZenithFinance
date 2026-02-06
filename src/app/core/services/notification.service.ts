@@ -53,21 +53,56 @@ export class NotificationService {
 
   loadNotifications() {
       const myId = this.authService.getCurrentUser()?.id;
-      if (!myId) return;
+      if (!myId) {
+          console.warn('Cannot load notifications: No user ID found');
+          return;
+      }
+
+      console.log('Fetching notifications for user:', myId);
 
       from(
           this.supabase.getClient()
             .from('notifications')
-            .select('*, sender:sender_id(name, avatar_url)')
+            .select(`
+                *,
+                sender:sender_id (
+                    name,
+                    avatar_url
+                )
+            `)
             .eq('recipient_id', myId)
             .order('created_at', { ascending: false })
             .limit(20)
       ).subscribe(({ data, error }) => {
-          if (!error && data) {
-              const notifs = data as any[]; // Type cast for join result
+          if (error) {
+              console.error('CRITICAL: Error loading notifications:', error);
+              // Fallback simple query if JOIN fails
+              this.loadNotificationsSimple(myId);
+              return;
+          }
+          
+          if (data) {
+              console.log('Notifications loaded successfully:', data.length);
               this.ngZone.run(() => {
-                this.notifications.set(notifs);
-                this.unreadCount.set(notifs.filter(n => !n.is_read).length);
+                this.notifications.set(data);
+                this.unreadCount.set(data.filter((n: any) => !n.is_read).length);
+              });
+          }
+      });
+  }
+
+  private loadNotificationsSimple(myId: string) {
+      from(
+          this.supabase.getClient()
+            .from('notifications')
+            .select('*')
+            .eq('recipient_id', myId)
+            .order('created_at', { ascending: false })
+      ).subscribe(({ data }) => {
+          if (data) {
+              this.ngZone.run(() => {
+                this.notifications.set(data);
+                this.unreadCount.set(data.filter((n: any) => !n.is_read).length);
               });
           }
       });
@@ -77,42 +112,46 @@ export class NotificationService {
     const myId = this.authService.getCurrentUser()?.id;
     if (!myId) return;
 
+    // Cleanup previous
     if (this.realtimeChannel) {
         this.supabase.getClient().removeChannel(this.realtimeChannel);
     }
 
     this.realtimeChannel = this.supabase.getClient()
-      .channel('public:notifications')
+      .channel('notifications-realtime')
       .on(
         'postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'notifications', filter: `recipient_id=eq.${myId}` }, 
         (payload) => {
-          console.log('New notification received:', payload);
+          console.log('REALTIME INSERT DETECTED!', payload.new);
           this.ngZone.run(() => {
             this.handleNewNotification(payload.new);
           });
         }
       )
-      .subscribe();
-      
-    console.log('Realtime notifications subscribed for user:', myId);
+      .subscribe((status) => {
+          console.log('Realtime subscription status:', status);
+      });
   }
 
   private handleNewNotification(record: any) {
-      // Fetch full details to get sender info (JOIN)
       this.supabase.getClient()
           .from('notifications')
           .select('*, sender:sender_id(name, avatar_url)')
           .eq('id', record.id)
           .single()
           .then(({ data, error }) => {
-              if (data && !error) {
+              if (data) {
                   this.ngZone.run(() => {
                       this.notifications.update(curr => [data, ...curr]);
                       this.unreadCount.update(c => c + 1);
                   });
               } else {
-                  console.error('Error fetching new notification details:', error);
+                  // If join fails, just add the raw record
+                  this.ngZone.run(() => {
+                    this.notifications.update(curr => [record, ...curr]);
+                    this.unreadCount.update(c => c + 1);
+                  });
               }
           });
   }
