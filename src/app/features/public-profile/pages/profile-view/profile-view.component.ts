@@ -5,7 +5,7 @@ import { UserService, UserProfile, PublicAsset } from '../../../../core/services
 import { AuthService } from '../../../../core/services/auth.service';
 import { CommunityService } from '../../../../core/services/community.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { LucideAngularModule, Share2, Lock, Shield, ArrowLeft, Users, TrendingUp, Briefcase, Plus, Check } from 'lucide-angular';
+import { LucideAngularModule, Share2, Lock, Shield, ArrowLeft, Users, TrendingUp, Briefcase, Plus, Check, Download, Share, ExternalLink } from 'lucide-angular';
 import { switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -38,7 +38,7 @@ export class ProfileViewComponent implements OnInit {
     return prof && me && prof.id === me.id;
   });
 
-  readonly icons = { Share2, Lock, Shield, ArrowLeft, Users, TrendingUp, Briefcase, Plus, Check };
+  readonly icons = { Share2, Lock, Shield, ArrowLeft, Users, TrendingUp, Briefcase, Plus, Check, Download, Share, ExternalLink };
 
   ngOnInit() {
     this.route.paramMap.pipe(
@@ -102,32 +102,70 @@ export class ProfileViewComponent implements OnInit {
     });
   }
 
-  formatCurrency(val: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+  showShareOptions = signal(false);
+
+  toggleShareOptions() {
+    this.showShareOptions.update(v => !v);
   }
 
-  generateSnapshot() {
+  async generateProfileCard() {
+    if (this.isGeneratingSnapshot()) return;
+    
+    // Ensure we have the element
+    const element = document.getElementById('share-card-template');
+    if (!element) return;
+
     this.isGeneratingSnapshot.set(true);
     
-    // Dynamically import html2canvas to optimize initial bundle
-    import('html2canvas').then(h2c => {
-      // Wait for DOM to render the snapshot-area
-      setTimeout(() => {
-        const element = document.getElementById('snapshot-area');
-        if (element) {
-          h2c.default(element, { backgroundColor: null, scale: 2 }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `zenith-story-${this.profile()?.username}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-            this.isGeneratingSnapshot.set(false);
-          }).catch(err => {
-             console.error('Snapshot failed', err);
-             this.isGeneratingSnapshot.set(false);
-          });
-        }
-      }, 500); // Wait for modal animation/render
-    });
+    try {
+      const h2c = (await import('html2canvas')).default;
+      const canvas = await h2c(element, {
+        useCORS: true,
+        scale: 2,
+        backgroundColor: null,
+      });
+
+      const url = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `ZenithProfile_${this.profile()?.username}.png`;
+      link.href = url;
+      link.click();
+      
+      this.toastService.success('Imagen de perfil generada');
+    } catch (error) {
+      console.error('Error generating image:', error);
+      this.toastService.error('Error al generar la imagen');
+    } finally {
+      this.isGeneratingSnapshot.set(false);
+      this.showShareOptions.set(false);
+    }
+  }
+
+  async shareProfile() {
+    const url = window.location.href;
+    const text = `¡Mira mi portafolio de inversiones en Zenith Finance! 🚀 Sigue mi progreso aquí:`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Zenith Finance - ${this.profile()?.name}`,
+          text: text,
+          url: url
+        });
+        this.toastService.success('¡Enlace compartido!');
+      } catch (error) {
+        console.warn('Share cancelled or failed:', error);
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      this.toastService.info('Enlace copiado al portapapeles');
+    }
+    this.showShareOptions.set(false);
+  }
+
+  formatCurrency(val: number): string {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
   }
 
   goBack(): void {

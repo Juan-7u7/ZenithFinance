@@ -32,21 +32,40 @@
         </div>
       </div>
 
-      <div class="header-actions">
-        <button class="btn-share-alt" (click)="generateSnapshot()" title="Compartir Perfil">
-           <lucide-icon [img]="icons.Share2" size="20"></lucide-icon>
-        </button>
+      <div class="profile-actions">
+        <!-- Share Menu -->
+        <div class="share-actions-wrapper">
+          <button class="btn-icon" (click)="toggleShareOptions()" title="Compartir Perfil">
+            <lucide-icon [img]="icons.Share2" size="20"></lucide-icon>
+          </button>
+          
+          @if (showShareOptions()) {
+            <div class="share-dropdown glass-card">
+              <button class="share-opt" (click)="shareProfile()">
+                <lucide-icon [img]="icons.ExternalLink" size="16"></lucide-icon>
+                <span>Compartir Enlace</span>
+              </button>
+              <button class="share-opt" (click)="generateProfileCard()">
+                <lucide-icon [img]="icons.Download" size="16"></lucide-icon>
+                <span>Descargar Tarjeta</span>
+              </button>
+            </div>
+          }
+        </div>
 
-        <ng-container *ngIf="!isOwnProfile()">
-          <button 
-            [class]="isFollowing() ? 'btn btn-following' : 'btn btn-follow'"
-            (click)="toggleFollow()"
-            [disabled]="isProcessingFollow()"
-          >
+        <button 
+          class="btn-follow" 
+          [class.following]="isFollowing()"
+          [disabled]="isProcessingFollow() || isOwnProfile()"
+          (click)="toggleFollow()"
+        >
+          @if (isProcessingFollow()) {
+            <span class="loading-spinner small"></span>
+          } @else {
             <lucide-icon [img]="isFollowing() ? icons.Check : icons.Plus" size="18"></lucide-icon>
             {{ isFollowing() ? 'Siguiendo' : 'Seguir' }}
-          </button>
-        </ng-container>
+          }
+        </button>
       </div>
     </div>
 
@@ -118,38 +137,40 @@
       </ng-template>
     </section>
 
-    <!-- Right: Snapshot Preview Area -->
-    <div id="snapshot-area" class="snapshot-card glass-card" *ngIf="isGeneratingSnapshot()">
-       <div class="snapshot-header">
-          <div class="user-row">
-            <div class="mini-avatar">
-               {{ profile()?.name?.charAt(0) }}
-            </div>
-            <div>
-              <h3>{{ profile()?.name }}</h3>
-              <span>Zenith Finance</span>
-            </div>
-          </div>
-          <div class="qr-placeholder">
-            <div class="qr-box">QR</div>
-          </div>
+  <!-- Template for Downloadable Image (Hidden from view) -->
+  <div class="share-card-container">
+    <div id="share-card-template" class="share-card">
+       <div class="card-banner" [style.background]="profile()?.banner_colors ? 'linear-gradient(135deg, ' + profile()?.banner_colors![0] + ' 0%, ' + profile()?.banner_colors![1] + ' 50%, ' + profile()?.banner_colors![2] + ' 100%)' : 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)'">
+         <div class="card-logo">ZENITH FINANCE</div>
        </div>
-       
-       <div class="snapshot-stats">
-          <div class="stat-item">
-             <span class="label">Activos</span>
-             <span class="val">{{ assets().length }}</span>
-          </div>
-          <div class="stat-item">
-             <span class="label">Top Activo</span>
-             <span class="val accent">{{ assets()[0]?.symbol || '-' }}</span>
-          </div>
-       </div>
-
-       <div class="snapshot-footer">
-          zenith.finance/u/{{ profile()?.username }}
+       <div class="card-body">
+         <div class="card-avatar">
+            <img [src]="profile()?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + profile()?.name" alt="">
+         </div>
+         <div class="card-info">
+            <h2>{{ profile()?.name }}</h2>
+            <p>@{{ profile()?.username }}</p>
+         </div>
+         <div class="card-stats">
+            <div class="card-stat">
+               <span class="v">{{ followerCount() }}</span>
+               <span class="l">Seguidores</span>
+            </div>
+            <div class="card-stat">
+               <span class="v">{{ profile()?.privacy_settings?.show_assets ? assets().length : '--' }}</span>
+               <span class="l">Activos</span>
+            </div>
+            <div class="card-stat">
+               <span class="v highlight">85%</span>
+               <span class="l">Score</span>
+            </div>
+         </div>
+         <div class="card-footer">
+            <span>zenith.finance/u/{{ profile()?.username }}</span>
+         </div>
        </div>
     </div>
+  </div>
   </main>
 </div>
 
