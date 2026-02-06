@@ -61,6 +61,8 @@
   }
 
   .profile-header-main {
+    position: relative; /* Added for stacking */
+    z-index: 10;        /* Ensure it's above the banner */
     padding: 0 40px;
     margin-top: -80px; /* More pull-up for larger avatar */
     display: flex;
