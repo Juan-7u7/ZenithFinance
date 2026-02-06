@@ -27,6 +27,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
   },
   {
+    path: 'community',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/community/community.routes').then(m => m.COMMUNITY_ROUTES)
+  },
+  {
     path: '**',
     redirectTo: 'dashboard'
   }

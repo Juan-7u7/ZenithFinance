@@ -24,6 +24,9 @@
     </div>
     
     <div class="actions">
+      <button class="btn-icon-v2" (click)="goToCommunity()" [title]="'community.title' | translate">
+        <lucide-icon [img]="icons.Users" class="icon-users"></lucide-icon>
+      </button>
       <button class="btn-icon-v2" (click)="goToProfile()" [title]="'profile.title' | translate">
         <lucide-icon [img]="icons.Settings" class="icon-settings"></lucide-icon>
       </button>

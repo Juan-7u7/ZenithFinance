@@ -94,6 +94,14 @@ export class LanguageService {
         theme: 'Tema',
         language: 'Idioma',
         others: 'OTROS'
+      },
+      community: {
+        title: 'Comunidad',
+        suggested: 'Sugeridos',
+        search_placeholder: 'Buscar usuarios...',
+        no_users: 'No se encontraron usuarios.',
+        connect: 'Conectar',
+        following: 'Siguiendo'
       }
     },
     en: {
@@ -177,6 +185,14 @@ export class LanguageService {
         theme: 'Theme',
         language: 'Language',
         others: 'OTHERS'
+      },
+      community: {
+        title: 'Community',
+        suggested: 'Suggested',
+        search_placeholder: 'Search users...',
+        no_users: 'No users found.',
+        connect: 'Connect',
+        following: 'Following'
       }
     }
   };

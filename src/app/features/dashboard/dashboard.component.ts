@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
@@ -27,7 +27,7 @@ import { PortfolioAsset } from '../../core/models/asset.model';
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users };
   currentDate = new Date();
   
   private authService = inject(AuthService);
@@ -135,6 +135,10 @@ export class DashboardComponent implements OnInit {
 
   goToProfile(): void {
     this.router.navigate(['/profile']);
+  }
+
+  goToCommunity(): void {
+    this.router.navigate(['/community']);
   }
 
   formatPercentage(value: number): string {
