@@ -239,16 +239,16 @@ export class AuthService {
     }
 
     return new Observable<void>(observer => {
-      // Update both auth metadata AND users table
+      // Update both auth metadata AND profiles table
       Promise.all([
         // 1. Update auth.users metadata
         this.supabase.getClient()
           .auth.updateUser({
             data: { name: updates.name }
           }),
-        // 2. Update users table (visible to other users)
+        // 2. Update profiles table (visible to other users)
         this.supabase.getClient()
-          .from('users')
+          .from('profiles')
           .update({ name: updates.name })
           .eq('id', user.id)
       ])
