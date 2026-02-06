@@ -1,7 +1,7 @@
-import { Component, OnInit, inject, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X, Zap } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
@@ -15,6 +15,10 @@ import { ConfirmDeleteModalComponent } from './components/confirm-delete-modal/c
 import { TransactionHistoryComponent } from './components/transaction-history/transaction-history.component';
 import { PortfolioDistributionComponent } from './components/portfolio-distribution/portfolio-distribution.component';
 import { NotificationPanelComponent } from './components/notification-panel/notification-panel.component';
+import { GoalProgressComponent } from './components/goal-progress/goal-progress.component';
+import { AutomationCenterComponent } from './components/automation-center/automation-center.component';
+import { AlertModalComponent } from './components/alert-modal/alert-modal.component';
+import { AlertService } from '../../core/services/alert.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { ToastService } from '../../core/services/toast.service';
 import { PortfolioAsset } from '../../core/models/asset.model';
@@ -24,13 +28,18 @@ import { NotificationService } from '../../core/services/notification.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, NotificationPanelComponent, TranslatePipe],
+  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, NotificationPanelComponent, TranslatePipe, GoalProgressComponent, AutomationCenterComponent, AlertModalComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Users, Bell, UserPlus, X };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Users, Bell, UserPlus, X, Zap };
+  
+  @ViewChild('automationCenter') automationCenter!: AutomationCenterComponent;
+  @ViewChild('alertModal') alertModal!: AlertModalComponent;
+  
+  private alertService = inject(AlertService);
   currentDate = new Date();
   
   private authService = inject(AuthService);
@@ -175,7 +184,15 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/community']);
   }
 
+  toggleAutomation() {
+    this.automationCenter.open();
+  }
+
   formatPercentage(value: number): string {
     return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+  }
+
+  setPriceAlert(asset: PortfolioAsset) {
+    this.alertModal.open(asset);
   }
 }

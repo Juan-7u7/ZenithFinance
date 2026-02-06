@@ -27,6 +27,9 @@
       <button class="btn-icon-v2" (click)="goToCommunity()" [attr.data-tooltip]="'community.title' | translate">
         <lucide-icon [img]="icons.Users" class="icon-users"></lucide-icon>
       </button>
+      <button class="btn-icon-v2" (click)="toggleAutomation()" data-tooltip="Automatizaciones">
+        <lucide-icon [img]="icons.Zap" size="20"></lucide-icon>
+      </button>
       <div class="notification-wrapper">
         <button class="btn-icon-v2" data-tooltip="Notificaciones" (click)="toggleNotifications($event)">
           <lucide-icon [img]="icons.Bell" class="icon-bell"></lucide-icon>
@@ -72,6 +75,10 @@
             {{ formatPercentage(dashboard().totalProfitLossPercentage) }}
             ({{ formatCurrency(dashboard().totalProfitLoss) }})
           </div>
+        </div>
+        
+        <div class="card goal-card">
+           <app-goal-progress [currentBalance]="dashboard().totalValue"></app-goal-progress>
         </div>
 
         <div class="card chart-card glass-card">
@@ -161,6 +168,9 @@
                   </div>
                   
                   <div class="asset-actions">
+                    <button class="btn-icon-sm" (click)="setPriceAlert(asset); $event.stopPropagation()" data-tooltip="Establecer Alerta">
+                      <lucide-icon [img]="icons.Bell" size="16"></lucide-icon>
+                    </button>
                     <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" [attr.data-tooltip]="'common.edit' | translate">
                       <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
                     </button>
@@ -203,6 +213,12 @@
       }
     </div>
   }
+
+  <!-- Automation Center -->
+  <app-automation-center #automationCenter></app-automation-center>
+
+  <!-- Alert Modal -->
+  <app-alert-modal #alertModal></app-alert-modal>
 
   <!-- Notification Panel -->
   <div class="notification-overlay" *ngIf="isNotificationPanelOpen()">

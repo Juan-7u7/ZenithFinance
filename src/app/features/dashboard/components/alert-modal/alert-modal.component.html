@@ -1,0 +1,85 @@
+<div class="modal-overlay fade-in" *ngIf="visible()" (click)="close()">
+  <div class="modal-container glass-card slide-up" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="title-group">
+         <div class="icon-box">
+            <lucide-icon [img]="icons.Bell" size="24"></lucide-icon>
+         </div>
+         <div class="text">
+            <h2>Crear Alerta de Precio</h2>
+            <p *ngIf="selectedAsset()">{{ selectedAsset()!.name }} ({{ selectedAsset()!.symbol | uppercase }})</p>
+         </div>
+      </div>
+      <button class="btn-close" (click)="close()">
+        <lucide-icon [img]="icons.X" size="20"></lucide-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="alertForm" (ngSubmit)="onSubmit()" class="modal-body">
+      
+      <!-- Current Price Display -->
+      <div class="current-price-card" *ngIf="selectedAsset()">
+        <div class="label">Precio Actual</div>
+        <div class="price">{{ selectedAsset()!.currentPrice | currency:'USD':'symbol':'1.2-2' }}</div>
+      </div>
+
+      <!-- Target Price Input -->
+      <div class="form-group">
+        <label for="target-price">Precio Objetivo (USD)</label>
+        <div class="input-wrapper currency">
+           <span class="prefix">$</span>
+           <input 
+             id="target-price"
+             type="number" 
+             formControlName="target_price" 
+             placeholder="0.00"
+             step="0.01"
+             (input)="onPriceChange()"
+           >
+        </div>
+        <small class="helper" *ngIf="alertForm.get('target_price')?.invalid && alertForm.get('target_price')?.touched">
+          Ingresa un precio válido mayor a 0.
+        </small>
+      </div>
+
+      <!-- Condition Display (Auto-detected) -->
+      <div class="condition-card" [class.above]="suggestedCondition() === 'ABOVE'" [class.below]="suggestedCondition() === 'BELOW'">
+        <div class="condition-icon">
+          <lucide-icon [img]="suggestedCondition() === 'ABOVE' ? icons.TrendingUp : icons.TrendingDown" size="20"></lucide-icon>
+        </div>
+        <div class="condition-text">
+          <div class="label">Condición Detectada</div>
+          <div class="value">
+            {{ suggestedCondition() === 'ABOVE' ? 'Cuando suba de' : 'Cuando baje de' }}
+            <strong>{{ alertForm.get('target_price')?.value || '0.00' | currency:'USD':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+        <div class="percentage" *ngIf="priceChangePercentage !== 0">
+          {{ priceChangePercentage > 0 ? '+' : '' }}{{ priceChangePercentage | number:'1.1-1' }}%
+        </div>
+      </div>
+
+      <!-- Info Card -->
+      <div class="info-card">
+         <lucide-icon [img]="icons.Info" size="18"></lucide-icon>
+         <p>Recibirás una notificación cuando <strong>{{ selectedAsset()?.symbol }}</strong> alcance el precio objetivo. La alerta se desactivará automáticamente después de dispararse.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Cancelar</button>
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="alertForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="loading-spinner small"></span>
+          } @else {
+            <lucide-icon [img]="icons.Bell" size="18"></lucide-icon>
+            <span>Crear Alerta</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

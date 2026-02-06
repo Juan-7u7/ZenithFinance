@@ -1,0 +1,46 @@
+<div class="goal-container glass-card" [class.no-goal]="!activeGoal">
+  <div class="goal-header">
+    <div class="title-with-icon">
+      <div class="icon-circle" [class.success]="progressPercentage >= 100">
+        <lucide-icon [img]="progressPercentage >= 100 ? icons.Trophy : icons.Target" size="18"></lucide-icon>
+      </div>
+      <div class="text">
+        <h4>{{ activeGoal ? activeGoal.name : ('dashboard.create_goal' | translate) }}</h4>
+        <p *ngIf="activeGoal">{{ progressPercentage | number:'1.0-0' }}% completado</p>
+      </div>
+    </div>
+    <button class="btn-config" (click)="openGoalSettings()" data-tooltip="Configurar Meta">
+       <lucide-icon [img]="icons.Settings2" size="16"></lucide-icon>
+    </button>
+  </div>
+
+  @if (activeGoal) {
+    <div class="progress-section">
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progressPercentage">
+           <div class="shimmer"></div>
+        </div>
+      </div>
+      <div class="progress-labels">
+        <span class="current">{{ currentBalance() | currency:'USD':'symbol':'1.0-0' }}</span>
+        <span class="target">{{ activeGoal.target_amount | currency:'USD':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+    
+    <div class="goal-footer" *ngIf="remainingAmount > 0">
+      <p>Faltan <strong>{{ remainingAmount | currency:'USD':'symbol':'1.2-2' }}</strong> para alcanzar tu objetivo.</p>
+    </div>
+    <div class="goal-footer success" *ngIf="remainingAmount <= 0">
+      <p>✨ <strong>¡Felicidades!</strong> Has alcanzado tu meta financiera.</p>
+    </div>
+  } @else {
+    <div class="empty-goal">
+      <p>{{ 'dashboard.goal_empty' | translate }}</p>
+      <button class="btn-setup" (click)="openGoalSettings()">
+        <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> {{ 'dashboard.create_goal' | translate }}
+      </button>
+    </div>
+  }
+</div>
+
+<app-goal-modal #goalModal></app-goal-modal>

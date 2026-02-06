@@ -57,7 +57,9 @@ export class LanguageService {
         buy: 'Compra',
         sell: 'Venta',
         update: 'Ajuste',
-        delete: 'Eliminación'
+        delete: 'Eliminación',
+        goal_empty: 'Visualiza tu progreso estableciendo un objetivo de inversión.',
+        create_goal: 'Crear Meta'
       },
       profile: {
         title: 'Mi Perfil',

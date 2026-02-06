@@ -11,22 +11,24 @@ export class MarketService {
   private http = inject(HttpClient);
   private readonly API_URL = 'https://api.coingecko.com/api/v3';
   
-  // Cache for market data to prevent rate limiting and optimize performance
-  private marketData$: Observable<Asset[]> | null = null;
+  // Dynamic cache per unique set of IDs
+  private cacheMap = new Map<string, Observable<Asset[]>>();
   private readonly REFRESH_INTERVAL = 60000; // 1 minute
 
   getMarketAssets(ids: string[] = ['bitcoin', 'ethereum', 'solana', 'cardano', 'polkadot'], currency: string = 'usd'): Observable<Asset[]> {
-    // If we have a cached stream, verify if we should return it or create a new one?
-    // For this implementation, we'll use a timer to auto-refresh constantly if subscribed
+    // Create a unique key for this set of IDs
+    const cacheKey = ids.sort().join(',');
     
-    if (!this.marketData$) {
-      this.marketData$ = timer(0, this.REFRESH_INTERVAL).pipe(
+    // If we don't have a stream for this exact set of IDs, create one
+    if (!this.cacheMap.has(cacheKey)) {
+      const stream$ = timer(0, this.REFRESH_INTERVAL).pipe(
         switchMap(() => this.fetchMarketData(ids, currency)),
         shareReplay(1) // Share the latest result with all subscribers
       );
+      this.cacheMap.set(cacheKey, stream$);
     }
     
-    return this.marketData$;
+    return this.cacheMap.get(cacheKey)!;
   }
 
   searchAssets(query: string): Observable<Partial<Asset>[]> {
@@ -48,6 +50,13 @@ export class MarketService {
 
   getAssetDetails(id: string): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/coins/${id}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`);
+  }
+
+  /**
+   * Clear the market data cache. Useful when assets are added/removed.
+   */
+  clearCache(): void {
+    this.cacheMap.clear();
   }
 
   getAssetHistory(id: string, days: number = 7): Observable<any> {

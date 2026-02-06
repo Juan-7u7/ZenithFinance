@@ -4,7 +4,10 @@ import { combineLatest, of } from 'rxjs';
 import { map, shareReplay, startWith, switchMap, catchError } from 'rxjs/operators';
 import { MarketService } from '../../core/services/market.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { ToastService } from '../../core/services/toast.service';
 import { PortfolioAsset, Portfolio } from '../../core/models/asset.model';
+import { AlertService } from '../../core/services/alert.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +15,11 @@ import { PortfolioAsset, Portfolio } from '../../core/models/asset.model';
 export class DashboardStateService {
   private marketService = inject(MarketService);
   private portfolioService = inject(PortfolioService);
+  private alertService = inject(AlertService);
+  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
+  
+  private notifiedAssets = new Set<string>();
 
   // 1. Get raw user assets
   private userAssets$ = this.portfolioService.assets$;
@@ -41,6 +49,21 @@ export class DashboardStateService {
       const enrichedAssets: PortfolioAsset[] = userAssets.map(ua => {
         const marketData = marketPrices.find(m => m.id === ua.asset_id);
         const currentPrice = marketData?.currentPrice || 0;
+        
+        // Trigger alert checks
+        if (currentPrice > 0) {
+          this.alertService.checkAlerts(ua.asset_id, currentPrice);
+          
+          // Detect Sharp Movement (> 5% in 24h)
+          const change24h = marketData?.priceChangePercentage24h || 0;
+          if (Math.abs(change24h) >= 5 && !this.notifiedAssets.has(ua.asset_id)) {
+             this.toastService.show(change24h > 0 ? 'success' : 'warning', 
+               `Movimiento brusco: ${ua.symbol} ha ${change24h > 0 ? 'subido' : 'bajado'} un ${Math.abs(change24h).toFixed(2)}%`
+             );
+             this.notifiedAssets.add(ua.asset_id);
+          }
+        }
+        
         const totalValue = ua.amount * currentPrice;
         
         // Calculate Profit/Loss
