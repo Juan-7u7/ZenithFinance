@@ -70,7 +70,7 @@
             <div class="form-group">
               <label for="name">{{ 'auth.name' | translate }}</label>
               <div class="input-wrapper">
-                <input id="name" type="text" formControlName="name" placeholder="Tu nombre">
+                <input id="name" type="text" formControlName="name" [placeholder]="'auth.name' | translate">
                 <lucide-icon [img]="icons.User" size="18" class="input-icon"></lucide-icon>
               </div>
             </div>
