@@ -2,7 +2,7 @@
   
   <header class="profile-page-header">
     <div class="profile-banner" [style.background]="profile()?.banner_colors ? 'linear-gradient(135deg, ' + profile()?.banner_colors![0] + ' 0%, ' + profile()?.banner_colors![1] + ' 50%, ' + profile()?.banner_colors![2] + ' 100%)' : null">
-      <button class="btn-back-circle" (click)="goBack()" title="Regresar">
+      <button class="btn-back-circle" (click)="goBack()" data-tooltip="Regresar">
         <lucide-icon [img]="icons.ArrowLeft" size="20"></lucide-icon>
       </button>
     </div>

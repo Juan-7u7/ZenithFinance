@@ -30,7 +30,7 @@ import { NotificationService } from '../../core/services/notification.service';
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Users, Bell, UserPlus, X };
   currentDate = new Date();
   
   private authService = inject(AuthService);

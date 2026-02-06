@@ -37,7 +37,6 @@ export class UserListComponent implements OnInit {
     Search,
     User,
     UserPlus,
-    Settings,
     LogOut,
     Moon,
     Sun,

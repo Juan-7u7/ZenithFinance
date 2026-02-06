@@ -24,17 +24,15 @@
     </div>
 
     <div class="actions">
-      <button class="btn-icon-v2" (click)="goToProfile()" [title]="'profile.title' | translate">
-        <lucide-icon [img]="icons.Settings" class="icon-settings"></lucide-icon>
-      </button>
-      <button class="btn-icon-v2 lang-btn" (click)="toggleLanguage()" [title]="'common.language' | translate">
+
+      <button class="btn-icon-v2 lang-btn" (click)="toggleLanguage()" [attr.data-tooltip]="'common.language' | translate">
         <lucide-icon [img]="icons.Languages" class="icon-lang"></lucide-icon>
         <span class="lang-code">{{ currentLang() | uppercase }}</span>
       </button>
-      <button class="btn-icon-v2" (click)="toggleTheme()" [title]="'common.theme' | translate">
+      <button class="btn-icon-v2" (click)="toggleTheme()" [attr.data-tooltip]="'common.theme' | translate">
         <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" class="icon-theme"></lucide-icon>
       </button>
-      <button class="btn-icon-v2" (click)="logout()" [title]="'dashboard.logout' | translate">
+      <button class="btn-icon-v2" (click)="logout()" [attr.data-tooltip]="'dashboard.logout' | translate">
         <lucide-icon [img]="icons.LogOut"></lucide-icon>
       </button>
     </div>

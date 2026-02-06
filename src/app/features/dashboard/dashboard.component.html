@@ -24,26 +24,24 @@
     </div>
     
     <div class="actions">
-      <button class="btn-icon-v2" (click)="goToCommunity()" [title]="'community.title' | translate">
+      <button class="btn-icon-v2" (click)="goToCommunity()" [attr.data-tooltip]="'community.title' | translate">
         <lucide-icon [img]="icons.Users" class="icon-users"></lucide-icon>
       </button>
       <div class="notification-wrapper">
-        <button class="btn-icon-v2" title="Notificaciones" (click)="toggleNotifications($event)">
+        <button class="btn-icon-v2" data-tooltip="Notificaciones" (click)="toggleNotifications($event)">
           <lucide-icon [img]="icons.Bell" class="icon-bell"></lucide-icon>
           <span class="notification-badge" *ngIf="unreadCount() > 0">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
         </button>
       </div>
-      <button class="btn-icon-v2 desktop-only" (click)="goToProfile()" [title]="'profile.title' | translate">
-        <lucide-icon [img]="icons.Settings" class="icon-settings"></lucide-icon>
-      </button>
-      <button class="btn-icon-v2 lang-btn desktop-only" (click)="toggleLanguage()" [title]="'common.language' | translate">
+
+      <button class="btn-icon-v2 lang-btn desktop-only" (click)="toggleLanguage()" [attr.data-tooltip]="'common.language' | translate">
         <lucide-icon [img]="icons.Languages" class="icon-lang"></lucide-icon>
         <span class="lang-code">{{ currentLang() | uppercase }}</span>
       </button>
-      <button class="btn-icon-v2 desktop-only" (click)="toggleTheme()" [title]="'common.theme' | translate">
+      <button class="btn-icon-v2 desktop-only" (click)="toggleTheme()" [attr.data-tooltip]="'common.theme' | translate">
         <lucide-icon [img]="currentTheme() === 'light' ? icons.Moon : icons.Sun" class="icon-theme"></lucide-icon>
       </button>
-      <button class="btn-icon-v2" (click)="logout()" [title]="'dashboard.logout' | translate">
+      <button class="btn-icon-v2" (click)="logout()" [attr.data-tooltip]="'dashboard.logout' | translate">
         <lucide-icon [img]="icons.LogOut"></lucide-icon>
       </button>
     </div>
@@ -163,10 +161,10 @@
                   </div>
                   
                   <div class="asset-actions">
-                    <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" [title]="'common.edit' | translate">
+                    <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" [attr.data-tooltip]="'common.edit' | translate">
                       <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
                     </button>
-                    <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" [title]="'common.delete' | translate">
+                    <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" [attr.data-tooltip]="'common.delete' | translate">
                       <lucide-icon [img]="icons.Trash2" size="16"></lucide-icon>
                     </button>
                   </div>

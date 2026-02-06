@@ -18,7 +18,7 @@
             @if (currentUser(); as user) {
               <img [src]="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.name" alt="Avatar">
             }
-            <div class="verification-badge" title="Verified">
+            <div class="verification-badge" data-tooltip="Verified">
               <lucide-icon [img]="icons.CheckCircle" size="16"></lucide-icon>
             </div>
           </div>
