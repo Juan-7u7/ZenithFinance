@@ -122,6 +122,9 @@
               <label class="switch">
                  <input type="checkbox" formControlName="show_assets" (change)="savePrivacy()">
                  <span class="slider round"></span>
+                 <span class="checkbox-ui">
+                   <lucide-icon [img]="icons.Check" size="16"></lucide-icon>
+                 </span>
               </label>
            </div>
            
@@ -133,6 +136,9 @@
               <label class="switch">
                  <input type="checkbox" formControlName="show_balance" (change)="savePrivacy()">
                  <span class="slider round"></span>
+                 <span class="checkbox-ui">
+                   <lucide-icon [img]="icons.Check" size="16"></lucide-icon>
+                 </span>
               </label>
            </div>
         </form>

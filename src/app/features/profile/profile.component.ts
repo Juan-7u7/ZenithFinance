@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { LucideAngularModule, User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe } from 'lucide-angular';
+import { LucideAngularModule, User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check } from 'lucide-angular';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService, UserProfile } from '../../core/services/user.service';
 import { LanguageService } from '../../core/services/language.service';
@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   
   // Icons
-  readonly icons = { User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe };
+  readonly icons = { User, Mail, Calendar, Shield, Trash2, Save, ArrowLeft, Languages, Moon, Sun, CheckCircle, Share2, Globe, Check };
 
   // UI State
   isLoading = signal(false);
