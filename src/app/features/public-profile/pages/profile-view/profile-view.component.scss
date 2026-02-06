@@ -5,28 +5,32 @@
   min-height: 100vh;
 }
 
-.btn-back-floating {
-  display: inline-flex;
+.btn-back-circle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  padding: 10px 16px;
-  border-radius: var(--radius-full);
-  margin: 24px var(--space-lg);
+  justify-content: center;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  backdrop-filter: blur(5px);
-  z-index: 10;
-  position: relative;
+  z-index: 20;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:hover {
-      background: var(--bg-card-hover);
-      color: var(--text-main);
-      transform: translateX(-4px);
+      background: rgba(15, 23, 42, 0.6);
+      transform: scale(1.1);
       border-color: var(--primary);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
@@ -50,7 +54,7 @@
     }
 
     @media (max-width: 640px) {
-        height: 140px;
+        height: 160px;
     }
   }
 
@@ -84,6 +88,7 @@
 
       .avatar-outer {
         position: relative;
+        z-index: 5;
         
         .avatar-wrapper {
           width: 120px;
@@ -92,7 +97,7 @@
           border: 6px solid var(--bg-page);
           background: var(--bg-page);
           overflow: hidden;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 
           img, .placeholder {
             width: 100%;
@@ -124,6 +129,7 @@
            align-items: center;
            justify-content: center;
            color: white;
+           z-index: 6;
         }
       }
 
@@ -134,20 +140,33 @@
           display: flex;
           align-items: center;
           gap: 8px;
+          margin-bottom: 2px;
 
           @media (max-width: 640px) {
               justify-content: center;
+              flex-wrap: wrap;
           }
 
           h1 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             margin: 0;
             color: var(--text-main);
+            letter-spacing: -0.5px;
+            line-height: 1.1;
           }
 
           .verified-icon {
-            color: var(--primary);
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
           }
         }
 
