@@ -197,6 +197,40 @@ export class AuthService {
     return !!this.tokenSubject.value && !!this.currentUserSubject.value;
   }
 
+  forgotPassword(email: string): Observable<void> {
+    return new Observable<void>(observer => {
+      this.supabase.getClient()
+        .auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/reset-password`,
+        })
+        .then(({ error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next();
+            observer.complete();
+          }
+        })
+        .catch(error => observer.error(error));
+    });
+  }
+
+  updatePassword(password: string): Observable<void> {
+    return new Observable<void>(observer => {
+      this.supabase.getClient()
+        .auth.updateUser({ password })
+        .then(({ error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next();
+            observer.complete();
+          }
+        })
+        .catch(error => observer.error(error));
+    });
+  }
+
   private clearAuth(): void {
     this.currentUserSubject.next(null);
     this.tokenSubject.next(null);
