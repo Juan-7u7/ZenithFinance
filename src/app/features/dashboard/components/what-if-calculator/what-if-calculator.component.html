@@ -1,0 +1,114 @@
+<div class="modal-overlay fade-in" *ngIf="visible()" (click)="close()">
+  <div class="modal-container glass-card slide-up" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="title-group">
+        <div class="icon-box">
+          <lucide-icon [img]="icons.Calculator" size="24"></lucide-icon>
+        </div>
+        <div class="text">
+          <h2>Calculadora "¿Qué pasaría si?"</h2>
+          <p>Simula inversiones pasadas</p>
+        </div>
+      </div>
+      <button class="btn-close" (click)="close()">
+        <lucide-icon [img]="icons.X" size="20"></lucide-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Amount Input -->
+      <div class="form-group">
+        <label>¿Cuánto habrías invertido?</label>
+        <div class="input-wrapper currency">
+          <span class="prefix">$</span>
+          <input 
+            type="number" 
+            [(ngModel)]="amountValue"
+            placeholder="1000"
+            min="1"
+            step="100">
+        </div>
+      </div>
+
+      <!-- Asset Selection -->
+      <div class="form-group">
+        <label>¿En qué activo?</label>
+        <div class="asset-grid">
+          <button 
+            *ngFor="let asset of popularAssets"
+            class="asset-btn"
+            [class.active]="symbol() === asset.symbol"
+            (click)="selectAsset(asset.symbol)">
+            <span class="symbol">{{ asset.symbol }}</span>
+            <span class="name">{{ asset.name }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Timeframe Selection -->
+      <div class="form-group">
+        <label>¿Hace cuánto tiempo?</label>
+        <div class="timeframe-grid">
+          <button 
+            *ngFor="let tf of timeframes"
+            class="timeframe-btn"
+            [class.active]="timeframe() === tf.days"
+            (click)="selectTimeframe(tf.days)">
+            {{ tf.label }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Calculate Button -->
+      <button 
+        class="btn-calculate"
+        (click)="calculate()"
+        [disabled]="isCalculating()">
+        <div class="loading-spinner" *ngIf="isCalculating()"></div>
+        <lucide-icon [img]="icons.Calculator" size="18" *ngIf="!isCalculating()"></lucide-icon>
+        {{ isCalculating() ? 'Calculando...' : 'Calcular' }}
+      </button>
+
+      <!-- Result Card -->
+      <div class="result-card" *ngIf="result()" [@slideIn]>
+        <div class="result-header">
+          <lucide-icon [img]="icons.TrendingUp" size="20"></lucide-icon>
+          <span>Resultado</span>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="label">Invertido</span>
+            <span class="value">{{ result()!.invested | currency:'USD':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="result-item highlight">
+            <span class="label">Valor Actual</span>
+            <span class="value big">{{ result()!.currentValue | currency:'USD':'symbol':'1.2-2' }}</span>
+          </div>
+          <div class="result-item" [class.positive]="result()!.profit >= 0" [class.negative]="result()!.profit < 0">
+            <span class="label">Ganancia/Pérdida</span>
+            <span class="value">
+              {{ result()!.profit >= 0 ? '+' : '' }}{{ result()!.profit | currency:'USD':'symbol':'1.2-2' }}
+              <small>({{ result()!.profitPercentage >= 0 ? '+' : '' }}{{ result()!.profitPercentage | number:'1.1-1' }}%)</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="result-details">
+          <div class="detail-row">
+            <span>Precio entonces:</span>
+            <strong>{{ result()!.priceAtStart | currency:'USD':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Precio ahora:</span>
+            <strong>{{ result()!.priceNow | currency:'USD':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Cantidad comprada:</span>
+            <strong>{{ result()!.quantity | number:'1.0-6' }} {{ symbol() }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

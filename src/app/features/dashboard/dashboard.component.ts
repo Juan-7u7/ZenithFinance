@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X, Zap } from 'lucide-angular';
+import { LucideAngularModule, Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Settings, Users, Bell, UserPlus, X, Zap, FileText, Download, Calculator } from 'lucide-angular';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
@@ -18,28 +18,35 @@ import { NotificationPanelComponent } from './components/notification-panel/noti
 import { GoalProgressComponent } from './components/goal-progress/goal-progress.component';
 import { AutomationCenterComponent } from './components/automation-center/automation-center.component';
 import { AlertModalComponent } from './components/alert-modal/alert-modal.component';
+import { WhatIfCalculatorComponent } from './components/what-if-calculator/what-if-calculator.component';
+import { NetWorthChartComponent } from './components/net-worth-chart/net-worth-chart.component';
 import { AlertService } from '../../core/services/alert.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { ToastService } from '../../core/services/toast.service';
 import { PortfolioAsset } from '../../core/models/asset.model';
 
 import { NotificationService } from '../../core/services/notification.service';
+import { ExportService } from '../../core/services/export.service';
+import { NetWorthService } from '../../core/services/net-worth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, NotificationPanelComponent, TranslatePipe, GoalProgressComponent, AutomationCenterComponent, AlertModalComponent],
+  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, NotificationPanelComponent, TranslatePipe, GoalProgressComponent, AutomationCenterComponent, AlertModalComponent, WhatIfCalculatorComponent, NetWorthChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   // Icons
-  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Users, Bell, UserPlus, X, Zap };
+  readonly icons = { Sun, Moon, LogOut, Plus, Wallet, Pencil, Trash2, CircleDollarSign, TrendingUp, Briefcase, Languages, Users, Bell, UserPlus, X, Zap, FileText, Download, Calculator };
   
   @ViewChild('automationCenter') automationCenter!: AutomationCenterComponent;
   @ViewChild('alertModal') alertModal!: AlertModalComponent;
+  @ViewChild('whatIfCalc') whatIfCalc!: WhatIfCalculatorComponent;
   
   private alertService = inject(AlertService);
+  private exportService = inject(ExportService);
+  private netWorthService = inject(NetWorthService);
   currentDate = new Date();
   
   private authService = inject(AuthService);
@@ -69,6 +76,13 @@ export class DashboardComponent implements OnInit {
   editingAsset = signal<PortfolioAsset | null>(null);
   deletingAsset = signal<PortfolioAsset | null>(null);
   isDeleting = signal(false);
+  
+  // Avatar Error State
+  avatarError = signal(false);
+
+  handleAvatarError() {
+    this.avatarError.set(true);
+  }
 
   ngOnInit(): void {
     console.log('Dashboard initialized with State Service');
@@ -194,5 +208,53 @@ export class DashboardComponent implements OnInit {
 
   setPriceAlert(asset: PortfolioAsset) {
     this.alertModal.open(asset);
+  }
+
+  // Export Functions
+  exportToPDF() {
+    const dashboard = this.dashboard();
+    this.exportService.exportPortfolioToPDF(
+      dashboard.assets,
+      dashboard.totalValue,
+      dashboard.totalProfitLoss,
+      dashboard.totalProfitLossPercentage
+    );
+    this.toastService.show('success', 'Exportando a PDF...');
+  }
+
+  exportToCSV() {
+    const dashboard = this.dashboard();
+    this.exportService.exportPortfolioToCSV(
+      dashboard.assets,
+      dashboard.totalValue,
+      dashboard.totalProfitLoss
+    );
+    this.toastService.show('success', 'Descargando CSV...');
+  }
+
+  // exportTransactionsToCSV() {
+  //   const dashboard = this.dashboard();
+  //   this.exportService.exportTransactionsToCSV(dashboard.transactions);
+  //   this.toastService.show('success', 'Descargando transacciones...');
+  // }
+
+  openWhatIfCalculator() {
+    this.whatIfCalc.open();
+  }
+
+  saveNetWorthSnapshot() {
+    const user = this.authService.getCurrentUser();
+    if (!user) return;
+
+    const dashboard = this.dashboard();
+    this.netWorthService.saveSnapshot(
+      user.id,
+      dashboard.totalValue,
+      dashboard.totalProfitLoss,
+      dashboard.totalProfitLossPercentage
+    ).subscribe({
+      next: () => console.log('Net worth snapshot saved'),
+      error: (error) => console.error('Failed to save snapshot:', error)
+    });
   }
 }

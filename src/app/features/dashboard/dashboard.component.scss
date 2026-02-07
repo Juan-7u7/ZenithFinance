@@ -172,7 +172,9 @@
       width: 100%;
       justify-content: flex-end;
       padding-top: var(--space-sm);
-      border-top: 1px solid var(--border-color);
+      /* border-top removed - no separator line */
+      flex-wrap: nowrap;
+      overflow-x: visible;
     }
   }
 }
@@ -247,6 +249,16 @@
   @media (max-width: 480px) {
     gap: var(--space-md);
     margin-bottom: var(--space-xl);
+  }
+}
+
+.net-worth-chart-wrapper {
+  grid-column: 1 / -1;
+  margin-bottom: var(--space-lg);
+
+  @media (min-width: 1200px) {
+    grid-column: 2 / -1;
+    grid-row: 2;
   }
 }
 
@@ -696,10 +708,11 @@
       }
   }
 
-  /* Assets Grid Responsive */
-  .assets-grid {
-      grid-template-columns: 1fr !important; /* Force single column */
-  }
+
+/* Assets Grid Responsive */
+.assets-grid {
+    grid-template-columns: 1fr !important; /* Force single column */
+}
 
   /* Adjust section headers */
   .section-header {
@@ -710,4 +723,75 @@
       h2 { font-size: 1.25rem; }
       .btn { padding: 8px 12px; font-size: 0.85rem; }
   }
+}
+
+/* ============================================
+   SKELETON LOADER STYLES
+   ============================================ */
+
+.skeleton-loader {
+  display: flex !important;
+  align-items: center;
+  gap: 20px;
+  
+  .avatar-skeleton {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, rgba(var(--text-light-rgb), 0.05) 0%, rgba(var(--text-light-rgb), 0.1) 50%, rgba(var(--text-light-rgb), 0.05) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    flex-shrink: 0;
+  }
+  
+  .info-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .line-skeleton {
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(var(--text-light-rgb), 0.05) 0%, rgba(var(--text-light-rgb), 0.1) 50%, rgba(var(--text-light-rgb), 0.05) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      
+      &.title {
+        width: 240px;
+        height: 32px;
+      }
+      
+      &.subtitle {
+        background: transparent;
+        animation: none;
+      }
+    }
+
+    .loading-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      &::before {
+        content: '';
+        width: 14px;
+        height: 14px;
+        border: 2px solid var(--primary);
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

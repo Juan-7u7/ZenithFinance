@@ -49,7 +49,21 @@ export class MarketService {
   }
 
   getAssetDetails(id: string): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/coins/${id}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`);
+    const params = new HttpParams()
+      .set('localization', 'false')
+      .set('tickers', 'false')
+      .set('market_data', 'true')
+      .set('community_data', 'false')
+      .set('developer_data', 'false')
+      .set('sparkline', 'false');
+
+    return this.http.get<any>(`${this.API_URL}/coins/${id}`, { params }).pipe(
+      retry(2),
+      catchError(error => {
+        console.error(`Error fetching details for ${id}:`, error);
+        return throwError(() => new Error(`No se pudo obtener información de ${id}. Por favor intenta de nuevo.`));
+      })
+    );
   }
 
   /**
@@ -60,7 +74,18 @@ export class MarketService {
   }
 
   getAssetHistory(id: string, days: number = 7): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/coins/${id}/market_chart?vs_currency=usd&days=${days}`);
+    const params = new HttpParams()
+      .set('vs_currency', 'usd')
+      .set('days', days.toString())
+      .set('interval', days > 90 ? 'daily' : undefined as any);
+
+    return this.http.get<any>(`${this.API_URL}/coins/${id}/market_chart`, { params }).pipe(
+      retry(2),
+      catchError(error => {
+        console.error(`Error fetching history for ${id}:`, error);
+        return throwError(() => new Error(`No se pudo obtener el historial de precios. Por favor intenta de nuevo.`));
+      })
+    );
   }
 
   private fetchMarketData(ids: string[], currency: string): Observable<Asset[]> {

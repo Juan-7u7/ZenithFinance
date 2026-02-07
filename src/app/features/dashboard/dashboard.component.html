@@ -4,8 +4,8 @@
     <div class="user-welcome">
       @if (currentUser(); as user) {
         <div class="avatar-wrapper clickable" (click)="goToProfile()">
-          @if (user.avatar) {
-            <img [src]="user.avatar" alt="Avatar" class="avatar">
+          @if (user.avatar && !avatarError()) {
+            <img [src]="user.avatar" alt="Avatar" class="avatar" (error)="handleAvatarError()">
           } @else {
             <div class="avatar placeholder-avatar">
               {{ user.name.charAt(0).toUpperCase() }}
@@ -20,6 +20,16 @@
             <span class="date">{{ currentDate | date:'mediumDate' }}</span>
           </div>
         </div>
+      } @else {
+        <div class="user-welcome skeleton-loader">
+          <div class="avatar-skeleton"></div>
+          <div class="info-skeleton">
+            <div class="line-skeleton title"></div>
+            <div class="line-skeleton subtitle">
+              <span class="loading-text">Obteniendo datos...</span>
+            </div>
+          </div>
+        </div>
       }
     </div>
     
@@ -29,6 +39,15 @@
       </button>
       <button class="btn-icon-v2" (click)="toggleAutomation()" data-tooltip="Automatizaciones">
         <lucide-icon [img]="icons.Zap" size="20"></lucide-icon>
+      </button>
+      <button class="btn-icon-v2 desktop-only" (click)="openWhatIfCalculator()" data-tooltip="Calculadora What-If">
+        <lucide-icon [img]="icons.Calculator" size="20"></lucide-icon>
+      </button>
+      <button class="btn-icon-v2 desktop-only" (click)="exportToPDF()" data-tooltip="Exportar PDF">
+        <lucide-icon [img]="icons.FileText" size="20"></lucide-icon>
+      </button>
+      <button class="btn-icon-v2 desktop-only" (click)="exportToCSV()" data-tooltip="Exportar CSV">
+        <lucide-icon [img]="icons.Download" size="20"></lucide-icon>
       </button>
       <div class="notification-wrapper">
         <button class="btn-icon-v2" data-tooltip="Notificaciones" (click)="toggleNotifications($event)">
@@ -87,6 +106,8 @@
         <div class="card chart-card glass-card">
           <app-portfolio-distribution [assets]="dashboard().assets"></app-portfolio-distribution>
         </div>
+
+        <app-net-worth-chart class="net-worth-chart-wrapper"></app-net-worth-chart>
 
         <div class="card stats-card-v2 glass-card">
           <div class="stat-group">
@@ -218,7 +239,12 @@
   }
 
   <!-- Automation Center -->
-  <app-automation-center #automationCenter></app-automation-center>
+  <app-automation-center 
+    #automationCenter
+    (openWhatIf)="openWhatIfCalculator()"
+    (exportPdf)="exportToPDF()"
+    (exportCsv)="exportToCSV()"
+  ></app-automation-center>
 
   <!-- Alert Modal -->
   <app-alert-modal #alertModal></app-alert-modal>
@@ -233,4 +259,7 @@
       </app-notification-panel>
     </div>
   </div>
+
+  <!-- What-If Calculator Modal -->
+  <app-what-if-calculator #whatIfCalc></app-what-if-calculator>
 </div>

@@ -68,10 +68,15 @@
 
 .sidebar-tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns on desktop (no utilities) */
   padding: var(--space-md);
   gap: 8px;
   background: rgba(var(--text-light-rgb), 0.02);
+  
+  /* 3 columns on mobile (includes utilities) */
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 
   button {
     background: transparent;
@@ -99,9 +104,16 @@
       font-size: 0.65rem;
       background: var(--primary);
       color: white;
-      padding: 1px 6px;
-      border-radius: 100px;
-      margin-left: 4px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 800;
+    }
+    
+    /* Hide utilities tab on desktop */
+    &.mobile-only {
+      @media (min-width: 769px) {
+        display: none;
+      }
     }
   }
 }
@@ -252,3 +264,66 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+.utilities-list {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+}
+
+.utility-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.utility-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+
+    .calc { background: rgba(59, 130, 246, 0.2); transform: scale(1.1); }
+    .pdf { background: rgba(239, 68, 68, 0.2); transform: scale(1.1); }
+    .csv { background: rgba(34, 197, 94, 0.2); transform: scale(1.1); }
+  }
+
+  h4 {
+    margin: 0 0 4px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    &.calc { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    &.pdf { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    &.csv { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+  }
+}
+

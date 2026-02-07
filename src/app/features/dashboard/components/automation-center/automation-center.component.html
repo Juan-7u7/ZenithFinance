@@ -29,6 +29,14 @@
         Metas
         <span class="badge" *ngIf="goals().length > 0">{{ goals().length }}</span>
       </button>
+      <button 
+        class="mobile-only"
+        [class.active]="activeTab() === 'utilities'" 
+        (click)="activeTab.set('utilities')"
+      >
+        <lucide-icon [img]="icons.Box" size="16"></lucide-icon>
+        Utilidades
+      </button>
     </div>
 
     <div class="sidebar-content custom-scrollbar">
@@ -80,6 +88,41 @@
              <button class="btn-delete-sm" (click)="removeGoal(goal.id)">
                <lucide-icon [img]="icons.Trash2" size="14"></lucide-icon> Eliminar Meta
              </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UTILITIES TAB -->
+      <div *ngIf="activeTab() === 'utilities'" class="utilities-list fade-in">
+        <div class="utility-group">
+          <div class="utility-card" (click)="openWhatIf.emit(); close()">
+            <div class="icon-wrapper calc">
+              <lucide-icon [img]="icons.Calculator" size="24"></lucide-icon>
+            </div>
+            <div class="info">
+              <h4>Calculadora What-If</h4>
+              <p>Simula inversiones pasadas</p>
+            </div>
+          </div>
+
+          <div class="utility-card" (click)="exportPdf.emit(); close()">
+            <div class="icon-wrapper pdf">
+              <lucide-icon [img]="icons.FileText" size="24"></lucide-icon>
+            </div>
+            <div class="info">
+              <h4>Exportar PDF</h4>
+              <p>Reporte profesional</p>
+            </div>
+          </div>
+
+          <div class="utility-card" (click)="exportCsv.emit(); close()">
+            <div class="icon-wrapper csv">
+              <lucide-icon [img]="icons.Download" size="24"></lucide-icon>
+            </div>
+            <div class="info">
+              <h4>Exportar CSV</h4>
+              <p>Datos en formato Excel</p>
+            </div>
           </div>
         </div>
       </div>
