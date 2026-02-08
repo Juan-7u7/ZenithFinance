@@ -51,6 +51,12 @@ export class MarketService {
   }
 
   getAssetDetails(id: string): Observable<any> {
+    // Skip API call if in demo mode to avoid CORS errors in console
+    if (this.USE_DEMO_MODE) {
+      console.log(`🎭 Demo mode: Using simulated data for ${id}`);
+      return of(this.generateDemoAssetDetails(id));
+    }
+
     const params = new HttpParams()
       .set('localization', 'false')
       .set('tickers', 'false')
@@ -62,14 +68,8 @@ export class MarketService {
     return this.http.get<any>(`${this.API_URL}/coins/${id}`, { params }).pipe(
       retry(1),
       catchError(error => {
-        console.warn(`API failed for ${id} details, using demo data:`, error);
-        
-        // If DEMO_MODE is enabled or CORS error, return simulated data
-        if (this.USE_DEMO_MODE || error.status === 0) {
-          return of(this.generateDemoAssetDetails(id));
-        }
-        
-        return throwError(() => new Error(`No se pudo obtener información de ${id}. Por favor intenta de nuevo.`));
+        console.warn(`⚠️ API failed for ${id} details (CORS):`, error.message);
+        return of(this.generateDemoAssetDetails(id));
       })
     );
   }
@@ -111,22 +111,22 @@ export class MarketService {
   }
 
   getAssetHistory(id: string, days: number = 7): Observable<any> {
+    // Skip API call if in demo mode to avoid CORS errors in console
+    if (this.USE_DEMO_MODE) {
+      console.log(`🎭 Demo mode: Using simulated history for ${id} (${days} days)`);
+      return of(this.generateDemoHistoryData(id, days));
+    }
+
     const params = new HttpParams()
       .set('vs_currency', 'usd')
       .set('days', days.toString())
       .set('interval', days > 90 ? 'daily' : undefined as any);
 
     return this.http.get<any>(`${this.API_URL}/coins/${id}/market_chart`, { params }).pipe(
-      retry(1), // Only 1 retry to fail fast
+      retry(1),
       catchError(error => {
-        console.warn(`API failed for ${id}, using demo data:`, error);
-        
-        // If DEMO_MODE is enabled or CORS error, return simulated data
-        if (this.USE_DEMO_MODE || error.status === 0) {
-          return of(this.generateDemoHistoryData(id, days));
-        }
-        
-        return throwError(() => new Error(`No se pudo obtener el historial de precios. Por favor intenta de nuevo.`));
+        console.warn(`⚠️ API failed for ${id} history (CORS):`, error.message);
+        return of(this.generateDemoHistoryData(id, days));
       })
     );
   }
