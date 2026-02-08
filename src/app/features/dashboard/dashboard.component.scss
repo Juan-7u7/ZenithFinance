@@ -687,9 +687,11 @@
 
       .actions {
           width: 100%;
+          width: 100%;
           justify-content: flex-start; /* Start for scrolling */
           gap: 12px;
-          overflow-x: auto; /* Allow scrolling */
+          overflow: visible; /* Prevent clipping of tooltips */
+          flex-wrap: wrap;   /* Allow wrapping if needed */
           padding: 4px 0 12px 0; /* Space for scrollbar/touch */
           -webkit-overflow-scrolling: touch;
           

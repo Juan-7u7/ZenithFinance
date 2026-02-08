@@ -99,7 +99,8 @@
         <div class="card goal-card">
            <app-goal-progress 
              [currentBalance]="dashboard().totalValue"
-             [profitLossPercentage]="dashboard().totalProfitLossPercentage">
+             [profitLossPercentage]="dashboard().totalProfitLossPercentage"
+             (openSettings)="openGoalModal()">
            </app-goal-progress>
         </div>
 
@@ -142,13 +143,6 @@
               <lucide-icon [img]="icons.Plus" size="16"></lucide-icon> {{ 'dashboard.add_asset' | translate }}
             </button>
           </div>
-
-          @if (isAddModalOpen()) {
-            <app-add-asset-modal
-              (close)="closeAddModal()"
-              (assetAdded)="onAssetAdded($event)"
-            ></app-add-asset-modal>
-          }
 
           @if (dashboard().assets.length === 0) {
             <div class="empty-state glass-card">
@@ -193,13 +187,13 @@
                   
                   <!-- Asset Actions (Always Visible) -->
                   <div class="asset-footer" (click)="$event.stopPropagation()">
-                    <button class="btn-action" (click)="setPriceAlert(asset)" [attr.data-tooltip]="'common.alert' | translate">
+                    <button class="btn-action" (click)="setPriceAlert(asset)" data-tooltip="Alertas" data-tooltip-pos="top">
                       <lucide-icon [img]="icons.Bell" size="18"></lucide-icon>
                     </button>
-                    <button class="btn-action" (click)="openEditModal(asset)" [attr.data-tooltip]="'common.edit' | translate">
+                    <button class="btn-action" (click)="openEditModal(asset)" [attr.data-tooltip]="'common.edit' | translate" data-tooltip-pos="top">
                       <lucide-icon [img]="icons.Pencil" size="18"></lucide-icon>
                     </button>
-                    <button class="btn-action delete" (click)="openDeleteModal(asset)" [attr.data-tooltip]="'common.delete' | translate">
+                    <button class="btn-action delete" (click)="openDeleteModal(asset)" [attr.data-tooltip]="'common.delete' | translate" data-tooltip-pos="top">
                       <lucide-icon [img]="icons.Trash2" size="18"></lucide-icon>
                     </button>
                   </div>
@@ -208,35 +202,13 @@
             </div>
           }
         </section>
-
-        <!-- History Section -->
-        <section class="history-section">
-          <app-transaction-history></app-transaction-history>
-        </section>
-      </div>
-
-      <!-- Edit Modal -->
-      @if (editingAsset(); as asset) {
-        @if (asset.id) {
-          <app-edit-asset-modal
-            [asset]="asset"
-            [databaseId]="asset.id"
-            (close)="closeEditModal()"
-            (assetUpdated)="onAssetUpdated()"
-          ></app-edit-asset-modal>
-        }
-      }
-
-      <!-- Delete Modal -->
-      @if (deletingAsset(); as asset) {
-        <app-confirm-delete-modal
-          [assetName]="asset.name"
-          [isLoading]="isDeleting()"
-          (cancel)="closeDeleteModal()"
-          (confirm)="confirmDelete()"
-        ></app-confirm-delete-modal>
-      }
-    </div>
+    
+      <!-- History Section -->
+      <section class="history-section">
+        <app-transaction-history></app-transaction-history>
+      </section>
+      </div> <!-- Close main-grid -->
+    </div> <!-- Close dashboard-content -->
   }
 
   <!-- Automation Center -->
@@ -246,9 +218,6 @@
     (exportPdf)="exportToPDF()"
     (exportCsv)="exportToCSV()"
   ></app-automation-center>
-
-  <!-- Alert Modal -->
-  <app-alert-modal #alertModal></app-alert-modal>
 
   <!-- Notification Panel -->
   <div class="notification-overlay" *ngIf="isNotificationPanelOpen()">
@@ -263,4 +232,36 @@
 
   <!-- What-If Calculator Modal -->
   <app-what-if-calculator #whatIfCalc></app-what-if-calculator>
+
+  <!-- GLOBAL MODALS (Outside animated content to fix positioning) -->
+  
+  @if (isAddModalOpen()) {
+    <app-add-asset-modal
+      (close)="closeAddModal()"
+      (assetAdded)="onAssetAdded($event)"
+    ></app-add-asset-modal>
+  }
+
+  @if (editingAsset(); as asset) {
+    @if (asset.id) {
+      <app-edit-asset-modal
+        [asset]="asset"
+        [databaseId]="asset.id"
+        (close)="closeEditModal()"
+        (assetUpdated)="onAssetUpdated()"
+      ></app-edit-asset-modal>
+    }
+  }
+
+  @if (deletingAsset(); as asset) {
+    <app-confirm-delete-modal
+      [assetName]="asset.name"
+      [isLoading]="isDeleting()"
+      (cancel)="closeDeleteModal()"
+      (confirm)="confirmDelete()"
+    ></app-confirm-delete-modal>
+  }
+
+  <app-alert-modal #alertModal></app-alert-modal>
+  <app-goal-modal #goalModal></app-goal-modal>
 </div>

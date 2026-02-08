@@ -108,6 +108,16 @@ export class NotificationService {
       });
   }
 
+  async requestPermissions() {
+    if (!('Notification' in window)) {
+      console.log('This browser does not support desktop notification');
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    console.log('Notification permission:', permission);
+  }
+
   private setupRealtimeSubscription() {
     const myId = this.authService.getCurrentUser()?.id;
     if (!myId) return;
@@ -126,12 +136,38 @@ export class NotificationService {
           console.log('REALTIME INSERT DETECTED!', payload.new);
           this.ngZone.run(() => {
             this.handleNewNotification(payload.new);
+            this.showSystemNotification(payload.new);
           });
         }
       )
       .subscribe((status) => {
           console.log('Realtime subscription status:', status);
       });
+  }
+
+  private showSystemNotification(record: any) {
+    if (Notification.permission === 'granted') {
+      const title = record.type === 'NEW_FOLLOWER' ? 'Nuevo Seguidor' : 'Notificación Zenith';
+      const body = 'Tienes una nueva notificación en Zenith Finance'; // Customize based on record content if available
+      
+      // Use ServiceWorker registration if available for better mobile support
+      if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification(title, {
+            body: body,
+            icon: 'assets/icons/icon-96x96.png',
+            vibrate: [100, 50, 100],
+            data: { url: '/dashboard' }
+          } as any);
+        });
+      } else {
+        // Fallback to basic Notification API
+        new Notification(title, {
+          body: body,
+          icon: 'assets/icons/icon-96x96.png'
+        });
+      }
+    }
   }
 
   deleteNotification(id: string) {

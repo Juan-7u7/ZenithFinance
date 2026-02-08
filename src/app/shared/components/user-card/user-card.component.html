@@ -30,7 +30,7 @@
         {{ isFollowing() ? 'Siguiendo' : 'Seguir' }}
       </button>
       
-      <a [routerLink]="['/u', user().username]" class="btn-icon-v2" data-tooltip="Ver Perfil" *ngIf="user().username">
+      <a [routerLink]="['/u', user().username]" class="btn-icon-v2" data-tooltip="Ver Perfil" data-tooltip-pos="top" *ngIf="user().username">
          <lucide-icon [img]="icons.Eye" size="18"></lucide-icon>
       </a>
   </div>

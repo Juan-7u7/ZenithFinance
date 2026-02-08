@@ -20,6 +20,7 @@ import { AutomationCenterComponent } from './components/automation-center/automa
 import { AlertModalComponent } from './components/alert-modal/alert-modal.component';
 import { WhatIfCalculatorComponent } from './components/what-if-calculator/what-if-calculator.component';
 import { NetWorthChartComponent } from './components/net-worth-chart/net-worth-chart.component';
+import { GoalModalComponent } from './components/goal-modal/goal-modal.component';
 import { AlertService } from '../../core/services/alert.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -32,7 +33,23 @@ import { NetWorthService } from '../../core/services/net-worth.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddAssetModalComponent, EditAssetModalComponent, ConfirmDeleteModalComponent, TransactionHistoryComponent, PortfolioDistributionComponent, NotificationPanelComponent, TranslatePipe, GoalProgressComponent, AutomationCenterComponent, AlertModalComponent, WhatIfCalculatorComponent, NetWorthChartComponent],
+  imports: [
+    CommonModule, 
+    LucideAngularModule, 
+    AddAssetModalComponent, 
+    EditAssetModalComponent, 
+    ConfirmDeleteModalComponent, 
+    TransactionHistoryComponent, 
+    PortfolioDistributionComponent, 
+    NotificationPanelComponent, 
+    TranslatePipe, 
+    GoalProgressComponent, 
+    AutomationCenterComponent, 
+    AlertModalComponent, 
+    WhatIfCalculatorComponent, 
+    NetWorthChartComponent, 
+    GoalModalComponent
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -43,6 +60,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild('automationCenter') automationCenter!: AutomationCenterComponent;
   @ViewChild('alertModal') alertModal!: AlertModalComponent;
   @ViewChild('whatIfCalc') whatIfCalc!: WhatIfCalculatorComponent;
+  @ViewChild('goalModal') goalModal!: GoalModalComponent;
   
   private alertService = inject(AlertService);
   private exportService = inject(ExportService);
@@ -250,6 +268,10 @@ export class DashboardComponent implements OnInit {
 
   openWhatIfCalculator() {
     this.whatIfCalc.open();
+  }
+
+  openGoalModal() {
+    this.goalModal.open();
   }
 
   saveNetWorthSnapshot() {

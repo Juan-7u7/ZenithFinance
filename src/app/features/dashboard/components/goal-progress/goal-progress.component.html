@@ -9,7 +9,7 @@
         <p *ngIf="activeGoal">{{ progressPercentage | number:'1.0-0' }}% completado</p>
       </div>
     </div>
-    <button class="btn-config" (click)="openGoalSettings()" data-tooltip="Configurar Meta">
+    <button class="btn-config" (click)="openGoalSettings()" data-tooltip="Configurar Meta" data-tooltip-pos="left">
        <lucide-icon [img]="icons.Settings2" size="16"></lucide-icon>
     </button>
   </div>
@@ -65,4 +65,4 @@
   }
 </div>
 
-<app-goal-modal #goalModal></app-goal-modal>
+

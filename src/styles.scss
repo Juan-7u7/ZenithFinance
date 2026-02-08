@@ -263,10 +263,93 @@ input:focus {
     &::after {
       visibility: visible;
       opacity: 1;
-      transform: translateX(-50%) translateY(10px); /* Adjusted to match box motion */
+      transform: translateX(-50%) translateY(5px); 
+    }
+  }
+
+  /* Top Position Override */
+  &[data-tooltip-pos="top"] {
+    &::before {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    
+    &::after {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: -6px; /* Pull arrow down to connect */
+      border-color: #333 transparent transparent transparent; /* Points DOWN */
+    }
+
+    &:hover {
+      &::before {
+        transform: translateX(-50%) translateY(-5px);
+      }
+      &::after {
+        transform: translateX(-50%) translateY(-5px);
+      }
+    }
+  }
+
+  /* Left Position Override */
+  &[data-tooltip-pos="left"] {
+    &::before {
+      top: 50%;
+      left: auto;
+      right: 100%;
+      margin-right: 10px;
+      margin-top: 0;
+      transform: translateY(-50%) translateX(0);
+    }
+    
+    &::after {
+      top: 50%;
+      left: auto;
+      right: 100%;
+      margin-right: -6px;
+      margin-top: -6px;
+      transform: translateY(0);
+      border-color: transparent transparent transparent #333; /* Points RIGHT */
+    }
+
+    &:hover {
+      &::before {
+        transform: translateY(-50%) translateX(-5px);
+      }
+      &::after {
+        transform: translateY(0) translateX(-5px);
+      }
+    }
+  }
+
+  /* Bottom-Left Position Override (perfect for top-right corner elements) */
+  &[data-tooltip-pos="bottom-left"] {
+    &::before {
+      left: auto;
+      right: 0;
+      transform: translateX(0) translateY(0);
+    }
+    
+    &::after {
+      left: auto;
+      right: 12px; /* Align arrow with icon center usually */
+      transform: translateX(0) translateY(0);
+    }
+
+    &:hover {
+      &::before {
+        transform: translateX(0) translateY(5px);
+      }
+      &::after {
+        transform: translateX(0) translateY(10px);
+      }
     }
   }
 }
+
 
 /* Base resets & common animations... */
 @keyframes fadeIn {

@@ -1,20 +1,21 @@
-import { Component, inject, input, ViewChild, computed } from '@angular/core';
+import { Component, inject, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GoalService } from '../../../../core/services/goal.service';
 import { LucideAngularModule, Target, Trophy, Plus, Settings2, TrendingUp, Calendar } from 'lucide-angular';
 import { TranslatePipe } from '../../../../shared/pipes/translate.pipe';
-import { GoalModalComponent } from '../goal-modal/goal-modal.component';
 
 @Component({
   selector: 'app-goal-progress',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, TranslatePipe, GoalModalComponent],
+  imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './goal-progress.component.html',
   styleUrls: ['./goal-progress.component.scss']
 })
 export class GoalProgressComponent {
   private goalService = inject(GoalService);
-  @ViewChild('goalModal') goalModal!: GoalModalComponent;
+  
+  // Outputs
+  openSettings = output<void>();
   
   // Inputs
   currentBalance = input<number>(0);
@@ -102,6 +103,6 @@ export class GoalProgressComponent {
   }
 
   openGoalSettings() {
-    this.goalModal.open();
+    this.openSettings.emit();
   }
 }
