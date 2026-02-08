@@ -12,7 +12,7 @@ export class MarketService {
   private http = inject(HttpClient);
   private readonly API_URL = 'https://api.coingecko.com/api/v3';
   private readonly API_KEY = environment.coinGeckoApiKey;
-  private readonly USE_DEMO_MODE = false; // ✅ Use real API with key
+  private readonly USE_DEMO_MODE = true; // ✅ Demo mode (CoinGecko blocks browser CORS)
   
   // Dynamic cache per unique set of IDs
   private cacheMap = new Map<string, Observable<Asset[]>>();
