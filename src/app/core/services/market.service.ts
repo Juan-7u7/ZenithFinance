@@ -1,17 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, timer, of, throwError } from 'rxjs';
 import { map, shareReplay, switchMap, catchError, retry } from 'rxjs/operators';
 import { Asset } from '../models/asset.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MarketService {
   private http = inject(HttpClient);
-  // Using pro-api (demo) endpoint which has better CORS support
   private readonly API_URL = 'https://api.coingecko.com/api/v3';
-  private readonly USE_DEMO_MODE = false; // ✅ Changed to false - attempt real API
+  private readonly API_KEY = environment.coinGeckoApiKey;
+  private readonly USE_DEMO_MODE = false; // ✅ Use real API with key
   
   // Dynamic cache per unique set of IDs
   private cacheMap = new Map<string, Observable<Asset[]>>();
@@ -63,15 +64,25 @@ export class MarketService {
       .set('market_data', 'true')
       .set('community_data', 'false')
       .set('developer_data', 'false')
-      .set('sparkline', 'false');
+      .set('sparkline', 'false')
+      .set('x_cg_demo_api_key', this.API_KEY); // API key as query param
 
     return this.http.get<any>(`${this.API_URL}/coins/${id}`, { params }).pipe(
       retry(1),
       catchError(error => {
-        console.warn(`⚠️ API failed for ${id} details (CORS):`, error.message);
+        console.warn(`⚠️ API failed for ${id} details:`, error.message);
         return of(this.generateDemoAssetDetails(id));
       })
     );
+  }
+
+  /**
+   * Get HTTP headers with API key
+   */
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'x-cg-demo-api-key': this.API_KEY
+    });
   }
 
   /**
@@ -120,12 +131,13 @@ export class MarketService {
     const params = new HttpParams()
       .set('vs_currency', 'usd')
       .set('days', days.toString())
-      .set('interval', days > 90 ? 'daily' : undefined as any);
+      .set('interval', days > 90 ? 'daily' : undefined as any)
+      .set('x_cg_demo_api_key', this.API_KEY); // API key as query param
 
     return this.http.get<any>(`${this.API_URL}/coins/${id}/market_chart`, { params }).pipe(
       retry(1),
       catchError(error => {
-        console.warn(`⚠️ API failed for ${id} history (CORS):`, error.message);
+        console.warn(`⚠️ API failed for ${id} history:`, error.message);
         return of(this.generateDemoHistoryData(id, days));
       })
     );
@@ -194,7 +206,8 @@ export class MarketService {
       .set('order', 'market_cap_desc')
       .set('per_page', '100')
       .set('page', '1')
-      .set('sparkline', 'false');
+      .set('sparkline', 'false')
+      .set('x_cg_demo_api_key', this.API_KEY); // API key as query param
 
     return this.http.get<any[]>(`${this.API_URL}/coins/markets`, { params }).pipe(
       retry(2), // Retry failed requests twice
