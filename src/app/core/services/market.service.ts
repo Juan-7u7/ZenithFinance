@@ -11,7 +11,7 @@ export class MarketService {
   private http = inject(HttpClient);
   // Using pro-api (demo) endpoint which has better CORS support
   private readonly API_URL = 'https://api.coingecko.com/api/v3';
-  private readonly USE_DEMO_MODE = true; // Fallback to demo data if API fails
+  private readonly USE_DEMO_MODE = false; // ✅ Changed to false - attempt real API
   
   // Dynamic cache per unique set of IDs
   private cacheMap = new Map<string, Observable<Asset[]>>();
