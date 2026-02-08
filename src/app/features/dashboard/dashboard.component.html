@@ -191,15 +191,16 @@
                     </div>
                   </div>
                   
-                  <div class="asset-actions">
-                    <button class="btn-icon-sm" (click)="setPriceAlert(asset); $event.stopPropagation()" data-tooltip="Establecer Alerta">
-                      <lucide-icon [img]="icons.Bell" size="16"></lucide-icon>
+                  <!-- Asset Actions (Always Visible) -->
+                  <div class="asset-footer" (click)="$event.stopPropagation()">
+                    <button class="btn-action" (click)="setPriceAlert(asset)" [attr.data-tooltip]="'common.alert' | translate">
+                      <lucide-icon [img]="icons.Bell" size="18"></lucide-icon>
                     </button>
-                    <button class="btn-icon-sm" (click)="openEditModal(asset); $event.stopPropagation()" [attr.data-tooltip]="'common.edit' | translate">
-                      <lucide-icon [img]="icons.Pencil" size="16"></lucide-icon>
+                    <button class="btn-action" (click)="openEditModal(asset)" [attr.data-tooltip]="'common.edit' | translate">
+                      <lucide-icon [img]="icons.Pencil" size="18"></lucide-icon>
                     </button>
-                    <button class="btn-icon-sm delete" (click)="openDeleteModal(asset); $event.stopPropagation()" [attr.data-tooltip]="'common.delete' | translate">
-                      <lucide-icon [img]="icons.Trash2" size="16"></lucide-icon>
+                    <button class="btn-action delete" (click)="openDeleteModal(asset)" [attr.data-tooltip]="'common.delete' | translate">
+                      <lucide-icon [img]="icons.Trash2" size="18"></lucide-icon>
                     </button>
                   </div>
                 </div>

@@ -508,6 +508,7 @@
     justify-content: space-between;
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-color);
+    margin-top: auto; // Push to bottom if height fixed, though flexible now
     gap: var(--space-sm);
     
     .asset-metric {
@@ -537,45 +538,40 @@
     }
   }
 
-  .asset-actions {
-    position: absolute;
-    top: var(--space-md);
-    right: var(--space-md);
+  .asset-footer {
     display: flex;
-    gap: var(--space-xs);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-5px);
-    transition: all 0.2s ease;
-    background: var(--bg-card);
-    padding: 4px;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    padding-top: var(--space-md);
+    margin-top: var(--space-md);
+    border-top: 1px solid rgba(var(--border-color-rgb), 0.5);
   }
 }
 
-.btn-icon-sm {
+.btn-action {
   background: transparent;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  width: 28px;
-  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: var(--text-muted);
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
+    background: var(--bg-card-hover);
     color: var(--primary);
-    background: var(--primary-light);
+    border-color: var(--border-color);
+    transform: translateY(-1px);
   }
 
   &.delete:hover {
     color: var(--error);
-    background: #fef2f2;
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.1);
   }
 }
 
@@ -601,8 +597,7 @@
   height: 100vh;
   z-index: 9999;
   display: flex;
-  justify-content: center; /* Centered by default for mobile simplicity, or adjust */
-  pointer-events: none; /* Let clicks pass through empty spaces if needed, but backdrop handles it */
+  pointer-events: none;
 
   .backdrop {
     position: absolute;
@@ -610,29 +605,49 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: transparent; /* Invisible backdrop to catch clicks */
+    background: rgba(0,0,0,0.1); /* Subtle backdrop */
     pointer-events: auto;
     cursor: default;
   }
 
   .panel-container {
     position: absolute;
-    top: 90px; /* Match header height + spacing */
-    right: 40px; /* Align with dashboard padding */
+    top: 90px;
+    right: 40px;
     pointer-events: auto;
     z-index: 10000;
   }
 
   @media (max-width: 768px) {
+    justify-content: center;
+    align-items: flex-end; /* Bottom sheet align */
+    
     .panel-container {
-      top: 50%;
-      left: 50%;
+      position: relative;
+      top: auto;
       right: auto;
-      transform: translate(-50%, -50%);
-      width: 90%;
-      max-width: 360px;
+      bottom: 0;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+      animation: slide-up-sheet 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      
+      /* Ensure panel component inside respects rounded corners */
+      overflow: hidden; 
+      margin-bottom: 0; // Stick to bottom
+    }
+
+    .backdrop {
+      background: rgba(0,0,0,0.4); // Darker backdrop for mobile focus
+      backdrop-filter: blur(4px);
     }
   }
+}
+
+@keyframes slide-up-sheet {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* Global Mobile Fixes for Dashboard */
