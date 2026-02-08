@@ -138,8 +138,8 @@ export class MarketService {
     const now = Date.now();
     const dayMs = 24 * 60 * 60 * 1000;
     
-    // Base prices for different cryptos (approximate current prices)
-    const basePrices: Record<string, number> = {
+    // Current prices (today's price)
+    const currentPrices: Record<string, number> = {
       'bitcoin': 45000,
       'ethereum': 2500,
       'binancecoin': 320,
@@ -154,17 +154,35 @@ export class MarketService {
       'uniswap': 6.2
     };
 
-    const basePrice = basePrices[id] || 100;
+    const currentPrice = currentPrices[id] || 100;
+    
+    // Generate a random but realistic total change over the period
+    // Crypto can move -50% to +150% over long periods
+    const totalChangePercent = (Math.random() - 0.3) * 0.8; // -24% to +56%
+    const startPrice = currentPrice / (1 + totalChangePercent);
+    
     const prices: [number, number][] = [];
 
-    // Generate realistic price movement
-    for (let i = 0; i < days; i++) {
+    // Generate realistic price movement with volatility
+    let currentWalkPrice = startPrice;
+    for (let i = 0; i <= days; i++) {
       const timestamp = now - ((days - i) * dayMs);
-      // Random walk with slight upward bias
-      const variation = (Math.random() - 0.48) * 0.05; // -2.5% to +2.5%
-      const price = basePrice * (1 + (variation * i / days));
-      prices.push([timestamp, price]);
+      
+      // Daily volatility (random walk)
+      const dailyChange = (Math.random() - 0.5) * 0.1; // -5% to +5% daily
+      currentWalkPrice = currentWalkPrice * (1 + dailyChange);
+      
+      // Gradually trend towards the target currentPrice
+      const progressRatio = i / days;
+      const targetInfluence = 0.3; // How much to pull toward target
+      const trendedPrice = currentWalkPrice * (1 - targetInfluence * progressRatio) + 
+                           currentPrice * (targetInfluence * progressRatio);
+      
+      prices.push([timestamp, trendedPrice]);
     }
+    
+    // Ensure the last price is exactly the current price
+    prices[prices.length - 1][1] = currentPrice;
 
     return { prices };
   }
