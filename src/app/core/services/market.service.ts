@@ -64,10 +64,11 @@ export class MarketService {
       .set('market_data', 'true')
       .set('community_data', 'false')
       .set('developer_data', 'false')
-      .set('sparkline', 'false')
-      .set('x_cg_demo_api_key', this.API_KEY); // API key as query param
+      .set('sparkline', 'false');
 
-    return this.http.get<any>(`${this.API_URL}/coins/${id}`, { params }).pipe(
+    const headers = this.getHeaders(); // ✅ API key in headers
+
+    return this.http.get<any>(`${this.API_URL}/coins/${id}`, { params, headers }).pipe(
       retry(1),
       catchError(error => {
         console.warn(`⚠️ API failed for ${id} details:`, error.message);
@@ -131,10 +132,11 @@ export class MarketService {
     const params = new HttpParams()
       .set('vs_currency', 'usd')
       .set('days', days.toString())
-      .set('interval', days > 90 ? 'daily' : undefined as any)
-      .set('x_cg_demo_api_key', this.API_KEY); // API key as query param
+      .set('interval', days > 90 ? 'daily' : undefined as any);
 
-    return this.http.get<any>(`${this.API_URL}/coins/${id}/market_chart`, { params }).pipe(
+    const headers = this.getHeaders(); // ✅ API key in headers
+
+    return this.http.get<any>(`${this.API_URL}/coins/${id}/market_chart`, { params, headers }).pipe(
       retry(1),
       catchError(error => {
         console.warn(`⚠️ API failed for ${id} history:`, error.message);
@@ -206,10 +208,11 @@ export class MarketService {
       .set('order', 'market_cap_desc')
       .set('per_page', '100')
       .set('page', '1')
-      .set('sparkline', 'false')
-      .set('x_cg_demo_api_key', this.API_KEY); // API key as query param
+      .set('sparkline', 'false');
 
-    return this.http.get<any[]>(`${this.API_URL}/coins/markets`, { params }).pipe(
+    const headers = this.getHeaders(); // ✅ API key in headers
+
+    return this.http.get<any[]>(`${this.API_URL}/coins/markets`, { params, headers }).pipe(
       retry(2), // Retry failed requests twice
       map(data => data.map(coin => this.mapToAsset(coin))),
       catchError(error => {
