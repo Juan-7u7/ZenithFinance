@@ -56,29 +56,10 @@ Añade, edita y elimina activos de tu portafolio con facilidad.
 
 ---
 
-## 🚀 Instalación y Desarrollo Local
+## 📬 Contacto
 
-1.  **Clonar el repositorio:**
-
-    ```bash
-    git clone https://github.com/tu-usuario/zenith-finance.git
-    cd zenith-finance
-    ```
-
-2.  **Instalar dependencias:**
-
-    ```bash
-    npm install
-    ```
-
-3.  **Configurar variables de entorno:**
-    Crea un archivo `.env` o actualiza `src/environments/environment.ts` con tus credenciales de Supabase.
-
-4.  **Ejecutar el servidor de desarrollo:**
-    ```bash
-    npm start
-    ```
-    Navega a `http://localhost:4200/`.
+Si tienes alguna pregunta o sugerencia, no dudes en contactarme:
+📧 **juanhdztr@gmail.com**
 
 ---
 
