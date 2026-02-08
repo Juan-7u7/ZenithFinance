@@ -87,6 +87,16 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     console.log('Dashboard initialized with State Service');
     this.notificationService.loadNotifications();
+    
+    // Save initial snapshot after data loads (with delay to ensure data is ready)
+    setTimeout(() => {
+      const dashboardData = this.dashboard();
+      const user = this.currentUser();
+      
+      if (user && dashboardData && dashboardData.assets.length > 0) {
+        this.saveNetWorthSnapshot();
+      }
+    }, 3000); // 3 seconds delay
   }
 
   // --- Notification Logic ---
