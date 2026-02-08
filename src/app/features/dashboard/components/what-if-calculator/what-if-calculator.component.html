@@ -10,7 +10,7 @@
           <p>Simula inversiones pasadas</p>
         </div>
       </div>
-      <button class="btn-close" (click)="close()">
+      <button class="btn-close" (click)="close(); $event.stopPropagation()">
         <lucide-icon [img]="icons.X" size="20"></lucide-icon>
       </button>
     </div>
@@ -33,15 +33,17 @@
       <!-- Asset Selection -->
       <div class="form-group">
         <label>¿En qué activo?</label>
-        <div class="asset-grid">
-          <button 
-            *ngFor="let asset of popularAssets"
-            class="asset-btn"
-            [class.active]="symbol() === asset.symbol"
-            (click)="selectAsset(asset.symbol)">
-            <span class="symbol">{{ asset.symbol }}</span>
-            <span class="name">{{ asset.name }}</span>
-          </button>
+        <div class="custom-select-wrapper">
+          <select 
+            class="custom-select"
+            [(ngModel)]="symbolValue"
+            (change)="selectAsset(symbolValue)"
+          >
+            <option *ngFor="let asset of popularAssets" [value]="asset.symbol">
+              {{ asset.symbol }} - {{ asset.name }}
+            </option>
+          </select>
+          <lucide-icon [img]="icons.TrendingUp" size="18" class="select-icon"></lucide-icon>
         </div>
       </div>
 

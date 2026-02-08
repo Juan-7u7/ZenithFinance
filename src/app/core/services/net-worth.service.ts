@@ -41,22 +41,25 @@ export class NetWorthService {
 
   /**
    * Get net worth history for a user
+   * Now returns the last N snapshots regardless of date range
+   * This ensures users see data even if they haven't been using the app for long
    */
   getHistory(userId: string, days: number = 30): Observable<NetWorthSnapshot[]> {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-
+    // Calculate limit based on days (approximate: 1 snapshot per day)
+    const limit = Math.max(days, 7); // Minimum 7 snapshots
+    
     return from(
       this.supabase.getClient()
         .from('net_worth_history')
         .select('*')
         .eq('user_id', userId)
-        .gte('timestamp', startDate.toISOString())
-        .order('timestamp', { ascending: true })
+        .order('timestamp', { ascending: false })
+        .limit(limit)
     ).pipe(
       map(({ data, error }) => {
         if (error) throw error;
-        return data || [];
+        // Return in ascending order for chart display
+        return (data || []).reverse();
       })
     );
   }

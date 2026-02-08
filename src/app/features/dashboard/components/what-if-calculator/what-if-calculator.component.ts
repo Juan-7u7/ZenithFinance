@@ -94,8 +94,15 @@ export class WhatIfCalculatorComponent {
   }
 
   async calculate() {
+    // Validation
     if (this.amountValue <= 0) {
       this.toastService.show('error', 'Por favor ingresa una cantidad válida');
+      return;
+    }
+
+    // Check network connectivity
+    if (!navigator.onLine) {
+      this.toastService.show('error', 'Sin conexión a internet. Por favor verifica tu conexión.');
       return;
     }
 
@@ -109,12 +116,14 @@ export class WhatIfCalculatorComponent {
 
       // Find asset ID from symbol
       const asset = this.popularAssets.find(a => a.symbol === symbol);
-      if (!asset) throw new Error('Asset not found');
+      if (!asset) {
+        throw new Error('Criptomoneda no encontrada');
+      }
 
       // Get current price
       const currentData = await this.marketService.getAssetDetails(asset.id).toPromise();
-      if (!currentData || !currentData.market_data) {
-        throw new Error('Could not fetch current price');
+      if (!currentData || !currentData.market_data || !currentData.market_data.current_price) {
+        throw new Error(`No se pudo obtener el precio actual de ${asset.name}. Intenta de nuevo.`);
       }
 
       const priceNow = currentData.market_data.current_price.usd;
@@ -122,7 +131,7 @@ export class WhatIfCalculatorComponent {
       // Get historical price
       const historicalData = await this.marketService.getAssetHistory(asset.id, daysAgo).toPromise();
       if (!historicalData || !historicalData.prices || historicalData.prices.length === 0) {
-        throw new Error('Could not fetch historical price');
+        throw new Error(`No hay datos históricos disponibles para ${asset.name} en los últimos ${daysAgo} días.`);
       }
 
       // Get price from the start of the period (first data point)
@@ -148,7 +157,21 @@ export class WhatIfCalculatorComponent {
 
     } catch (error: any) {
       console.error('What-if calculation error:', error);
-      this.toastService.show('error', error.message || 'Error al calcular. Intenta de nuevo.');
+      
+      // Enhanced error messages
+      let errorMessage = 'Error al calcular. Por favor intenta de nuevo.';
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.status === 0 || error.status === 504) {
+        errorMessage = 'Sin conexión al servidor. Verifica tu internet.';
+      } else if (error.status === 429) {
+        errorMessage = 'Demasiadas solicitudes. Espera un momento e intenta de nuevo.';
+      } else if (error.status === 404) {
+        errorMessage = 'Criptomoneda no encontrada en la base de datos.';
+      }
+      
+      this.toastService.show('error', errorMessage);
     } finally {
       this.isCalculating.set(false);
     }
