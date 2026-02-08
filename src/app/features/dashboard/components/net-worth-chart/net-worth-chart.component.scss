@@ -381,16 +381,86 @@
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
+// ===========================================
+// RESPONSIVE IMPROVEMENTS
+// ===========================================
+
+@media (max-width: 1200px) {
+  .chart-container {
+    padding: clamp(var(--space-md), 3vw, var(--space-xl));
+    min-height: 420px;
+  }
+
+  .title-section {
+    .stats {
+      .current-value {
+        font-size: clamp(1.75rem, 4vw, 2.25rem);
+      }
+    }
+  }
+
+  .chart-wrapper {
+    height: clamp(240px, 35vw, 280px);
+  }
+}
+
+@media (max-width: 992px) {
   .chart-container {
     padding: var(--space-lg);
+    min-height: 400px;
+  }
+
+  .chart-header {
+    gap: var(--space-md);
+  }
+
+  .title-section {
+    h3 {
+      font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+    }
+
+    .stats {
+      gap: 14px;
+
+      .current-value {
+        font-size: clamp(1.65rem, 3.8vw, 2rem);
+      }
+
+      .change {
+        padding: 7px 13px;
+        font-size: clamp(0.825rem, 1.8vw, 0.9rem);
+      }
+    }
+  }
+
+  .period-selector {
+    flex-wrap: wrap;
+
+    .period-btn {
+      padding: 9px 16px;
+      font-size: 0.85rem;
+      min-width: fit-content;
+    }
+  }
+
+  .chart-wrapper {
+    height: clamp(220px, 32vw, 260px);
+    padding: clamp(var(--space-sm), 2vw, var(--space-md));
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    padding: var(--space-md);
     min-height: 380px;
+    gap: var(--space-md);
   }
 
   .chart-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: var(--space-md);
+    padding-bottom: var(--space-sm);
   }
 
   .title-section {
@@ -410,45 +480,334 @@
       .change {
         padding: 6px 12px;
         font-size: 0.8rem;
+        align-self: flex-start;
       }
     }
   }
 
   .period-selector {
     width: 100%;
-    justify-content: stretch;
+    justify-content: space-between;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .period-btn {
       flex: 1;
-      padding: 8px 12px;
+      min-width: 60px;
+      padding: 10px 14px;
       font-size: 0.8rem;
+      white-space: nowrap;
+    }
+  }
+
+  .chart-wrapper {
+    height: 240px;
+    padding: var(--space-sm);
+  }
+
+  .chart-svg {
+    .chart-line {
+      stroke-width: 2.5;
+    }
+
+    .chart-point {
+      r: 3;
+    }
+  }
+
+  .timeline {
+    padding: 10px 12px;
+    margin-top: 12px;
+
+    .timeline-label {
+      font-size: 0.7rem;
+
+      &::before {
+        width: 6px;
+      }
+    }
+  }
+
+  .empty-state {
+    padding: var(--space-xl);
+    gap: 12px;
+
+    lucide-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+
+    small {
+      font-size: 0.8rem;
+      max-width: 250px;
+    }
+  }
+
+  .loading-state {
+    padding: var(--space-xl);
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border-width: 3px;
+    }
+
+    p {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .chart-container {
+    padding: var(--space-md) var(--space-sm);
+    min-height: 360px;
+  }
+
+  .title-section {
+    h3 {
+      font-size: 1.05rem;
+
+      &::before {
+        width: 3px;
+        height: 20px;
+      }
+    }
+
+    .stats {
+      .current-value {
+        font-size: 1.65rem;
+      }
+    }
+  }
+
+  .period-selector {
+    padding: 5px;
+    gap: 6px;
+
+    .period-btn {
+      padding: 8px 12px;
+      font-size: 0.775rem;
+      min-width: 55px;
     }
   }
 
   .chart-wrapper {
     height: 220px;
-    padding: var(--space-sm);
-  }
-
-  .timeline {
-    padding: 10px 12px;
-
-    .timeline-label {
-      font-size: 0.7rem;
-    }
   }
 }
 
 @media (max-width: 480px) {
   .chart-container {
-    padding: var(--space-md);
+    padding: var(--space-sm);
+    min-height: 340px;
+    gap: var(--space-sm);
   }
 
-  .title-section .stats .current-value {
-    font-size: 1.5rem;
+  .chart-header {
+    gap: var(--space-sm);
+  }
+
+  .title-section {
+    gap: 10px;
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    .stats {
+      gap: 8px;
+
+      .current-value {
+        font-size: 1.5rem;
+      }
+
+      .change {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        gap: 4px;
+
+        lucide-icon {
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+  }
+
+  .period-selector {
+    padding: 4px;
+    gap: 4px;
+
+    .period-btn {
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      min-width: 50px;
+      border-radius: 8px;
+
+      &.active::after {
+        bottom: -4px;
+        width: 3px;
+        height: 3px;
+      }
+    }
+  }
+
+  .chart-wrapper {
+    height: 200px;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .chart-svg {
+    .chart-line {
+      stroke-width: 2;
+    }
+
+    .chart-point {
+      r: 2.5;
+
+      &:hover {
+        r: 3;
+      }
+    }
+  }
+
+  .timeline {
+    padding: 8px 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .timeline-label {
+      font-size: 0.65rem;
+
+      &::before {
+        width: 5px;
+        height: 1.5px;
+      }
+    }
+  }
+
+  .empty-state {
+    padding: var(--space-lg);
+    gap: 10px;
+
+    lucide-icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+
+    small {
+      font-size: 0.75rem;
+      max-width: 200px;
+      line-height: 1.4;
+    }
+  }
+
+  .loading-state {
+    padding: var(--space-lg);
+    gap: 16px;
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border-width: 3px;
+    }
+
+    p {
+      font-size: 0.825rem;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .chart-container {
+    min-height: 320px;
+  }
+
+  .title-section {
+    .stats {
+      .current-value {
+        font-size: 1.35rem;
+      }
+    }
+  }
+
+  .period-selector {
+    .period-btn {
+      padding: 6px 8px;
+      font-size: 0.7rem;
+      min-width: 45px;
+    }
   }
 
   .chart-wrapper {
     height: 180px;
+  }
+
+  .timeline {
+    .timeline-label {
+      font-size: 0.6rem;
+    }
+  }
+}
+
+// Landscape mobile optimization
+@media (max-height: 500px) and (orientation: landscape) {
+  .chart-container {
+    min-height: 280px;
+  }
+
+  .chart-wrapper {
+    height: 160px;
+  }
+
+  .empty-state,
+  .loading-state {
+    padding: var(--space-md);
+  }
+}
+
+// Tablet specific
+@media (min-width: 768px) and (max-width: 1024px) {
+  .chart-container {
+    padding: var(--space-lg);
+  }
+
+  .chart-wrapper {
+    height: 250px;
+  }
+}
+
+// Large desktop optimization
+@media (min-width: 1400px) {
+  .chart-container {
+    padding: var(--space-2xl);
+  }
+
+  .chart-wrapper {
+    height: 320px;
+  }
+
+  .title-section {
+    .stats {
+      .current-value {
+        font-size: 2.5rem;
+      }
+    }
   }
 }
