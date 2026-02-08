@@ -2,15 +2,17 @@
   <div class="chart-header">
     <div class="title-section">
       <h3>Histórico de Patrimonio</h3>
+      
+      <!-- Stats Summary -->
       <div class="stats" *ngIf="!isLoading() && snapshots().length > 0">
         <div class="current-value">
           {{ currentValue() | currency:'USD':'symbol':'1.0-0' }}
         </div>
-        <div class="change" [class.positive]="trend() === 'up'" [class.negative]="trend() === 'down'">
+        <div class="change-badge" [class.positive]="trend() === 'up'" [class.negative]="trend() === 'down'">
           <lucide-icon [img]="trend() === 'up' ? icons.TrendingUp : icons.TrendingDown" size="16"></lucide-icon>
-          <span>
+          <span class="change-text">
             {{ totalChange() >= 0 ? '+' : '' }}{{ totalChange() | currency:'USD':'symbol':'1.0-0' }}
-            ({{ totalChangePercentage() >= 0 ? '+' : '' }}{{ totalChangePercentage() | number:'1.1-1' }}%)
+            <span class="percentage">({{ totalChangePercentage() >= 0 ? '+' : '' }}{{ totalChangePercentage() | number:'1.1-1' }}%)</span>
           </span>
         </div>
       </div>
@@ -29,69 +31,77 @@
 
   <div class="chart-body" *ngIf="!isLoading()">
     <div class="chart-wrapper" *ngIf="snapshots().length > 0">
+      
+      <!-- SVG Layer for Lines & Area (Scalable) -->
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="chart-svg">
-        <!-- Gradient Definitions -->
         <defs>
           <linearGradient id="gradient-positive" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.4" />
+            <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.3" />
             <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0" />
           </linearGradient>
           <linearGradient id="gradient-negative" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.4" />
+            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3" />
             <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0" />
           </linearGradient>
         </defs>
 
-        <!-- Grid lines -->
-        <line x1="0" y1="0" x2="100" y2="0" class="grid-line" />
-        <line x1="0" y1="25" x2="100" y2="25" class="grid-line" />
-        <line x1="0" y1="50" x2="100" y2="50" class="grid-line" />
-        <line x1="0" y1="75" x2="100" y2="75" class="grid-line" />
-        <line x1="0" y1="100" x2="100" y2="100" class="grid-line" />
+        <!-- Grid Lines -->
+        <g class="grid-lines">
+          <line x1="0" y1="25" x2="100" y2="25" />
+          <line x1="0" y1="50" x2="100" y2="50" />
+          <line x1="0" y1="75" x2="100" y2="75" />
+        </g>
 
-        <!-- Area fill -->
+        <!-- Area Fill -->
         <path 
           [attr.d]="areaPath()" 
           class="chart-area"
           [class.positive]="trend() === 'up'"
           [class.negative]="trend() === 'down'" />
 
-        <!-- Line -->
+        <!-- Line Stroke -->
         <path 
           [attr.d]="pathData()" 
           class="chart-line"
           [class.positive]="trend() === 'up'"
           [class.negative]="trend() === 'down'" />
-
-        <!-- Data points -->
-        <circle 
-          *ngFor="let point of chartData()"
-          [attr.cx]="point.x"
-          [attr.cy]="point.y"
-          r="1.5"
-          class="chart-point"
-          [class.positive]="trend() === 'up'"
-          [class.negative]="trend() === 'down'">
-          <title>{{ point.total_value | currency:'USD':'symbol':'1.2-2' }} - {{ formatDate(point.timestamp) }}</title>
-        </circle>
       </svg>
 
-      <!-- Timeline -->
-      <div class="timeline">
-        <span class="timeline-label">{{ formatDate(snapshots()[0].timestamp) }}</span>
-        <span class="timeline-label">{{ formatDate(snapshots()[snapshots().length - 1].timestamp) }}</span>
+      <!-- HTML Overlay for Points (Prevents Distortion) -->
+      <div class="points-overlay">
+        <div 
+          *ngFor="let point of chartData()"
+          class="chart-point"
+          [style.left.%]="point.x"
+          [style.top.%]="point.y"
+          [class.positive]="trend() === 'up'"
+          [class.negative]="trend() === 'down'">
+          
+          <div class="tooltip">
+            <span class="value">{{ point.total_value | currency:'USD':'symbol':'1.0-0' }}</span>
+            <span class="date">{{ formatDate(point.timestamp) }}</span>
+          </div>
+        </div>
       </div>
+
+    </div>
+
+    <div class="timeline">
+      <span class="timeline-label">{{ formatDate(snapshots()[0].timestamp) }}</span>
+      <span class="timeline-label">{{ formatDate(snapshots()[snapshots().length - 1].timestamp) }}</span>
     </div>
 
     <div class="empty-state" *ngIf="snapshots().length === 0">
-      <lucide-icon [img]="icons.TrendingUp" size="48"></lucide-icon>
-      <p>No hay datos históricos aún</p>
-      <small>Los datos se registrarán automáticamente cada día</small>
+      <div class="icon-bg">
+        <lucide-icon [img]="icons.TrendingUp" size="32"></lucide-icon>
+      </div>
+      <p>Sin datos históricos</p>
+      <small>Tu patrimonio se registrará aquí automáticamente.</small>
     </div>
   </div>
 
   <div class="loading-state" *ngIf="isLoading()">
     <div class="spinner"></div>
-    <p>Cargando histórico...</p>
+    <p>Cargando gráfico...</p>
   </div>
 </div>
