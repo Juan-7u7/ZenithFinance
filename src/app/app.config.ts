@@ -5,7 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { provideServiceWorker } from '@angular/service-worker';
+// import { provideServiceWorker } from '@angular/service-worker'; // Removing unused import
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,9 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
-    provideAnimationsAsync(), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          })
+    provideAnimationsAsync()
   ]
 };
+
